@@ -1,0 +1,14 @@
+
+.root {
+    display: flex;
+    padding: 40px 48px 40px 29px;
+    background-color: #DDC0AE;
+}
+
+.menu {
+    flex: 1
+}
+
+.icons {
+
+}

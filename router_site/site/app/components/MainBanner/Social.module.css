@@ -1,0 +1,16 @@
+
+.root {
+    background-color: #383838;
+    padding: 26px 30px 46px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 32px;
+}
+
+.item {
+    font-family: 'Circular Std', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+    transform: rotate(-90deg);
+}

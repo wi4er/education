@@ -1,0 +1,56 @@
+.root {
+    font-family: "Google Sans", sans-serif;
+
+    display: grid;
+    max-width: 483px;
+    grid-template:
+    "title title"
+    ".     .    " 17px
+    "sub   sub  "
+    ".     .    " 10px
+    "text  text "
+    ".     .    " 50px
+    "butt  .    ";
+}
+
+.title {
+    grid-area: title;
+    margin: 0;
+    font-weight: 700;
+    font-size: 152px;
+    color: #A1613B;
+    letter-spacing: -12.2px;
+}
+
+.subtitle {
+    grid-area: sub;
+    font-weight: 700;
+    font-size: 20px;
+    color: #A1613B;
+}
+
+.text {
+    grid-area: text;
+    font-size: 16px;
+    line-height: 24px;
+    color: #505050;
+}
+
+.button {
+    grid-area: butt;
+    display: flex;
+    gap: 14px;
+    padding: 21px 36px 21px 39px;
+    background-color: #A1613B;
+
+    border: none;
+    border-radius: 50px;
+    font-family: "Circular Std", sans-serif;
+    font-size: 20px;
+    color: #FFF;
+
+    .stick {
+        border-left: 1px solid #D9D9D9;
+        opacity: 30%;
+    }
+}

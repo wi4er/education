@@ -1,0 +1,40 @@
+.root {
+    padding: 80px 85px 80px 135px;
+    display: grid;
+
+    grid-template:
+    ".       .    image" 115px
+    "title   .    image" 71px
+    ".       .    image" 30px
+    "text    .    image" 1fr
+    ".       .    image" 60px
+    "buttons .    image"
+    ".       .    image" 65px
+    / 1fr    89px auto;
+
+    font-family: "Google Sans", sans-serif;
+}
+
+.title {
+    grid-area: title;
+
+    font-size: 55px;
+    line-height: 130%;
+    text-transform: uppercase;
+    color: #A1613B;
+}
+
+.text {
+    grid-area: text;
+    font-size: 18px;
+    line-height: 30px;
+    color: #4D4D4D;
+}
+
+.buttons {
+    grid-area: buttons;
+}
+
+.image {
+    grid-area: image;
+}

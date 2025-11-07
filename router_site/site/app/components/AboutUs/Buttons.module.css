@@ -1,0 +1,26 @@
+.root {
+
+    display: flex;
+    gap: 30px;
+
+    font-family: "Google Sans", sans-serif;
+}
+
+.button {
+    cursor: pointer;
+    width: 190px;
+    height: 58px;
+    border-radius: 29px;
+    border: none;
+    color: #FFF;
+
+    font-size: 20px;
+
+    &.buy {
+        background-color: #A1613B;
+    }
+
+    &.details {
+        background-color: #383838;
+    }
+}

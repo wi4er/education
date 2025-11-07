@@ -1,0 +1,44 @@
+.root {
+    padding: 40px 205px 51px;
+    background-color: #FAFAFA;
+
+    font-family: "Google Sans", sans-serif;
+
+    display: grid;
+    justify-items: center;
+
+    grid-template-rows: auto 44px auto 20px auto;
+    grid-column-gap: 24px;
+}
+
+.title {
+    grid-column: 1 / 6;
+    grid-row: 0;
+    margin: 0;
+
+    font-size: 44px;
+    line-height: 130%;
+    color: #A1613B;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+.icon {
+    grid-row: 3;
+    width: 120px;
+    height: 120px;
+    background-color: #FFF;
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px #294D7608;
+}
+
+.name {
+    grid-row: 5;
+    font-size: 22px;
+    line-height: 125%;
+    font-weight: 500;
+    color: #333131;
+}

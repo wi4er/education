@@ -1,0 +1,48 @@
+.root {
+    font-family: 'Google Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.text {
+    color: #4C4C4C;
+    font-size: 14px;
+    line-height: 122%;
+    font-weight: 400;
+}
+
+.email {
+    border: 1px solid #4C4C4C;
+    border-radius: 7px;
+    padding: 2px 2px 2px 12px;
+    display: flex;
+    gap: 7px;
+
+    .input {
+        width: 0;
+        flex: 1;
+        background-color: rgba(0, 0, 0, 0);
+        font-size: 14px;
+        outline: none;
+        border: none;
+    }
+
+    .input::placeholder {
+        color: #837C7C;
+    }
+
+    .button {
+        border: none;
+        font-size: 14px;
+        text-transform: uppercase;
+        width: 70px;
+        height: 40px;
+        border-radius: 3px;
+        background-color: #A1613B;
+        color: #FFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

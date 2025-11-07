@@ -1,0 +1,13 @@
+
+.root {
+    display: flex;
+    gap: 42px;
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    font-family: "Google Sans", sans-serif;
+    font-size: 18px;
+
+}

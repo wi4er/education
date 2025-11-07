@@ -1,0 +1,13 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+
+    font-family: "Google Sans", sans-serif;
+}
+
+.item {
+    color: #4C4C4C;
+    font-size: 14px;
+    font-weight: 400;
+}

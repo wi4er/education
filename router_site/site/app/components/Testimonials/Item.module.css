@@ -1,0 +1,44 @@
+.root {
+    padding: 89px 0 70px;
+}
+
+.box {
+    position: relative;
+    height: 200px;
+    padding: 30px 78px 34px 100px;
+    box-shadow: 0 10px 30px #294D7614;
+    background-color: #FFF;
+    border-radius: 30px 10px 30px 10px;
+}
+
+.text {
+    position: relative;
+    height: 100%;
+    padding: 21px 0 0 60px;
+    font-family: "Google Sans", sans-serif;
+    font-size: 16px;
+    line-height: 157%;
+    text-align: center;
+    color: #8C8C8C;
+
+    .open {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .close {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+}
+
+.image {
+    position: absolute;
+    left: 34px;
+    top: -89px;
+    border-radius: 46px;
+    width: 92px;
+    height: 132px;
+}

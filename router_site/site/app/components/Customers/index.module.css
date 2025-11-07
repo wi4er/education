@@ -1,0 +1,29 @@
+
+.root {
+    width: 100%;
+    background-color: #FFF2EA;
+
+    display: grid;
+    grid-template-rows: auto 15px auto;
+    justify-items: center;
+    justify-content: space-between;
+    column-gap: 20px;
+
+    font-family: "Google Sans", sans-serif;
+    padding: 59px 236.5px 66px;
+}
+
+.count {
+    grid-row: 1;
+
+    font-weight: 500;
+    font-size: 45px;
+    color: #A1613B;
+}
+
+.text {
+    grid-row: 3;
+    font-size: 20px;
+    color: #181818;
+    text-align: center;
+}

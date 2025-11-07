@@ -1,0 +1,22 @@
+.root {
+    display: grid;
+
+    font-family: "Google Sans", sans-serif;
+
+    grid-template-columns: 24px 1fr;
+    column-gap: 13px;
+    align-content: space-between;
+}
+
+.icon {
+    margin-top: -1px;
+}
+
+
+.text {
+    max-width: 200px;
+    font-size: 14px;
+    line-height: 122%;
+    color: #4C4C4C;
+}
+

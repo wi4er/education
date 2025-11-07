@@ -1,0 +1,38 @@
+.root {
+    padding: 140px 147px;
+    font-family: "Google Sans", sans-serif;
+
+    display: grid;
+    justify-items: center;
+    grid-template:
+    "title"
+    "-" 10px
+    "text"
+    "--" 49px
+    "list";
+}
+
+
+.title {
+    grid-area: title;
+    margin: 0;
+    font-weight: 400;
+    font-size: 55px;
+    line-height: 130%;
+    text-transform: uppercase;
+    color: #A1613B;
+}
+
+.text {
+    grid-area: text;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 30px;
+    max-width: 640px;
+    align-items: center;
+    text-align: center;
+}
+
+.list {
+    grid-area: list;
+}
