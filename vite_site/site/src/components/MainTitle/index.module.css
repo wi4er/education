@@ -1,0 +1,33 @@
+.root {
+    display: grid;
+    /*justify-items: center;*/
+    grid-template:
+    "title title title"
+    ".     .     .    " 24px
+    "left  .     right"
+    /auto  1fr   auto ;
+}
+
+.title {
+    grid-area: title;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+
+    @media (min-width: 1280px) {
+        padding-left: 20px;
+        margin: 0 auto;
+        max-width: 75%;
+        word-break: break-all;
+    }
+}
+
+.left {
+    grid-area: left;
+    padding-left: 30px;
+}
+
+.right {
+    grid-area: right;
+    padding-right: 30px;
+}

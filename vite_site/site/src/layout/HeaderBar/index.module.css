@@ -1,0 +1,20 @@
+.root {
+    display: grid;
+    grid-template:
+    ".     .     .    .     .    " 22px
+    ".     about .    direc .    "
+    / 30px auto  1fr  auto  30px;
+
+    position: sticky;
+    top: 0;
+
+    background: linear-gradient(#FFFF, #FFF0);
+}
+
+.about {
+    grid-area: about;
+}
+
+.direc {
+    grid-area: direc;
+}

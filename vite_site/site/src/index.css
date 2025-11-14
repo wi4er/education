@@ -1,0 +1,12 @@
+a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+html, body, #root {
+    min-height: 100vh;
+}
+
+* {
+    box-sizing: border-box;
+}

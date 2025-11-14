@@ -1,0 +1,45 @@
+.root {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    @media (min-width: 799px) {
+        flex-direction: row;
+    }
+}
+
+
+.item {
+    height: 160px;
+    gap: 20px;
+    padding: 50px 0 30px;
+
+    @media (min-width: 799px) {
+        height: 414px;
+        width: 414px;
+        gap: 30px;
+    }
+}
+
+.center {
+    height: 160px;
+    border-width: 0.5px 0 0.5px 0;
+    border-style: solid;
+    border-color: #000;
+    padding: 30px 0;
+    gap: 20px;
+
+    @media (min-width: 799px) {
+        height: 414px;
+        width: 393px;
+        gap: 30px;
+
+        border-width: 0 0.5px 0 0.5px;
+        border-style: solid;
+        border-color: #000;
+    }
+}
+
+.label {
+
+}
