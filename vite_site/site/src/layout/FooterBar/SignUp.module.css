@@ -1,0 +1,48 @@
+.root {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    border: 1px solid #000;
+    cursor: pointer;
+    grid-template:
+        ".     .     .    " 19px
+        ".     text  .    "
+        ".     .     .    " 17px
+        ".     arrow .    "
+        ".     .     .    " 19px
+        /10px  1fr   10px ;
+
+    @media (min-width: 800px) {
+        grid-template:
+        ".     .    .    .    " 1px
+        ".     text .    arrow"
+        ".     .    .    .    " 1px
+        /157px 1fr  40px auto;
+    }
+
+    @media (min-width: 1280px) {
+        grid-template:
+        ".     .    .    .    " 1px
+        "arrow .    text .    "
+        ".     .    .    .    " 1px
+        /auto  1fr  auto 173px;
+    }
+}
+
+.text {
+    grid-area: text;
+    text-transform: uppercase;
+}
+
+.arrow {
+    grid-area: arrow;
+    width: 40px;
+    height: 40px;
+    stroke-width: 8px;
+
+    @media (min-width: 800px) {
+        width: 157px;
+        height: 156px;
+        stroke-width: 2px;
+    }
+}

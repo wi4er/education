@@ -37,7 +37,7 @@
 @font-face {
     font-family: 'Rubik';
     font-weight: 900;
-    src: url('./Rubik-Bold.ttf');
+    src: url('./Rubik-Black.ttf');
 }
 
 /*****************************************************/
@@ -88,5 +88,5 @@
     font-family: 'Rubik';
     font-weight: 900;
     font-style: italic;
-    src: url('./Rubik-BoldItalic.ttf');
+    src: url('./Rubik-BlackItalic.ttf');
 }

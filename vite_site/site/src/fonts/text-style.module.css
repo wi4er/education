@@ -45,14 +45,33 @@
     line-height: 145%;
     font-weight: 400;
 
-    @media (min-width: 799px) {
+    @media (min-width: 800px) {
         font-size: 122px;
         line-height: 120%;
         letter-spacing: 12.2px;
     }
 
-    @media (min-width: 1279px) {
+    @media (min-width: 1280px) {
         font-size: 200px;
+        line-height: 120%;
+        letter-spacing: 20.5px;
+    }
+}
+
+.heading_2 {
+    font-family: Rubik, sans-serif;
+    font-size: 46px;
+    line-height: 145%;
+    font-weight: 900;
+
+    @media (min-width: 800px) {
+        font-size: 112px;
+        line-height: 120%;
+        letter-spacing: 12.2px;
+    }
+
+    @media (min-width: 1280px) {
+        font-size: 182px;
         line-height: 120%;
         letter-spacing: 20.5px;
     }
@@ -65,12 +84,14 @@
     line-height: 110%;
     letter-spacing: -0.3px;
 
-    @media (min-width: 799px) {
+    @media (min-width: 800px) {
         font-size: 24px;
+        letter-spacing: -0.3px;
     }
 
-    @media (min-width: 1279px) {
+    @media (min-width: 1280px) {
         font-size: 36px;
+        letter-spacing: -0.7px;
     }
 }
 
@@ -81,14 +102,29 @@
     line-height: 110%;
     letter-spacing: -0.3px;
 
-    @media (min-width: 799px) {
+    @media (min-width: 800px) {
         font-size: 18px;
         letter-spacing: -0.3px;
     }
 
-    @media (min-width: 1279px) {
+    @media (min-width: 1280px) {
         font-size: 26px;
         letter-spacing: -0.3px;
+    }
+}
+
+.heading_6 {
+    font-family: Rubik, sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 120%;
+
+    @media (min-width: 800px) {
+        font-size: 20px;
+    }
+
+    @media (min-width: 1280px) {
+        font-size: 20px;
     }
 }
 
@@ -99,7 +135,7 @@
     line-height: 120%;
     letter-spacing: -0.3px;
 
-    @media (min-width: 799px) {
+    @media (min-width: 800px) {
         font-size: 14px;
     }
 

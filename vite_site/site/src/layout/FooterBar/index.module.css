@@ -1,3 +1,74 @@
 .root {
+    display: grid;
 
+    grid-template:
+        ".     .      .     " 48px
+        ".     sign   .     "
+        ".     .      .     " 43px
+        ".     image  .     " 188px
+        ".     .      .     " 43px
+        ".     popup  .     "
+        ".     .      .     " 40px
+        ".     title  .     "
+        ".     .      .     " 40px
+        ".     rights .     "
+        ".     .      .     " 6px
+        ".     tag    .     "
+        ".     .      .     " 20px
+        /40px  auto   40px;
+
+    @media (min-width: 800px) {
+        grid-template:
+        ".     .      .      .      .     " 88px
+        ".     sign   sign   sign   .     "
+        ".     .      .      .      .     " 43px
+        ".     image  image  image  .     " 386px
+        ".     .      .      .      .     " 43px
+        ".     popup  popup  popup  .     "
+        ".     .      .      .      .     " 40px
+        ".     title  title  title  .     "
+        ".     .      .      .      .     " 40px
+        ".     rights .      tag    .     "
+        ".     .      .      .      .     " 20px
+        /40px  auto   1fr    auto   40px;
+    }
+}
+
+.sign {
+    grid-area: sign;
+}
+
+.image {
+    grid-area: image;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    img {
+        object-fit: cover;
+        min-width: 100%;
+        min-height: 100%;
+    }
+}
+
+.popup {
+    grid-area: popup;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.title {
+    grid-area: title;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.rights {
+    grid-area: rights;
+    text-transform: uppercase;
+}
+
+.tag {
+    grid-area: tag;
+    text-transform: uppercase;
 }

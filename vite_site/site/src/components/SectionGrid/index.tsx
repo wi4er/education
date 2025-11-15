@@ -4,7 +4,6 @@ import type { SectionItem } from './SectionItem.ts';
 import { sectionList } from './mock/section-list.ts';
 import cn from 'classnames';
 
-
 export function SectionGrid(
   {
     list = sectionList,
