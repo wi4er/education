@@ -43,6 +43,7 @@ export function Item(
     }
   }, [text, hover]);
 
+
   return (
     <div
       className={cn(css.root, className)}
