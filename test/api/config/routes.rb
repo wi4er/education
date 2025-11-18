@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
-  get "items/index"
   resources :articles
-  resources :items
+  resources :items, defaults: { format: :json }
 
   devise_for :users,
              controllers: {

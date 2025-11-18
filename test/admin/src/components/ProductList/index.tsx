@@ -8,22 +8,42 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './columns';
+import { ProductForm } from '../ProductForm';
+import { productContext } from './product.context';
 
 export function ProductList() {
   const [list, setList] = React.useState<Array<UserEntity>>([]);
+  const [edit, setEdit] = React.useState<boolean>(false);
+  const [editProduct, setEditProduct] = React.useState<number>(0);
 
-  React.useEffect(() => {
+  async function fetchProductList() {
     fetch('http://localhost:3000/items', {
       method: 'GET',
       credentials: 'include',
-    }).then(res  => res.json()).then(res  => {
-      setList(res.data)
-      console.log(res);
+    }).then(res => res.json()).then(res => {
+      setList(res.data);
     });
+  }
+
+  React.useEffect(() => {
+    fetchProductList();
   }, []);
 
   return (
-    <div className={css.root}>
+    <productContext.Provider value={{
+      openEdit: (id: number) => {
+        setEdit(true);
+        setEditProduct(id);
+      },
+      deleteItem: (id: number) => {
+        fetch(`http://localhost:3000/items/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        }).then(res => res.json()).then(res => {
+          if (res.status) fetchProductList();
+        });
+      },
+    }}>
       <Toolbar>
         <Typography variant="h4" component="div" sx={{flexGrow: 1}}>
           Product List
@@ -35,8 +55,7 @@ export function ProductList() {
           color="inherit"
           aria-label="menu"
           sx={{mr: 2}}
-          onClick={() => {
-          }}
+          onClick={() => setEdit(true)}
         >
           <AddIcon/>
         </IconButton>
@@ -60,14 +79,21 @@ export function ProductList() {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 5,
+              pageSize: 20,
             },
           },
         }}
         pageSizeOptions={[5]}
-        checkboxSelection
-        disableRowSelectionOnClick
       />
-    </div>
+
+      <ProductForm
+        open={edit}
+        productId={editProduct}
+        handleClose={() => {
+          setEdit(false);
+          fetchProductList();
+        }}
+      />
+    </productContext.Provider>
   );
 }
