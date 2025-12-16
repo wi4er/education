@@ -1,0 +1,39 @@
+
+.heading1 {
+    font-family: "Playfair Display", sans-serif;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 82px;
+}
+
+.heading2 {
+    font-family: "Playfair Display", sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 50px;
+}
+
+.heading3 {
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.button {
+    font-family: Poppins, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.caption {
+    font-family: Poppins, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.input {
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+}

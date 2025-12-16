@@ -1,0 +1,140 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+} from '@nestjs/common';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
+import { Attribute } from '../entities/attribute/attribute.entity';
+import { Attribute2String } from '../entities/attribute/attribute2string.entity';
+import { Attribute2Point } from '../entities/attribute/attribute2point.entity';
+import { AttributeView } from '../views/attribute.view';
+import { AttributeInput } from '../inputs/attribute.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+
+@Controller('attribute')
+export class AttributeController {
+
+  constructor(
+    @InjectRepository(Attribute)
+    private readonly attributeRepository: Repository<Attribute>,
+    private readonly dataSource: DataSource,
+    private readonly pointAttributeService: PointAttributeService,
+    private readonly stringAttributeService: StringAttributeService,
+  ) {
+  }
+
+  toView(attribute: Attribute): AttributeView {
+    return {
+      id: attribute.id,
+      createdAt: attribute.createdAt,
+      updatedAt: attribute.updatedAt,
+      attributes: {
+        strings: attribute.strings?.map(str => ({
+          lang: str.languageId,
+          attr: str.attributeId,
+          value: str.value,
+        })) ?? [],
+        points: attribute.points?.map(pnt => ({
+          attr: pnt.attributeId,
+          point: pnt.pointId,
+        })) ?? [],
+      },
+    };
+  }
+
+  @Get()
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.GET)
+  async findAll(): Promise<AttributeView[]> {
+    const attributes = await this.attributeRepository.find({
+      relations: ['strings', 'points'],
+    });
+
+    return attributes.map(attr => this.toView(attr));
+  }
+
+  @Get(':id')
+  @CheckId(Attribute)
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.GET)
+  async findOne(
+    @Param('id')
+    id: string,
+  ): Promise<AttributeView> {
+    const attribute = await this.attributeRepository.findOne({
+      where: { id },
+      relations: ['strings', 'points'],
+    });
+
+    return this.toView(attribute);
+  }
+
+  @Post()
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.POST)
+  async create(
+    @Body()
+    data: AttributeInput
+  ): Promise<AttributeView> {
+    const { strings, points, ...attributeData } = data;
+
+    const attribute = await this.dataSource.transaction(async transaction => {
+      const attr = transaction.create(Attribute, attributeData);
+      const savedAttribute = await transaction.save(attr);
+
+      await this.stringAttributeService.create<Attribute>(transaction, Attribute2String, strings);
+      await this.pointAttributeService.create<Attribute>(transaction, Attribute2Point, points);
+
+      return transaction.findOne(Attribute, {
+        where: { id: savedAttribute.id },
+        relations: ['strings', 'points'],
+      });
+    });
+
+    return this.toView(attribute);
+  }
+
+  @Put(':id')
+  @CheckId(Attribute)
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.PUT)
+  async update(
+    @Param('id')
+    id: string,
+    @Body()
+    data: AttributeInput,
+  ): Promise<AttributeView> {
+    const { strings, points, ...attributeData } = data;
+
+    const attribute = await this.dataSource.transaction(async transaction => {
+      await transaction.update(Attribute, id, attributeData);
+
+      await this.stringAttributeService.update<Attribute>(transaction, Attribute2String, id, strings);
+      await this.pointAttributeService.update<Attribute>(transaction, Attribute2Point, id, points);
+
+      return transaction.findOne(Attribute, {
+        where: { id },
+        relations: ['strings', 'points'],
+      });
+    });
+
+    return this.toView(attribute);
+  }
+
+  @Delete(':id')
+  @CheckId(Attribute)
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.DELETE)
+  async remove(
+    @Param('id')
+    id: string,
+  ): Promise<void> {
+    await this.attributeRepository.delete(id);
+  }
+
+}

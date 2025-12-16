@@ -1,0 +1,15 @@
+
+.wrap {
+    height: 51px;
+    padding: 0 40px;
+    border: 1px solid #30261C;
+    border-radius: 26px;
+
+    color: #F1F0EE;
+    background-color: #30261C;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px;
+    align-items: center;
+}

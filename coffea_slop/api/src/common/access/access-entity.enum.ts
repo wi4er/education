@@ -1,0 +1,17 @@
+export enum AccessEntity {
+
+  ATTRIBUTE = 'ATTRIBUTE',
+  LANGUAGE = 'LANGUAGE',
+  DIRECTORY = 'DIRECTORY',
+  MEASURE = 'MEASURE',
+  POINT = 'POINT',
+  USER = 'USER',
+  GROUP = 'GROUP',
+  ACCESS = 'ACCESS',
+  BLOCK = 'BLOCK',
+  ELEMENT = 'ELEMENT',
+  SECTION = 'SECTION',
+  FORM = 'FORM',
+  RESULT = 'RESULT',
+
+}

@@ -14,10 +14,10 @@ export function HeaderBar() {
       </Link>
 
       <Link
-        to={'/directions'}
+        to={'/catalog'}
         className={cn(css.direc, font.heading_5)}
       >
-        DIRECTIONS
+        CATALOG
       </Link>
     </header>
   );

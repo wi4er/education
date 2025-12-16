@@ -1,0 +1,30 @@
+.wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3.5rem 4rem;
+    background: #E2D9C8;
+    height: 220px;
+    gap: 151px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+    .wrap {
+        gap: 4rem;
+        padding: 3rem 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrap {
+        gap: 2.5rem;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .wrap {
+        gap: 1.5rem;
+        padding: 2rem 1rem;
+    }
+}

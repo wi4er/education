@@ -1,0 +1,21 @@
+.root {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    @media (min-width: 1281px) {
+        padding: 0 clamp(0px, calc(8.5% - 108px), 55px);
+    }
+}
+
+.item {
+    flex: 1 0 300px;
+
+    @media (min-width: 800px) {
+        flex: 1 0 320px;
+    }
+
+    @media (min-width: 1280px) {
+        flex: 1 0 350px;
+    }
+}

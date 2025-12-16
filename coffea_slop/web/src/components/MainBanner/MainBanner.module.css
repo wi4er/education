@@ -1,0 +1,149 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 4rem;
+  background: var(--color-cream);
+  overflow: hidden;
+}
+
+.heroContent {
+  flex: 1;
+  max-width: 550px;
+  z-index: 2;
+}
+
+.heroLabel {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 600;
+  color: var(--color-brown);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.heroAccent {
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+.heroSubtitle {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 400px;
+}
+
+.heroButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: var(--color-brown);
+  color: var(--color-white);
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.heroButton:hover {
+  background: var(--color-brown-light);
+}
+
+.heroVisual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.heroCoffeeImage {
+  width: 450px;
+  height: 450px;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+}
+
+.heroDecorations {
+  position: absolute;
+  top: 2rem;
+  right: 4rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.heroDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.heroDotGold {
+  background: var(--color-accent);
+}
+
+.heroDotBrown {
+  background: var(--color-brown);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    padding: 8rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .heroContent {
+    max-width: none;
+  }
+
+  .heroSubtitle {
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .heroTitle {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroCoffeeImage {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 7rem 1rem 3rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroDecorations {
+    display: none;
+  }
+}
