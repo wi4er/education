@@ -12,8 +12,11 @@ import { CheckMethodAccess } from '../../common/access/check-method-access.guard
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
 import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { PermissionMethod } from '../../common/permission/permission.method';
 import { Form } from '../entities/form/form.entity';
 import { Form2String } from '../entities/form/form2string.entity';
 import { Form2Point } from '../entities/form/form2point.entity';
@@ -80,10 +83,20 @@ export class FormController {
   @Get()
   @CheckMethodAccess(AccessEntity.FORM, AccessMethod.GET)
   async findAll(
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
+    @CurrentGroups()
+    groups: string[],
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
   ): Promise<FormView[]> {
     const forms = await this.formRepository.find({
+      where: {
+        permissions: {
+          groupId: Or(In(groups), IsNull()),
+          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+        },
+      },
       relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
       take: limit,
       skip: offset,
@@ -94,6 +107,7 @@ export class FormController {
   @Get(':id')
   @CheckId(Form)
   @CheckMethodAccess(AccessEntity.FORM, AccessMethod.GET)
+  @CheckIdPermission(Form, PermissionMethod.READ)
   async findOne(
     @Param('id')
     id: string,
@@ -135,6 +149,7 @@ export class FormController {
   @Put(':id')
   @CheckId(Form)
   @CheckMethodAccess(AccessEntity.FORM, AccessMethod.PUT)
+  @CheckIdPermission(Form, PermissionMethod.WRITE)
   async update(
     @Param('id')
     id: string,
@@ -164,6 +179,7 @@ export class FormController {
   @Delete(':id')
   @CheckId(Form)
   @CheckMethodAccess(AccessEntity.FORM, AccessMethod.DELETE)
+  @CheckIdPermission(Form, PermissionMethod.DELETE)
   async remove(
     @Param('id')
     id: string,

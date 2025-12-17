@@ -15,7 +15,8 @@ import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { PermissionMethod } from '../../common/permission/permission.method';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
 import { Block } from '../entities/block/block.entity';
 import { Block2String } from '../entities/block/block2string.entity';
 import { Block2Point } from '../entities/block/block2point.entity';
@@ -82,12 +83,20 @@ export class BlockController {
   @Get()
   @CheckMethodAccess(AccessEntity.BLOCK, AccessMethod.GET)
   async findAll(
+    @CurrentGroups()
+    groups: string[],
     @Query('limit')
     limit?: number,
     @Query('offset')
     offset?: number,
   ): Promise<BlockView[]> {
     const blocks = await this.blockRepository.find({
+      where: {
+        permissions: {
+          groupId: Or(In(groups), IsNull()),
+          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+        },
+      },
       relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
       take: limit,
       skip: offset,

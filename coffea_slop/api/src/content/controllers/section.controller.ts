@@ -15,7 +15,8 @@ import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { PermissionMethod } from '../../common/permission/permission.method';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
 import { Section } from '../entities/section/section.entity';
 import { Section2String } from '../entities/section/section2string.entity';
 import { Section2Point } from '../entities/section/section2point.entity';
@@ -83,12 +84,20 @@ export class SectionController {
   @Get()
   @CheckMethodAccess(AccessEntity.SECTION, AccessMethod.GET)
   async findAll(
+    @CurrentGroups()
+    groups: string[],
     @Query('limit')
     limit?: number,
     @Query('offset')
     offset?: number,
   ): Promise<SectionView[]> {
     const sections = await this.sectionRepository.find({
+      where: {
+        permissions: {
+          groupId: Or(In(groups), IsNull()),
+          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+        },
+      },
       relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
       take: limit,
       skip: offset,

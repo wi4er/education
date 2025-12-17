@@ -2,9 +2,12 @@ import { Injectable, CanActivate, ExecutionContext, SetMetadata } from '@nestjs/
 import { Reflector } from '@nestjs/core';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { PermissionMethod } from './permission.method';
 import { WithPermissions } from '../entities/with-permissions.entity';
 import { PermissionException } from '../../exception/permission/permission.exception';
+
+const COOKIE_NAME = 'auth_token';
 
 export const CHECK_ID_PERMISSION = 'CHECK_ID_PERMISSION';
 
@@ -31,7 +34,20 @@ export class CheckIdPermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
+    private readonly jwtService: JwtService,
   ) {
+  }
+
+  private getUserGroups(request: any): string[] {
+    const token = request.cookies?.[COOKIE_NAME];
+    if (!token) return [];
+
+    try {
+      const payload = this.jwtService.verify(token);
+      return payload.groups ?? [];
+    } catch {
+      return [];
+    }
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -56,8 +72,14 @@ export class CheckIdPermissionGuard implements CanActivate {
 
     if (!found) return true;
 
+    const userGroups = this.getUserGroups(request);
+
     const hasPermission = found.permissions?.some(
-      perm => perm.method === method && (perm.groupId === null || perm.groupId === undefined),
+      perm => perm.method === method && (
+        perm.groupId === null
+        || perm.groupId === undefined
+        || userGroups.includes(perm.groupId)
+      ),
     );
 
     if (!hasPermission) throw new PermissionException(entity.name, method, id);

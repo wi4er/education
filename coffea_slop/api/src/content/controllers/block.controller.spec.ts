@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
 import * as request from 'supertest';
+import * as cookieParser from 'cookie-parser';
 import { BlockController } from './block.controller';
 import { Block } from '../entities/block/block.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
@@ -13,10 +15,17 @@ import { CommonModule } from '../../common/common.module';
 import { PermissionMethod } from '../../common/permission/permission.method';
 import { Block4Permission } from '../entities/block/block4permission.entity';
 
+const JWT_SECRET = 'test-secret';
+
 describe('BlockController', () => {
 
   let app: INestApplication;
   let dataSource: DataSource;
+  let jwtService: JwtService;
+
+  beforeAll(() => {
+    process.env.JWT_SECRET = JWT_SECRET;
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,13 +34,16 @@ describe('BlockController', () => {
         ExceptionModule,
         CommonModule,
         TypeOrmModule.forFeature([Block]),
+        JwtModule.register({ secret: JWT_SECRET }),
       ],
       controllers: [BlockController],
       providers: [],
     }).compile();
 
     app = module.createNestApplication();
+    app.use(cookieParser());
     dataSource = module.get<DataSource>(DataSource);
+    jwtService = module.get<JwtService>(JwtService);
     await app.init();
   });
 
@@ -48,6 +60,7 @@ describe('BlockController', () => {
 
     it('should return an array of blocks with relations', async () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block')
@@ -61,7 +74,58 @@ describe('BlockController', () => {
         descriptions: [],
         counters: [],
       });
-      expect(response.body[0].permissions).toEqual([]);
+      expect(response.body[0].permissions).toHaveLength(1);
+    });
+
+    it('should filter out blocks without READ permission', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block).save({ id: 'block-3' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+
+      const response = await request(app.getHttpServer())
+        .get('/block')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(b => b.id)).toEqual(['block-1', 'block-3']);
+    });
+
+    it('should return blocks with group permission when user has matching group in token', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/block')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(b => b.id)).toEqual(['block-1', 'block-2']);
+    });
+
+    it('should not return blocks with group permission when user lacks that group', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/block')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].id).toBe('block-2');
     });
   });
 
@@ -70,6 +134,9 @@ describe('BlockController', () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
       await dataSource.getRepository(Block).save({ id: 'block-2' });
       await dataSource.getRepository(Block).save({ id: 'block-3' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?limit=2')
@@ -82,6 +149,9 @@ describe('BlockController', () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
       await dataSource.getRepository(Block).save({ id: 'block-2' });
       await dataSource.getRepository(Block).save({ id: 'block-3' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?offset=1')
@@ -95,6 +165,10 @@ describe('BlockController', () => {
       await dataSource.getRepository(Block).save({ id: 'block-2' });
       await dataSource.getRepository(Block).save({ id: 'block-3' });
       await dataSource.getRepository(Block).save({ id: 'block-4' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-4', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?limit=2&offset=1')
@@ -105,6 +179,7 @@ describe('BlockController', () => {
 
     it('should return empty array when offset exceeds total blocks', async () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?offset=10')

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
 import * as request from 'supertest';
+import * as cookieParser from 'cookie-parser';
 import { ElementController } from './element.controller';
 import { Element } from '../entities/element/element.entity';
 import { Block } from '../entities/block/block.entity';
@@ -16,10 +18,17 @@ import { PermissionMethod } from '../../common/permission/permission.method';
 import { Element4Permission } from '../entities/element/element4permission.entity';
 import { SectionService } from '../services/section.service';
 
+const JWT_SECRET = 'test-secret';
+
 describe('ElementController', () => {
 
   let app: INestApplication;
   let dataSource: DataSource;
+  let jwtService: JwtService;
+
+  beforeAll(() => {
+    process.env.JWT_SECRET = JWT_SECRET;
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,15 +37,18 @@ describe('ElementController', () => {
         ExceptionModule,
         CommonModule,
         TypeOrmModule.forFeature([Element]),
+        JwtModule.register({ secret: JWT_SECRET }),
       ],
       controllers: [ElementController],
       providers: [
-        SectionService
+        SectionService,
       ],
     }).compile();
 
     app = module.createNestApplication();
+    app.use(cookieParser());
     dataSource = module.get<DataSource>(DataSource);
+    jwtService = module.get<JwtService>(JwtService);
     await app.init();
   });
 
@@ -54,6 +66,7 @@ describe('ElementController', () => {
     it('should return an array of elements with relations', async () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/element')
@@ -68,8 +81,62 @@ describe('ElementController', () => {
         descriptions: [],
         counters: [],
       });
-      expect(response.body[0].permissions).toEqual([]);
+      expect(response.body[0].permissions).toHaveLength(1);
       expect(response.body[0].sections).toEqual([]);
+    });
+
+    it('should filter out elements without READ permission', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-3', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
+
+      const response = await request(app.getHttpServer())
+        .get('/element')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(e => e.id)).toEqual(['element-1', 'element-3']);
+    });
+
+    it('should return elements with group permission when user has matching group in token', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/element')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(e => e.id)).toEqual(['element-1', 'element-2']);
+    });
+
+    it('should not return elements with group permission when user lacks that group', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
+      await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/element')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].id).toBe('element-2');
     });
   });
 
@@ -79,6 +146,9 @@ describe('ElementController', () => {
       await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-3', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/element?limit=2')
@@ -92,6 +162,9 @@ describe('ElementController', () => {
       await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-3', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/element?offset=1')
@@ -106,6 +179,10 @@ describe('ElementController', () => {
       await dataSource.getRepository(Element).save({ id: 'element-2', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-3', parentId: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-4', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-4', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/element?limit=2&offset=1')
@@ -117,6 +194,7 @@ describe('ElementController', () => {
     it('should return empty array when offset exceeds total elements', async () => {
       await dataSource.getRepository(Block).save({ id: 'block-1' });
       await dataSource.getRepository(Element).save({ id: 'element-1', parentId: 'block-1' });
+      await dataSource.getRepository(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/element?offset=10')

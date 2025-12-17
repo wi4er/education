@@ -9,6 +9,7 @@ import { CheckMethodAccessGuard } from './access/check-method-access.guard';
 import { CheckIdGuard } from './check-id/check-id.guard';
 import { CheckIdPermissionGuard } from './permission/check-id-permission.guard';
 import { CheckParentPermissionGuard } from './permission/check-parent-permission.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   providers: [
@@ -17,6 +18,7 @@ import { CheckParentPermissionGuard } from './permission/check-parent-permission
     PermissionAttributeService,
     DescriptionAttributeService,
     CounterAttributeService,
+    JwtService,
     {
       provide: APP_GUARD,
       useClass: CheckMethodAccessGuard,

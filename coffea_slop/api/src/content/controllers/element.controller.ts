@@ -3,7 +3,7 @@ import { CheckMethodAccess } from '../../common/access/check-method-access.guard
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, IsNull, Or, Repository } from 'typeorm';
 import { Element } from '../entities/element/element.entity';
 import { Element2String } from '../entities/element/element2string.entity';
 import { Element2Point } from '../entities/element/element2point.entity';
@@ -21,6 +21,7 @@ import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { PermissionMethod } from '../../common/permission/permission.method';
 import { Element4Permission } from '../entities/element/element4permission.entity';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
 
 @Controller('element')
 export class ElementController {
@@ -77,12 +78,20 @@ export class ElementController {
   @Get()
   @CheckMethodAccess(AccessEntity.ELEMENT, AccessMethod.GET)
   async findAll(
+    @CurrentGroups()
+    groups: Array<string>,
     @Query('limit')
     limit?: number,
     @Query('offset')
     offset?: number,
   ): Promise<ElementView[]> {
     const elements = await this.elementRepository.find({
+      where: {
+        permissions: {
+          groupId: Or(In(groups), IsNull()),
+          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+        },
+      },
       relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections'],
       take: limit,
       skip: offset,

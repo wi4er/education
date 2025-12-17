@@ -12,8 +12,11 @@ import { CheckMethodAccess } from '../../common/access/check-method-access.guard
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
 import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { PermissionMethod } from '../../common/permission/permission.method';
 import { Directory } from '../entities/directory/directory.entity';
 import { Directory2String } from '../entities/directory/directory2string.entity';
 import { Directory2Point } from '../entities/directory/directory2point.entity';
@@ -34,7 +37,8 @@ export class DirectoryController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly permissionAttributeService: PermissionAttributeService,
-  ) {}
+  ) {
+  }
 
   toView(directory: Directory): DirectoryView {
     return {
@@ -62,10 +66,20 @@ export class DirectoryController {
   @Get()
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.GET)
   async findAll(
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
+    @CurrentGroups()
+    groups: string[],
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
   ): Promise<DirectoryView[]> {
     const directories = await this.directoryRepository.find({
+      where: {
+        permissions: {
+          groupId: Or(In(groups), IsNull()),
+          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+        },
+      },
       relations: ['strings', 'points', 'permissions'],
       take: limit,
       skip: offset,
@@ -76,7 +90,11 @@ export class DirectoryController {
   @Get(':id')
   @CheckId(Directory)
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.GET)
-  async findOne(@Param('id') id: string): Promise<DirectoryView> {
+  @CheckIdPermission(Directory, PermissionMethod.READ)
+  async findOne(
+    @Param('id')
+    id: string,
+  ): Promise<DirectoryView> {
     const directory = await this.directoryRepository.findOne({
       where: { id },
       relations: ['strings', 'points', 'permissions'],
@@ -88,7 +106,7 @@ export class DirectoryController {
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.POST)
   async create(
     @Body()
-    data: DirectoryInput
+    data: DirectoryInput,
   ): Promise<DirectoryView> {
     const { strings, points, permissions, ...directoryData } = data;
 
@@ -112,6 +130,7 @@ export class DirectoryController {
   @Put(':id')
   @CheckId(Directory)
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.PUT)
+  @CheckIdPermission(Directory, PermissionMethod.WRITE)
   async update(
     @Param('id')
     id: string,
@@ -139,7 +158,11 @@ export class DirectoryController {
   @Delete(':id')
   @CheckId(Directory)
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.DELETE)
-  async remove(@Param('id') id: string): Promise<void> {
+  @CheckIdPermission(Directory, PermissionMethod.DELETE)
+  async remove(
+    @Param('id')
+    id: string,
+  ): Promise<void> {
     await this.directoryRepository.delete(id);
   }
 

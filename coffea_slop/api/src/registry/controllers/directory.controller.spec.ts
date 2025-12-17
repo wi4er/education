@@ -1,22 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
 import * as request from 'supertest';
+import * as cookieParser from 'cookie-parser';
 import { DirectoryController } from './directory.controller';
 import { Directory } from '../entities/directory/directory.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { Group } from '../../personal/entities/group/group.entity';
+import { Directory4Permission } from '../entities/directory/directory4permission.entity';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
+import { PermissionMethod } from '../../common/permission/permission.method';
+
+const JWT_SECRET = 'test-secret';
 
 describe('DirectoryController', () => {
 
   let app: INestApplication;
   let dataSource: DataSource;
+  let jwtService: JwtService;
+
+  beforeAll(() => {
+    process.env.JWT_SECRET = JWT_SECRET;
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,13 +34,16 @@ describe('DirectoryController', () => {
         ExceptionModule,
         CommonModule,
         TypeOrmModule.forFeature([Directory]),
+        JwtModule.register({ secret: JWT_SECRET }),
       ],
       controllers: [DirectoryController],
       providers: [],
     }).compile();
 
     app = module.createNestApplication();
+    app.use(cookieParser());
     dataSource = module.get<DataSource>(DataSource);
+    jwtService = module.get<JwtService>(JwtService);
     await app.init();
   });
 
@@ -51,6 +63,7 @@ describe('DirectoryController', () => {
     it('should return an array of directories with relations', async () => {
       const repo = dataSource.getRepository(Directory);
       await repo.save(repo.create({ id: 'dir-1' }));
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory')
@@ -62,7 +75,58 @@ describe('DirectoryController', () => {
         strings: [],
         points: [],
       });
-      expect(response.body[0].permissions).toEqual([]);
+      expect(response.body[0].permissions).toHaveLength(1);
+    });
+
+    it('should filter out directories without READ permission', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-3', method: PermissionMethod.READ });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(d => d.id)).toEqual(['dir-1', 'dir-3']);
+    });
+
+    it('should return directories with group permission when user has matching group in token', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body.map(d => d.id)).toEqual(['dir-1', 'dir-2']);
+    });
+
+    it('should not return directories with group permission when user lacks that group', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
+
+      const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory')
+        .set('Cookie', `auth_token=${token}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].id).toBe('dir-2');
     });
   });
 
@@ -71,6 +135,9 @@ describe('DirectoryController', () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
       await dataSource.getRepository(Directory).save({ id: 'dir-2' });
       await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory?limit=2')
@@ -83,6 +150,9 @@ describe('DirectoryController', () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
       await dataSource.getRepository(Directory).save({ id: 'dir-2' });
       await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory?offset=1')
@@ -96,6 +166,10 @@ describe('DirectoryController', () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-2' });
       await dataSource.getRepository(Directory).save({ id: 'dir-3' });
       await dataSource.getRepository(Directory).save({ id: 'dir-4' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-3', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-4', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory?limit=2&offset=1')
@@ -106,6 +180,7 @@ describe('DirectoryController', () => {
 
     it('should return empty array when offset exceeds total directories', async () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory?offset=10')
@@ -131,6 +206,7 @@ describe('DirectoryController', () => {
     it('should return a single directory with relations', async () => {
       const repo = dataSource.getRepository(Directory);
       await repo.save(repo.create({ id: 'dir-1' }));
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/directory/dir-1')
@@ -141,7 +217,17 @@ describe('DirectoryController', () => {
         strings: [],
         points: [],
       });
-      expect(response.body.permissions).toEqual([]);
+      expect(response.body.permissions).toHaveLength(1);
+    });
+
+    it('should return 403 when no READ permission exists', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory/dir-1')
+        .expect(403);
+
+      expect(response.body.message).toBe('Permission denied: READ on Directory with id dir-1');
     });
   });
 
@@ -202,6 +288,7 @@ describe('DirectoryController', () => {
     it('should update and return the directory', async () => {
       const repo = dataSource.getRepository(Directory);
       await repo.save(repo.create({ id: 'dir-1' }));
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/directory/dir-1')
@@ -209,6 +296,17 @@ describe('DirectoryController', () => {
         .expect(200);
 
       expect(response.body.id).toBe('dir-1');
+    });
+
+    it('should return 403 when no WRITE permission exists', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({})
+        .expect(403);
+
+      expect(response.body.message).toBe('Permission denied: WRITE on Directory with id dir-1');
     });
   });
 
@@ -228,6 +326,7 @@ describe('DirectoryController', () => {
     it('should delete the directory', async () => {
       const repo = dataSource.getRepository(Directory);
       await repo.save(repo.create({ id: 'dir-1' }));
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.DELETE });
 
       await request(app.getHttpServer())
         .delete('/directory/dir-1')
@@ -235,6 +334,16 @@ describe('DirectoryController', () => {
 
       const found = await repo.findOne({ where: { id: 'dir-1' } });
       expect(found).toBeNull();
+    });
+
+    it('should return 403 when no DELETE permission exists', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .delete('/directory/dir-1')
+        .expect(403);
+
+      expect(response.body.message).toBe('Permission denied: DELETE on Directory with id dir-1');
     });
   });
 
