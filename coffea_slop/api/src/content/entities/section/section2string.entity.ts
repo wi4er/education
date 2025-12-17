@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Section } from './section.entity';
 import { Language } from '../../../settings/entities/language/language.entity';
@@ -14,6 +13,7 @@ import { CommonStringEntity } from '../../../common/entities/common-string.entit
 
 @Entity('content_section2string')
 export class Section2String
+  extends BaseEntity
   implements CommonStringEntity<Section> {
 
   @PrimaryGeneratedColumn()
@@ -64,11 +64,5 @@ export class Section2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

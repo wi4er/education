@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Language } from '../../../settings/entities/language/language.entity';
@@ -11,7 +12,7 @@ import { Attribute } from '../../../settings/entities/attribute/attribute.entity
 import { CommonDescriptionEntity } from '../../../common/entities/common-description.entity';
 
 @Entity('personal_user2description')
-export class User2Description
+export class User2Description extends BaseEntity
   implements CommonDescriptionEntity<User> {
 
   @PrimaryGeneratedColumn()

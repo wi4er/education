@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Attribute2String } from './attribute2string.entity';
 import { Attribute2Point } from './attribute2point.entity';
@@ -11,7 +12,7 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 
 @Entity('settings_attribute')
-export class Attribute
+export class Attribute extends BaseEntity
   implements WithStrings<Attribute>, WithPoints<Attribute> {
 
   @PrimaryColumn({

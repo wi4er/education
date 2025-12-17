@@ -10,6 +10,7 @@ import { PointAttributeService } from '../../common/services/point-attribute.ser
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('LanguageController', () => {
 
@@ -21,13 +22,11 @@ describe('LanguageController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Language]),
       ],
       controllers: [LanguageController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -62,6 +61,55 @@ describe('LanguageController', () => {
         strings: [],
         points: [],
       });
+    });
+  });
+
+  describe('GET /language with pagination', () => {
+    it('should return limited languages when limit is provided', async () => {
+      await dataSource.getRepository(Language).save({ id: 'lang-1' });
+      await dataSource.getRepository(Language).save({ id: 'lang-2' });
+      await dataSource.getRepository(Language).save({ id: 'lang-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/language?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip languages when offset is provided', async () => {
+      await dataSource.getRepository(Language).save({ id: 'lang-1' });
+      await dataSource.getRepository(Language).save({ id: 'lang-2' });
+      await dataSource.getRepository(Language).save({ id: 'lang-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/language?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated languages when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Language).save({ id: 'lang-1' });
+      await dataSource.getRepository(Language).save({ id: 'lang-2' });
+      await dataSource.getRepository(Language).save({ id: 'lang-3' });
+      await dataSource.getRepository(Language).save({ id: 'lang-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/language?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total languages', async () => {
+      await dataSource.getRepository(Language).save({ id: 'lang-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/language?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 

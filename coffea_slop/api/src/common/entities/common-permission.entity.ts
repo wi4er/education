@@ -8,8 +8,8 @@ export interface CommonPermissionEntity<TParent> {
   parent: TParent;
   parentId: string;
 
-  group: Group;
-  groupId: string;
+  group?: Group;
+  groupId?: string;
 
   method: PermissionMethod;
 

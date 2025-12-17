@@ -4,17 +4,20 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Directory2String } from './directory2string.entity';
 import { Directory2Point } from './directory2point.entity';
-import { Directory2Permission } from './directory2permission.entity';
+import { Directory4Permission } from './directory4permission.entity';
 import { Point } from '../point/point.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 
 @Entity('registry_directory')
 export class Directory
-  implements WithStrings<Directory>, WithPoints<Directory> {
+  extends BaseEntity
+  implements WithStrings<Directory>,
+    WithPoints<Directory> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -36,10 +39,10 @@ export class Directory
   points: Directory2Point[];
 
   @OneToMany(
-    () => Directory2Permission,
-    (dirPermission: Directory2Permission) => dirPermission.parent,
+    () => Directory4Permission,
+    (dirPermission: Directory4Permission) => dirPermission.parent,
   )
-  permissions: Directory2Permission[];
+  permissions: Directory4Permission[];
 
   @OneToMany(
     () => Point,

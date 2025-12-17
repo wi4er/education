@@ -11,6 +11,7 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('UserController', () => {
 
@@ -22,14 +23,11 @@ describe('UserController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([User]),
       ],
       controllers: [UserController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-        DescriptionAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -64,7 +62,57 @@ describe('UserController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
+    });
+  });
+
+  describe('GET /user with pagination', () => {
+    it('should return limited users when limit is provided', async () => {
+      await dataSource.getRepository(User).save({ id: 'user-1' });
+      await dataSource.getRepository(User).save({ id: 'user-2' });
+      await dataSource.getRepository(User).save({ id: 'user-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/user?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip users when offset is provided', async () => {
+      await dataSource.getRepository(User).save({ id: 'user-1' });
+      await dataSource.getRepository(User).save({ id: 'user-2' });
+      await dataSource.getRepository(User).save({ id: 'user-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/user?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated users when both limit and offset are provided', async () => {
+      await dataSource.getRepository(User).save({ id: 'user-1' });
+      await dataSource.getRepository(User).save({ id: 'user-2' });
+      await dataSource.getRepository(User).save({ id: 'user-3' });
+      await dataSource.getRepository(User).save({ id: 'user-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/user?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total users', async () => {
+      await dataSource.getRepository(User).save({ id: 'user-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/user?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 
@@ -94,6 +142,7 @@ describe('UserController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
     });
   });
@@ -110,6 +159,7 @@ describe('UserController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
 
       const repo = dataSource.getRepository(User);

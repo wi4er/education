@@ -1,21 +1,23 @@
 import { Injectable, CanActivate, ExecutionContext, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager, ObjectType } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { PermissionMethod } from './permission.method';
+import { WithPermissions } from '../entities/with-permissions.entity';
+import { PermissionException } from '../../exception/permission/permission.exception';
 
 export const CHECK_ID_PERMISSION = 'CHECK_ID_PERMISSION';
 
 export interface CheckIdPermissionOptions<T> {
 
-  entity: ObjectType<T>;
+  entity: new() => WithPermissions<T>;
   method: PermissionMethod;
   idParam?: string;
 
 }
 
 export function CheckIdPermission<T>(
-  entity: ObjectType<T>,
+  entity: new() => WithPermissions<T>,
   method: PermissionMethod,
   idParam: string = 'id',
 ) {
@@ -29,7 +31,8 @@ export class CheckIdPermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -39,11 +42,25 @@ export class CheckIdPermissionGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!check) {
-      return true;
-    }
+    if (!check) return true;
 
-    // TODO: Implement permission check logic
+    const { method, entity, idParam } = check;
+    const id = request.params[idParam];
+
+    if (!id) return true;
+
+    const found = await this.manager.findOne(entity, {
+      where: { id },
+      relations: ['permissions'],
+    });
+
+    if (!found) return true;
+
+    const hasPermission = found.permissions?.some(
+      perm => perm.method === method && (perm.groupId === null || perm.groupId === undefined),
+    );
+
+    if (!hasPermission) throw new PermissionException(entity.name, method, id);
 
     return true;
   }

@@ -5,5 +5,6 @@ export enum PermissionMethod {
   WRITE = 'WRITE',
   DELETE = 'DELETE',
   CHILD = 'CHILD',
+  AUTH = 'AUTH',
 
 }

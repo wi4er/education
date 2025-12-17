@@ -4,14 +4,16 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Directory } from './directory.entity';
 import { Group } from '../../../personal/entities/group/group.entity';
 import { PermissionMethod } from '../../../common/permission/permission.method';
 import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
-@Entity('registry_directory2permission')
-export class Directory2Permission
+@Entity('registry_directory4permission')
+export class Directory4Permission
+  extends BaseEntity
   implements CommonPermissionEntity<Directory> {
 
   @PrimaryGeneratedColumn()
@@ -19,7 +21,7 @@ export class Directory2Permission
 
   @ManyToOne(
     () => Directory,
-    (directory) => directory.permissions,
+    (directory: Directory) => directory.permissions,
     {
       nullable: false,
       onDelete: 'CASCADE',
@@ -35,16 +37,16 @@ export class Directory2Permission
   @ManyToOne(
     () => Group,
     {
-      nullable: false,
+      nullable: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'groupId' })
-  group: Group;
+  group?: Group;
 
-  @Column({ type: 'varchar', length: 32 })
-  groupId: string;
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  groupId?: string;
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;

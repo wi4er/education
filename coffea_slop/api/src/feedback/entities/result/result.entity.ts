@@ -6,11 +6,12 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  BaseEntity,
 } from 'typeorm';
 import { Form } from '../form/form.entity';
 
 @Entity('feedback_result')
-export class Result {
+export class Result extends BaseEntity {
 
   @PrimaryColumn({
     type: 'varchar',

@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -33,7 +34,8 @@ export class GroupController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
-  ) {}
+  ) {
+  }
 
   toView(group: Group): GroupView {
     return {
@@ -61,9 +63,16 @@ export class GroupController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.GET)
-  async findAll(): Promise<GroupView[]> {
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<GroupView[]> {
     const groups = await this.groupRepository.find({
       relations: ['strings', 'points', 'descriptions'],
+      take: limit,
+      skip: offset,
     });
     return groups.map(g => this.toView(g));
   }
@@ -71,7 +80,10 @@ export class GroupController {
   @Get(':id')
   @CheckId(Group)
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.GET)
-  async findOne(@Param('id') id: string): Promise<GroupView> {
+  async findOne(
+    @Param('id')
+    id: string,
+  ): Promise<GroupView> {
     const group = await this.groupRepository.findOne({
       where: { id },
       relations: ['strings', 'points', 'descriptions'],
@@ -82,7 +94,8 @@ export class GroupController {
   @Post()
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.POST)
   async create(
-    @Body() data: GroupInput
+    @Body()
+    data: GroupInput,
   ): Promise<GroupView> {
     const { strings, points, descriptions, ...groupData } = data;
 
@@ -107,8 +120,10 @@ export class GroupController {
   @CheckId(Group)
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.PUT)
   async update(
-    @Param('id') id: string,
-    @Body() data: GroupInput,
+    @Param('id')
+    id: string,
+    @Body()
+    data: GroupInput,
   ): Promise<GroupView> {
     const { strings, points, descriptions, ...groupData } = data;
 
@@ -131,7 +146,10 @@ export class GroupController {
   @Delete(':id')
   @CheckId(Group)
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.DELETE)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(
+    @Param('id')
+    id: string,
+  ): Promise<void> {
     await this.groupRepository.delete(id);
   }
 

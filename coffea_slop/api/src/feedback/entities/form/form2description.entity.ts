@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Form } from './form.entity';
 import { Language } from '../../../settings/entities/language/language.entity';
@@ -12,6 +13,7 @@ import { CommonDescriptionEntity } from '../../../common/entities/common-descrip
 
 @Entity('feedback_form2description')
 export class Form2Description
+  extends BaseEntity
   implements CommonDescriptionEntity<Form> {
 
   @PrimaryGeneratedColumn()

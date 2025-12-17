@@ -38,9 +38,7 @@ export class CheckMethodAccessGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!check) {
-      return true;
-    }
+    if (!check) return true;
 
     return true;
   }

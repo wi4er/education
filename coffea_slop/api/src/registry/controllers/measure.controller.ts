@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -53,9 +54,16 @@ export class MeasureController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.GET)
-  async findAll(): Promise<MeasureView[]> {
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<MeasureView[]> {
     const measures = await this.measureRepository.find({
       relations: ['strings', 'points'],
+      take: limit,
+      skip: offset,
     });
     return measures.map(m => this.toView(m));
   }
@@ -68,6 +76,7 @@ export class MeasureController {
       where: { id },
       relations: ['strings', 'points'],
     });
+
     return this.toView(measure);
   }
 
@@ -98,8 +107,10 @@ export class MeasureController {
   @CheckId(Measure)
   @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.PUT)
   async update(
-    @Param('id') id: string,
-    @Body() data: MeasureInput,
+    @Param('id')
+    id: string,
+    @Body()
+    data: MeasureInput,
   ): Promise<MeasureView> {
     const { strings, points, ...measureData } = data;
 

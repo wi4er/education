@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -16,7 +17,7 @@ import { Repository, DataSource } from 'typeorm';
 import { Directory } from '../entities/directory/directory.entity';
 import { Directory2String } from '../entities/directory/directory2string.entity';
 import { Directory2Point } from '../entities/directory/directory2point.entity';
-import { Directory2Permission } from '../entities/directory/directory2permission.entity';
+import { Directory4Permission } from '../entities/directory/directory4permission.entity';
 import { DirectoryView } from '../views/directory.view';
 import { DirectoryInput } from '../inputs/directory.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
@@ -60,9 +61,14 @@ export class DirectoryController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.GET)
-  async findAll(): Promise<DirectoryView[]> {
+  async findAll(
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+  ): Promise<DirectoryView[]> {
     const directories = await this.directoryRepository.find({
       relations: ['strings', 'points', 'permissions'],
+      take: limit,
+      skip: offset,
     });
     return directories.map(dir => this.toView(dir));
   }
@@ -92,7 +98,7 @@ export class DirectoryController {
 
       await this.stringAttributeService.create<Directory>(transaction, Directory2String, strings);
       await this.pointAttributeService.create<Directory>(transaction, Directory2Point, points);
-      await this.permissionAttributeService.create<Directory>(transaction, Directory2Permission, permissions);
+      await this.permissionAttributeService.create<Directory>(transaction, Directory4Permission, permissions);
 
       return transaction.findOne(Directory, {
         where: { id: savedDirectory.id },
@@ -119,7 +125,7 @@ export class DirectoryController {
 
       await this.stringAttributeService.update<Directory>(transaction, Directory2String, id, strings);
       await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
-      await this.permissionAttributeService.update<Directory>(transaction, Directory2Permission, id, permissions);
+      await this.permissionAttributeService.update<Directory>(transaction, Directory4Permission, id, permissions);
 
       return transaction.findOne(Directory, {
         where: { id },

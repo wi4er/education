@@ -7,12 +7,11 @@ import { BlockController } from './block.controller';
 import { Block } from '../entities/block/block.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
 import { Group } from '../../personal/entities/group/group.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
-import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { Block4Permission } from '../entities/block/block4permission.entity';
 
 describe('BlockController', () => {
 
@@ -24,15 +23,11 @@ describe('BlockController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Block]),
       ],
       controllers: [BlockController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-        PermissionAttributeService,
-        DescriptionAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -40,9 +35,7 @@ describe('BlockController', () => {
     await app.init();
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /block', () => {
     it('should return an empty array when no blocks exist', async () => {
@@ -54,8 +47,7 @@ describe('BlockController', () => {
     });
 
     it('should return an array of blocks with relations', async () => {
-      const repo = dataSource.getRepository(Block);
-      await repo.save(repo.create({ id: 'block-1' }));
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .get('/block')
@@ -67,12 +59,80 @@ describe('BlockController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
       expect(response.body[0].permissions).toEqual([]);
     });
   });
 
+  describe('GET /block with pagination', () => {
+    it('should return limited blocks when limit is provided', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block).save({ id: 'block-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/block?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip blocks when offset is provided', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block).save({ id: 'block-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/block?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated blocks when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block).save({ id: 'block-2' });
+      await dataSource.getRepository(Block).save({ id: 'block-3' });
+      await dataSource.getRepository(Block).save({ id: 'block-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/block?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total blocks', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/block?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
+    });
+  });
+
   describe('GET /block/:id', () => {
+    it('should return a single block with relations', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+
+      const response = await request(app.getHttpServer())
+        .get('/block/block-1')
+        .expect(200);
+
+      expect(response.body.id).toBe('block-1');
+      expect(response.body.attributes).toEqual({
+        strings: [],
+        points: [],
+        descriptions: [],
+        counters: [],
+      });
+      expect(response.body.permissions).toHaveLength(1);
+    });
+
     it('should return 404 for non-existent block', async () => {
       const response = await request(app.getHttpServer())
         .get('/block/non-existent-id')
@@ -85,21 +145,14 @@ describe('BlockController', () => {
       });
     });
 
-    it('should return a single block with relations', async () => {
-      const repo = dataSource.getRepository(Block);
-      await repo.save(repo.create({ id: 'block-1' }));
+    it('should return 403 when no READ permission exists', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .get('/block/block-1')
-        .expect(200);
+        .expect(403);
 
-      expect(response.body.id).toBe('block-1');
-      expect(response.body.attributes).toEqual({
-        strings: [],
-        points: [],
-        descriptions: [],
-      });
-      expect(response.body.permissions).toEqual([]);
+      expect(response.body.message).toBe('Permission denied: READ on Block with id block-1');
     });
   });
 
@@ -115,16 +168,15 @@ describe('BlockController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
 
-      const repo = dataSource.getRepository(Block);
-      const found = await repo.findOne({ where: { id: 'new-block' } });
+      const found = await dataSource.getRepository(Block).findOne({ where: { id: 'new-block' } });
       expect(found).not.toBeNull();
     });
 
     it('should create block with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await dataSource.getRepository(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
@@ -144,8 +196,7 @@ describe('BlockController', () => {
     });
 
     it('should create block with descriptions', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'content' }));
+      await dataSource.getRepository(Attribute).save({ id: 'content' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
@@ -165,8 +216,7 @@ describe('BlockController', () => {
     });
 
     it('should create block with permissions', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
+      await dataSource.getRepository(Group).save({ id: 'admins' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
@@ -200,8 +250,8 @@ describe('BlockController', () => {
     });
 
     it('should update and return the block', async () => {
-      const repo = dataSource.getRepository(Block);
-      await repo.save(repo.create({ id: 'block-1' }));
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
@@ -209,6 +259,17 @@ describe('BlockController', () => {
         .expect(200);
 
       expect(response.body.id).toBe('block-1');
+    });
+
+    it('should return 403 when no WRITE permission exists', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+
+      const response = await request(app.getHttpServer())
+        .put('/block/block-1')
+        .send({})
+        .expect(403);
+
+      expect(response.body.message).toBe('Permission denied: WRITE on Block with id block-1');
     });
   });
 
@@ -226,15 +287,25 @@ describe('BlockController', () => {
     });
 
     it('should delete the block', async () => {
-      const repo = dataSource.getRepository(Block);
-      await repo.save(repo.create({ id: 'block-1' }));
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.DELETE });
 
       await request(app.getHttpServer())
         .delete('/block/block-1')
         .expect(200);
 
-      const found = await repo.findOne({ where: { id: 'block-1' } });
+      const found = await dataSource.getRepository(Block).findOne({ where: { id: 'block-1' } });
       expect(found).toBeNull();
+    });
+
+    it('should return 403 when no DELETE permission exists', async () => {
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+
+      const response = await request(app.getHttpServer())
+        .delete('/block/block-1')
+        .expect(403);
+
+      expect(response.body.message).toBe('Permission denied: DELETE on Block with id block-1');
     });
   });
 

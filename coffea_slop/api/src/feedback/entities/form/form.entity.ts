@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Form2String } from './form2string.entity';
 import { Form2Point } from './form2point.entity';
-import { Form2Permission } from './form2permission.entity';
+import { Form4Permission } from './form4permission.entity';
 import { Form2Description } from './form2description.entity';
+import { Form2Counter } from './form2counter.entity';
 import { Result } from '../result/result.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
@@ -16,7 +18,7 @@ import { WithPermissions } from '../../../common/entities/with-permissions.entit
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
 
 @Entity('feedback_form')
-export class Form
+export class Form extends BaseEntity
   implements WithStrings<Form>,
     WithPoints<Form>,
     WithPermissions<Form>,
@@ -42,10 +44,10 @@ export class Form
   points: Form2Point[];
 
   @OneToMany(
-    () => Form2Permission,
-    (formPermission: Form2Permission) => formPermission.parent,
+    () => Form4Permission,
+    (formPermission: Form4Permission) => formPermission.parent,
   )
-  permissions: Form2Permission[];
+  permissions: Form4Permission[];
 
   @OneToMany(
     () => Form2Description,
@@ -58,6 +60,12 @@ export class Form
     (result: Result) => result.form,
   )
   results: Result[];
+
+  @OneToMany(
+    () => Form2Counter,
+    (formCounter: Form2Counter) => formCounter.parent,
+  )
+  counters: Form2Counter[];
 
   @CreateDateColumn()
   createdAt: Date;

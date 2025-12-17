@@ -4,14 +4,16 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Element } from './element.entity';
 import { Group } from '../../../personal/entities/group/group.entity';
 import { PermissionMethod } from '../../../common/permission/permission.method';
 import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
-@Entity('content_element2permission')
-export class Element2Permission
+@Entity('content_element4permission')
+export class Element4Permission
+  extends BaseEntity
   implements CommonPermissionEntity<Element> {
 
   @PrimaryGeneratedColumn()
@@ -19,7 +21,7 @@ export class Element2Permission
 
   @ManyToOne(
     () => Element,
-    (element) => element.permissions,
+    (element: Element) => element.permissions,
     {
       nullable: false,
       onDelete: 'CASCADE',
@@ -35,16 +37,16 @@ export class Element2Permission
   @ManyToOne(
     () => Group,
     {
-      nullable: false,
+      nullable: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'groupId' })
-  group: Group;
+  group?: Group;
 
-  @Column({ type: 'varchar', length: 32 })
-  groupId: string;
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  groupId?: string;
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;

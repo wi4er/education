@@ -2,17 +2,16 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Attribute } from './attribute.entity';
 import { Point } from '../../../registry/entities/point/point.entity';
 import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('settings_attribute2point')
-export class Attribute2Point
+export class Attribute2Point extends BaseEntity
   implements CommonPointEntity<Attribute> {
 
   @PrimaryGeneratedColumn()
@@ -60,11 +59,5 @@ export class Attribute2Point
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

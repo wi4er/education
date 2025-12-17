@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -54,9 +55,16 @@ export class AttributeController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.GET)
-  async findAll(): Promise<AttributeView[]> {
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<AttributeView[]> {
     const attributes = await this.attributeRepository.find({
       relations: ['strings', 'points'],
+      take: limit,
+      skip: offset,
     });
 
     return attributes.map(attr => this.toView(attr));

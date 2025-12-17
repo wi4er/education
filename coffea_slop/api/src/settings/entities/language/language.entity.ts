@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Language2String } from './language2string.entity';
 import { Language2Point } from './language2point.entity';
@@ -11,7 +12,7 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 
 @Entity('settings_language')
-export class Language
+export class Language extends BaseEntity
   implements WithStrings<Language>, WithPoints<Language> {
 
   @PrimaryColumn({

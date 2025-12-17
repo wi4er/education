@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Block2String } from './block2string.entity';
 import { Block2Point } from './block2point.entity';
-import { Block2Permission } from './block2permission.entity';
+import { Block4Permission } from './block4permission.entity';
 import { Block2Description } from './block2description.entity';
+import { Block2Counter } from './block2counter.entity';
 import { Element } from '../element/element.entity';
 import { Section } from '../section/section.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
@@ -17,7 +19,7 @@ import { WithPermissions } from '../../../common/entities/with-permissions.entit
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
 
 @Entity('content_block')
-export class Block
+export class Block extends BaseEntity
   implements WithStrings<Block>,
     WithPoints<Block>,
     WithPermissions<Block>,
@@ -43,10 +45,10 @@ export class Block
   points: Block2Point[];
 
   @OneToMany(
-    () => Block2Permission,
-    (blockPermission: Block2Permission) => blockPermission.parent,
+    () => Block4Permission,
+    (blockPermission: Block4Permission) => blockPermission.parent,
   )
-  permissions: Block2Permission[];
+  permissions: Block4Permission[];
 
   @OneToMany(
     () => Block2Description,
@@ -56,15 +58,21 @@ export class Block
 
   @OneToMany(
     () => Element,
-    (element: Element) => element.block,
+    (element: Element) => element.parent,
   )
   elements: Element[];
 
   @OneToMany(
     () => Section,
-    (section: Section) => section.block,
+    (section: Section) => section.parent,
   )
   sections: Section[];
+
+  @OneToMany(
+    () => Block2Counter,
+    (blockCounter: Block2Counter) => blockCounter.parent,
+  )
+  counters: Block2Counter[];
 
   @CreateDateColumn()
   createdAt: Date;

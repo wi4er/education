@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -30,7 +31,8 @@ export class LanguageController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-  ) {}
+  ) {
+  }
 
   toView(language: Language): LanguageView {
     return {
@@ -53,9 +55,16 @@ export class LanguageController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.GET)
-  async findAll(): Promise<LanguageView[]> {
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<LanguageView[]> {
     const languages = await this.languageRepository.find({
       relations: ['strings', 'points'],
+      take: limit,
+      skip: offset,
     });
     return languages.map(lng => this.toView(lng));
   }
@@ -64,7 +73,8 @@ export class LanguageController {
   @CheckId(Language)
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.GET)
   async findOne(
-    @Param('id') id: string
+    @Param('id')
+    id: string,
   ): Promise<LanguageView> {
     const language = await this.languageRepository.findOne({
       where: { id },
@@ -76,7 +86,8 @@ export class LanguageController {
   @Post()
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.POST)
   async create(
-    @Body() data: LanguageInput
+    @Body()
+    data: LanguageInput,
   ): Promise<LanguageView> {
     const { strings, points, ...languageData } = data;
 
@@ -127,7 +138,7 @@ export class LanguageController {
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.DELETE)
   async remove(
     @Param('id')
-    id: string
+    id: string,
   ): Promise<void> {
     await this.languageRepository.delete(id);
   }

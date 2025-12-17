@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BaseEntity,
 } from 'typeorm';
 import { Measure2String } from './measure2string.entity';
 import { Measure2Point } from './measure2point.entity';
@@ -12,6 +13,7 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 
 @Entity('registry_measure')
 export class Measure
+  extends BaseEntity
   implements WithStrings<Measure>, WithPoints<Measure> {
 
   @PrimaryColumn({

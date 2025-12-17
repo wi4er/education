@@ -4,22 +4,23 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
-import { Form } from './form.entity';
+import { Block } from './block.entity';
 import { Group } from '../../../personal/entities/group/group.entity';
 import { PermissionMethod } from '../../../common/permission/permission.method';
 import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
-@Entity('feedback_form2permission')
-export class Form2Permission
-  implements CommonPermissionEntity<Form> {
+@Entity('content_block4permission')
+export class Block4Permission extends BaseEntity
+  implements CommonPermissionEntity<Block> {
 
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(
-    () => Form,
-    (form) => form.permissions,
+    () => Block,
+    (block) => block.permissions,
     {
       nullable: false,
       onDelete: 'CASCADE',
@@ -27,7 +28,7 @@ export class Form2Permission
     },
   )
   @JoinColumn({ name: 'parentId' })
-  parent: Form;
+  parent: Block;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
@@ -35,16 +36,16 @@ export class Form2Permission
   @ManyToOne(
     () => Group,
     {
-      nullable: false,
+      nullable: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'groupId' })
-  group: Group;
+  group?: Group;
 
-  @Column({ type: 'varchar', length: 32 })
-  groupId: string;
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  groupId?: string;
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;

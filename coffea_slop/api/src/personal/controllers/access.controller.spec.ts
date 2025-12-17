@@ -10,6 +10,7 @@ import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../entities/access/access-method.enum';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('AccessController', () => {
 
@@ -21,6 +22,7 @@ describe('AccessController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Access]),
       ],
       controllers: [AccessController],

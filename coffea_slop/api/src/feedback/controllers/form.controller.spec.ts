@@ -13,6 +13,7 @@ import { PermissionAttributeService } from '../../common/services/permission-att
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('FormController', () => {
 
@@ -24,15 +25,11 @@ describe('FormController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Form]),
       ],
       controllers: [FormController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-        PermissionAttributeService,
-        DescriptionAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -67,8 +64,58 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
       expect(response.body[0].permissions).toEqual([]);
+    });
+  });
+
+  describe('GET /form with pagination', () => {
+    it('should return limited forms when limit is provided', async () => {
+      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await dataSource.getRepository(Form).save({ id: 'form-2' });
+      await dataSource.getRepository(Form).save({ id: 'form-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/form?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip forms when offset is provided', async () => {
+      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await dataSource.getRepository(Form).save({ id: 'form-2' });
+      await dataSource.getRepository(Form).save({ id: 'form-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/form?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated forms when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await dataSource.getRepository(Form).save({ id: 'form-2' });
+      await dataSource.getRepository(Form).save({ id: 'form-3' });
+      await dataSource.getRepository(Form).save({ id: 'form-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/form?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total forms', async () => {
+      await dataSource.getRepository(Form).save({ id: 'form-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/form?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 
@@ -98,6 +145,7 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
       expect(response.body.permissions).toEqual([]);
     });
@@ -115,6 +163,7 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        counters: [],
       });
 
       const repo = dataSource.getRepository(Form);

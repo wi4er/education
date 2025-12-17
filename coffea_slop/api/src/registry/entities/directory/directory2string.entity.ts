@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Directory } from './directory.entity';
 import { Language } from '../../../settings/entities/language/language.entity';
@@ -14,6 +13,7 @@ import { CommonStringEntity } from '../../../common/entities/common-string.entit
 
 @Entity('registry_directory2string')
 export class Directory2String
+  extends BaseEntity
   implements CommonStringEntity<Directory> {
 
   @PrimaryGeneratedColumn()
@@ -21,7 +21,7 @@ export class Directory2String
 
   @ManyToOne(
     () => Directory,
-    (directory) => directory.strings,
+    (directory: Directory) => directory.strings,
     {
       nullable: false,
       onDelete: 'CASCADE',
@@ -64,11 +64,5 @@ export class Directory2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

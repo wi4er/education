@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
@@ -11,7 +12,7 @@ import { Point } from '../../../registry/entities/point/point.entity';
 import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('personal_user2point')
-export class User2Point
+export class User2Point extends BaseEntity
   implements CommonPointEntity<User> {
 
   @PrimaryGeneratedColumn()

@@ -4,13 +4,14 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { AccessEntity } from '../../../common/access/access-entity.enum';
 import { AccessMethod } from './access-method.enum';
 
 @Entity('personal_access')
-export class Access {
+export class Access extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;

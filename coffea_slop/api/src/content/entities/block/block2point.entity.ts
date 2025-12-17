@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Block } from './block.entity';
 import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
@@ -13,7 +12,7 @@ import { Point } from '../../../registry/entities/point/point.entity';
 import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('content_block2point')
-export class Block2Point
+export class Block2Point extends BaseEntity
   implements CommonPointEntity<Block> {
 
   @PrimaryGeneratedColumn()
@@ -61,11 +60,5 @@ export class Block2Point
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

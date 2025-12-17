@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Point2String } from './point2string.entity';
 import { Point2Point } from './point2point.entity';
@@ -16,7 +17,9 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 
 @Entity('registry_point')
 export class Point
-  implements WithStrings<Point>, WithPoints<Point> {
+  extends BaseEntity
+  implements WithStrings<Point>,
+    WithPoints<Point> {
 
   @PrimaryColumn({
     type: 'varchar',

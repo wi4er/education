@@ -6,6 +6,7 @@ import { Section } from './entities/section/section.entity';
 import { BlockController } from './controllers/block.controller';
 import { ElementController } from './controllers/element.controller';
 import { SectionController } from './controllers/section.controller';
+import { SectionService } from './services/section.service';
 import { CommonModule } from '../common/common.module';
 
 @Module({
@@ -17,6 +18,9 @@ import { CommonModule } from '../common/common.module';
     BlockController,
     ElementController,
     SectionController,
+  ],
+  providers: [
+    SectionService,
   ],
 })
 export class ContentModule {}

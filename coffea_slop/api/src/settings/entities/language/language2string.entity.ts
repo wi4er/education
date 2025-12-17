@@ -2,17 +2,16 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Language } from './language.entity';
 import { Attribute } from '../attribute/attribute.entity';
 import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('settings_language2string')
-export class Language2String
+export class Language2String extends BaseEntity
   implements CommonStringEntity<Language> {
 
   @PrimaryGeneratedColumn()
@@ -63,11 +62,5 @@ export class Language2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

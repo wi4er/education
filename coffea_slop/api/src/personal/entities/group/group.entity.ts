@@ -4,6 +4,7 @@ import {
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Group2String } from './group2string.entity';
 import { Group2Point } from './group2point.entity';
@@ -14,7 +15,7 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
 
 @Entity('personal_group')
-export class Group
+export class Group extends BaseEntity
   implements WithStrings<Group>, WithPoints<Group>, WithDescriptions<Group> {
 
   @PrimaryColumn({

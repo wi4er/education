@@ -8,7 +8,7 @@ Coffee shop e-commerce website built with Next.js 16 and React 19.
 
 ## Commands
 
-- `npm run dev` - Start development server (http://localhost:3000)
+- `npm run dev` - Start development server (http://localhost:3030 via Docker, or 3000 locally)
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint

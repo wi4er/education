@@ -4,12 +4,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Element } from './element.entity';
 import { Section } from '../section/section.entity';
 
 @Entity('content_element4section')
-export class Element4Section {
+export class Element4Section
+  extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;

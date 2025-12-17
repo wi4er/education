@@ -1,13 +1,16 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 import { User2String } from './user2string.entity';
 import { User2Point } from './user2point.entity';
 import { User2Description } from './user2description.entity';
+import { User2Counter } from './user2counter.entity';
 import { User4Group } from './user4group.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
@@ -15,7 +18,10 @@ import { WithDescriptions } from '../../../common/entities/with-descriptions.ent
 
 @Entity('personal_user')
 export class User
-  implements WithStrings<User>, WithPoints<User>, WithDescriptions<User> {
+  extends BaseEntity
+  implements WithStrings<User>,
+    WithPoints<User>,
+    WithDescriptions<User> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -23,6 +29,18 @@ export class User
     default: () => 'uuid_generate_v4()',
   })
   id: string;
+
+  @Column({ type: 'varchar', length: 128, nullable: true })
+  login?: string;
+
+  @Column({ type: 'varchar', length: 256, nullable: true })
+  password?: string;
+
+  @Column({ type: 'varchar', length: 256, nullable: true })
+  email?: string;
+
+  @Column({ type: 'varchar', length: 32, nullable: true })
+  phone?: string;
 
   @OneToMany(
     () => User2String,
@@ -47,6 +65,12 @@ export class User
     (group: User4Group) => group.user,
   )
   groups: User4Group[];
+
+  @OneToMany(
+    () => User2Counter,
+    (userCounter: User2Counter) => userCounter.parent,
+  )
+  counters: User2Counter[];
 
   @CreateDateColumn()
   createdAt: Date;

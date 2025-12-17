@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Element } from './element.entity';
 import { Language } from '../../../settings/entities/language/language.entity';
@@ -12,6 +13,7 @@ import { CommonDescriptionEntity } from '../../../common/entities/common-descrip
 
 @Entity('content_element2description')
 export class Element2Description
+  extends BaseEntity
   implements CommonDescriptionEntity<Element> {
 
   @PrimaryGeneratedColumn()

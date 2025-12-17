@@ -9,6 +9,7 @@ import { PointAttributeService } from '../../common/services/point-attribute.ser
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('AttributeController', () => {
 
@@ -20,13 +21,11 @@ describe('AttributeController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Attribute]),
       ],
       controllers: [AttributeController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -61,6 +60,55 @@ describe('AttributeController', () => {
         strings: [],
         points: [],
       });
+    });
+  });
+
+  describe('GET /attribute with pagination', () => {
+    it('should return limited attributes when limit is provided', async () => {
+      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/attribute?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip attributes when offset is provided', async () => {
+      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/attribute?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated attributes when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
+      await dataSource.getRepository(Attribute).save({ id: 'attr-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/attribute?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total attributes', async () => {
+      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/attribute?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 

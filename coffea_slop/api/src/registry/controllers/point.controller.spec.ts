@@ -7,10 +7,9 @@ import { PointController } from './point.controller';
 import { Point } from '../entities/point/point.entity';
 import { Directory } from '../entities/directory/directory.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('PointController', () => {
 
@@ -22,13 +21,11 @@ describe('PointController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Point]),
       ],
       controllers: [PointController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -67,6 +64,59 @@ describe('PointController', () => {
         strings: [],
         points: [],
       });
+    });
+  });
+
+  describe('GET /point with pagination', () => {
+    it('should return limited points when limit is provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/point?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip points when offset is provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/point?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated points when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-4', directoryId: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/point?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total points', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/point?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 

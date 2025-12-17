@@ -11,6 +11,7 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('DirectoryController', () => {
 
@@ -22,14 +23,11 @@ describe('DirectoryController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Directory]),
       ],
       controllers: [DirectoryController],
-      providers: [
-        PointAttributeService,
-        StringAttributeService,
-        PermissionAttributeService,
-      ],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();
@@ -65,6 +63,55 @@ describe('DirectoryController', () => {
         points: [],
       });
       expect(response.body[0].permissions).toEqual([]);
+    });
+  });
+
+  describe('GET /directory with pagination', () => {
+    it('should return limited directories when limit is provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory?limit=2')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should skip directories when offset is provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory?offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return paginated directories when both limit and offset are provided', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-2' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-3' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-4' });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory?limit=2&offset=1')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return empty array when offset exceeds total directories', async () => {
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .get('/directory?offset=10')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
     });
   });
 

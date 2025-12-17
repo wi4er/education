@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Form } from './form.entity';
 import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
@@ -14,6 +13,7 @@ import { CommonPointEntity } from '../../../common/entities/common-point.entity'
 
 @Entity('feedback_form2point')
 export class Form2Point
+  extends BaseEntity
   implements CommonPointEntity<Form> {
 
   @PrimaryGeneratedColumn()
@@ -61,11 +61,5 @@ export class Form2Point
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

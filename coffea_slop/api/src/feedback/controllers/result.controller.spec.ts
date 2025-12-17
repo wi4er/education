@@ -8,6 +8,7 @@ import { Result } from '../entities/result/result.entity';
 import { Form } from '../entities/form/form.entity';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('ResultController', () => {
 
@@ -19,9 +20,11 @@ describe('ResultController', () => {
       imports: [
         TestDbModule,
         ExceptionModule,
+        CommonModule,
         TypeOrmModule.forFeature([Result]),
       ],
       controllers: [ResultController],
+      providers: [],
     }).compile();
 
     app = module.createNestApplication();

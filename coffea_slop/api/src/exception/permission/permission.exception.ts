@@ -1,16 +1,15 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { PermissionMethod } from '../../common/permission/permission.method';
 
 export class PermissionException extends HttpException {
 
-  readonly entity: AccessEntity;
-  readonly method: AccessMethod;
+  readonly entity: string;
+  readonly method: PermissionMethod;
   readonly resourceId?: string;
 
   constructor(
-    entity: AccessEntity,
-    method: AccessMethod,
+    entity: string,
+    method: PermissionMethod,
     resourceId?: string,
   ) {
     const message = resourceId

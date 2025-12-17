@@ -7,11 +7,13 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  BaseEntity,
 } from 'typeorm';
 import { Section2String } from './section2string.entity';
 import { Section2Point } from './section2point.entity';
-import { Section2Permission } from './section2permission.entity';
+import { Section4Permission } from './section4permission.entity';
 import { Section2Description } from './section2description.entity';
+import { Section2Counter } from './section2counter.entity';
 import { Element4Section } from '../element/element4section.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
@@ -21,6 +23,7 @@ import { Block } from '../block/block.entity';
 
 @Entity('content_section')
 export class Section
+  extends BaseEntity
   implements WithStrings<Section>,
     WithPoints<Section>,
     WithPermissions<Section>,
@@ -46,10 +49,10 @@ export class Section
   points: Section2Point[];
 
   @OneToMany(
-    () => Section2Permission,
-    (sectPermission: Section2Permission) => sectPermission.parent,
+    () => Section4Permission,
+    (sectPermission: Section4Permission) => sectPermission.parent,
   )
-  permissions: Section2Permission[];
+  permissions: Section4Permission[];
 
   @OneToMany(
     () => Section2Description,
@@ -63,6 +66,12 @@ export class Section
   )
   elements: Element4Section[];
 
+  @OneToMany(
+    () => Section2Counter,
+    (sectCounter: Section2Counter) => sectCounter.parent,
+  )
+  counters: Section2Counter[];
+
   @ManyToOne(
     () => Block,
     (block: Block) => block.sections,
@@ -72,11 +81,11 @@ export class Section
       onUpdate: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'blockId' })
-  block: Block;
+  @JoinColumn({ name: 'parentId' })
+  parent: Block;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
-  blockId: string;
+  parentId: string;
 
   @CreateDateColumn()
   createdAt: Date;

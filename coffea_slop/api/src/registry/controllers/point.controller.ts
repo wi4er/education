@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,7 +28,8 @@ export class PointController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-  ) {}
+  ) {
+  }
 
   toView(point: Point): PointView {
     return {
@@ -50,16 +52,26 @@ export class PointController {
   }
 
   @Get()
-  async findAll(): Promise<PointView[]> {
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<PointView[]> {
     const points = await this.pointRepository.find({
       relations: ['strings', 'points'],
+      take: limit,
+      skip: offset,
     });
     return points.map(pnt => this.toView(pnt));
   }
 
   @Get(':id')
   @CheckId(Point)
-  async findOne(@Param('id') id: string): Promise<PointView> {
+  async findOne(
+    @Param('id')
+    id: string,
+  ): Promise<PointView> {
     const point = await this.pointRepository.findOne({
       where: { id },
       relations: ['strings', 'points'],
@@ -68,7 +80,10 @@ export class PointController {
   }
 
   @Post()
-  async create(@Body() data: PointInput): Promise<PointView> {
+  async create(
+    @Body()
+    data: PointInput,
+  ): Promise<PointView> {
     const { strings, points, ...pointData } = data;
 
     const point = await this.dataSource.transaction(async transaction => {
@@ -90,8 +105,10 @@ export class PointController {
   @Put(':id')
   @CheckId(Point)
   async update(
-    @Param('id') id: string,
-    @Body() data: PointInput,
+    @Param('id')
+    id: string,
+    @Body()
+    data: PointInput,
   ): Promise<PointView> {
     const { strings, points, ...pointData } = data;
 
@@ -112,7 +129,10 @@ export class PointController {
 
   @Delete(':id')
   @CheckId(Point)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(
+    @Param('id')
+    id: string,
+  ): Promise<void> {
     await this.pointRepository.delete(id);
   }
 

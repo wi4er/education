@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Measure } from './measure.entity';
 import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
@@ -14,6 +13,7 @@ import { CommonPointEntity } from '../../../common/entities/common-point.entity'
 
 @Entity('registry_measure2point')
 export class Measure2Point
+  extends BaseEntity
   implements CommonPointEntity<Measure> {
 
   @PrimaryGeneratedColumn()
@@ -61,11 +61,5 @@ export class Measure2Point
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

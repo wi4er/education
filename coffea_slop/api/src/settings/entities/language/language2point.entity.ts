@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BaseEntity,
 } from 'typeorm';
 import { Language } from './language.entity';
 import { Attribute } from '../attribute/attribute.entity';
@@ -13,7 +12,7 @@ import { Point } from '../../../registry/entities/point/point.entity';
 import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('settings_language2point')
-export class Language2Point
+export class Language2Point extends BaseEntity
   implements CommonPointEntity<Language> {
 
   @PrimaryGeneratedColumn()
@@ -61,11 +60,5 @@ export class Language2Point
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

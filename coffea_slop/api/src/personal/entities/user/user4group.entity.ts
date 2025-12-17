@@ -4,12 +4,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Group } from '../group/group.entity';
 
 @Entity('personal_user4group')
-export class User4Group {
+export class User4Group extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
