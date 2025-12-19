@@ -1,8 +1,7 @@
 export interface CommonDescriptionInput {
 
-  parentId: string;
-  languageId?: string;
-  attributeId: string;
+  attr: string;
+  lang?: string;
   value: string;
 
 }

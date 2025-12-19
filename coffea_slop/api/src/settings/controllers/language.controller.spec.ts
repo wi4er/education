@@ -168,7 +168,7 @@ describe('LanguageController', () => {
         .post('/language')
         .send({
           id: 'new-lang',
-          strings: [{ parentId: 'new-lang', attributeId: 'name', value: 'English' }],
+          strings: [{ attr: 'name', value: 'English' }],
         })
         .expect(201);
 

@@ -27,7 +27,7 @@ import { FormView } from '../views/form.view';
 import { FormInput } from '../inputs/form.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 
@@ -40,7 +40,7 @@ export class FormController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-    private readonly permissionAttributeService: PermissionAttributeService,
+    private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
   ) {
@@ -131,11 +131,11 @@ export class FormController {
       const frm = transaction.create(Form, formData);
       const savedForm = await transaction.save(frm);
 
-      await this.stringAttributeService.create<Form>(transaction, Form2String, strings);
-      await this.pointAttributeService.create<Form>(transaction, Form2Point, points);
-      await this.permissionAttributeService.create<Form>(transaction, Form4Permission, permissions);
-      await this.descriptionAttributeService.create<Form>(transaction, Form2Description, descriptions);
-      await this.counterAttributeService.create<Form>(transaction, Form2Counter, counters);
+      await this.stringAttributeService.create<Form>(transaction, Form2String, savedForm.id, strings);
+      await this.pointAttributeService.create<Form>(transaction, Form2Point, savedForm.id, points);
+      await this.permissionService.create<Form>(transaction, Form4Permission, permissions, savedForm.id);
+      await this.descriptionAttributeService.create<Form>(transaction, Form2Description, savedForm.id, descriptions);
+      await this.counterAttributeService.create<Form>(transaction, Form2Counter, savedForm.id, counters);
 
       return transaction.findOne(Form, {
         where: { id: savedForm.id },
@@ -163,7 +163,7 @@ export class FormController {
 
       await this.stringAttributeService.update<Form>(transaction, Form2String, id, strings);
       await this.pointAttributeService.update<Form>(transaction, Form2Point, id, points);
-      await this.permissionAttributeService.update<Form>(transaction, Form4Permission, id, permissions);
+      await this.permissionService.update<Form>(transaction, Form4Permission, id, permissions);
       await this.descriptionAttributeService.update<Form>(transaction, Form2Description, id, descriptions);
       await this.counterAttributeService.update<Form>(transaction, Form2Counter, id, counters);
 

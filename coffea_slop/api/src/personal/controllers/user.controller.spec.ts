@@ -175,7 +175,7 @@ describe('UserController', () => {
         .post('/user')
         .send({
           id: 'new-user',
-          strings: [{ parentId: 'new-user', attributeId: 'name', value: 'John Doe' }],
+          strings: [{ attr: 'name', value: 'John Doe' }],
         })
         .expect(201);
 
@@ -196,7 +196,7 @@ describe('UserController', () => {
         .post('/user')
         .send({
           id: 'new-user',
-          descriptions: [{ parentId: 'new-user', attributeId: 'bio', value: 'User biography text' }],
+          descriptions: [{ attr: 'bio', value: 'User biography text' }],
         })
         .expect(201);
 

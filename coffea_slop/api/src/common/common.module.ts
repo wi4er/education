@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PointAttributeService } from './services/point-attribute.service';
 import { StringAttributeService } from './services/string-attribute.service';
-import { PermissionAttributeService } from './services/permission-attribute.service';
+import { PermissionService } from './services/permission.service';
 import { DescriptionAttributeService } from './services/description-attribute.service';
 import { CounterAttributeService } from './services/counter-attribute.service';
 import { APP_GUARD } from '@nestjs/core';
@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
   providers: [
     PointAttributeService,
     StringAttributeService,
-    PermissionAttributeService,
+    PermissionService,
     DescriptionAttributeService,
     CounterAttributeService,
     JwtService,
@@ -39,7 +39,7 @@ import { JwtService } from '@nestjs/jwt';
   exports: [
     PointAttributeService,
     StringAttributeService,
-    PermissionAttributeService,
+    PermissionService,
     DescriptionAttributeService,
     CounterAttributeService,
   ],

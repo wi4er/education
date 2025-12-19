@@ -46,6 +46,9 @@ describe('SectionController', () => {
     dataSource = module.get<DataSource>(DataSource);
     jwtService = module.get<JwtService>(JwtService);
     await app.init();
+
+    // Create admin group for permission service
+    await dataSource.getRepository(Group).save({ id: 'admin' });
   });
 
   afterEach(() => app.close());
@@ -275,7 +278,7 @@ describe('SectionController', () => {
         .send({
           id: 'new-section',
           parentId: 'block-1',
-          strings: [{ parentId: 'new-section', attributeId: 'name', value: 'Test Section' }],
+          strings: [{ attr: 'name', value: 'Test Section' }],
         })
         .expect(201);
 
@@ -297,7 +300,7 @@ describe('SectionController', () => {
         .send({
           id: 'new-section',
           parentId: 'block-1',
-          descriptions: [{ parentId: 'new-section', attributeId: 'content', value: 'Long description text' }],
+          descriptions: [{ attr: 'content', value: 'Long description text' }],
         })
         .expect(201);
 
@@ -324,11 +327,9 @@ describe('SectionController', () => {
         .expect(201);
 
       expect(response.body.id).toBe('new-section');
-      expect(response.body.permissions).toHaveLength(1);
-      expect(response.body.permissions[0]).toEqual({
-        group: 'admins',
-        method: 'READ',
-      });
+      expect(response.body.permissions).toHaveLength(2);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
     });
   });
 
@@ -372,6 +373,82 @@ describe('SectionController', () => {
         .expect(403);
 
       expect(response.body.message).toBe('Permission denied: WRITE on Section with id section-1');
+    });
+
+    it('should add new permissions without removing existing ones', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Group).save({ id: 'editors' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/section/section-1')
+        .send({
+          parentId: 'block-1',
+          permissions: [
+            { parentId: 'section-1', groupId: 'admins', method: 'READ' },
+            { parentId: 'section-1', groupId: 'editors', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(3);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'editors', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+    });
+
+    it('should remove permissions that are no longer in the list', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Group).save({ id: 'editors' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'editors', method: PermissionMethod.READ });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/section/section-1')
+        .send({
+          parentId: 'block-1',
+          permissions: [
+            { parentId: 'section-1', groupId: 'admins', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(2);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+    });
+
+    it('should keep existing permissions unchanged when same permissions are sent', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      const existingPerm = await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/section/section-1')
+        .send({
+          parentId: 'block-1',
+          permissions: [
+            { parentId: 'section-1', groupId: 'admins', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(2);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+
+      const permAfter = await dataSource.getRepository(Section4Permission).findOne({
+        where: { parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ },
+      });
+      expect(permAfter.id).toBe(existingPerm.id);
     });
   });
 

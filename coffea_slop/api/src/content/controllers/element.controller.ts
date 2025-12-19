@@ -13,7 +13,7 @@ import { ElementView } from '../views/element.view';
 import { ElementInput } from '../inputs/element.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 import { SectionService } from '../services/section.service';
@@ -32,7 +32,7 @@ export class ElementController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-    private readonly permissionAttributeService: PermissionAttributeService,
+    private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
     private readonly sectionService: SectionService,
@@ -126,11 +126,11 @@ export class ElementController {
       const el = transaction.create(Element, elementData);
       const savedElement = await transaction.save(el);
 
-      await this.stringAttributeService.create<Element>(transaction, Element2String, strings);
-      await this.pointAttributeService.create<Element>(transaction, Element2Point, points);
-      await this.permissionAttributeService.create<Element>(transaction, Element4Permission, permissions);
-      await this.descriptionAttributeService.create<Element>(transaction, Element2Description, descriptions);
-      await this.counterAttributeService.create<Element>(transaction, Element2Counter, counters);
+      await this.stringAttributeService.create<Element>(transaction, Element2String, savedElement.id, strings);
+      await this.pointAttributeService.create<Element>(transaction, Element2Point, savedElement.id, points);
+      await this.permissionService.create<Element>(transaction, Element4Permission, permissions, savedElement.id);
+      await this.descriptionAttributeService.create<Element>(transaction, Element2Description, savedElement.id, descriptions);
+      await this.counterAttributeService.create<Element>(transaction, Element2Counter, savedElement.id, counters);
       await this.sectionService.create(transaction, savedElement.id, sections);
 
       return transaction.findOne(Element, {
@@ -159,7 +159,7 @@ export class ElementController {
 
       await this.stringAttributeService.update<Element>(transaction, Element2String, id, strings);
       await this.pointAttributeService.update<Element>(transaction, Element2Point, id, points);
-      await this.permissionAttributeService.update<Element>(transaction, Element4Permission, id, permissions);
+      await this.permissionService.update<Element>(transaction, Element4Permission, id, permissions);
       await this.descriptionAttributeService.update<Element>(transaction, Element2Description, id, descriptions);
       await this.counterAttributeService.update<Element>(transaction, Element2Counter, id, counters);
       await this.sectionService.update(transaction, id, sections);

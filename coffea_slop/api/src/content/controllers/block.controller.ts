@@ -26,7 +26,7 @@ import { BlockView } from '../views/block.view';
 import { BlockInput } from '../inputs/block.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 import { Block4Permission } from '../entities/block/block4permission.entity';
@@ -40,7 +40,7 @@ export class BlockController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-    private readonly permissionAttributeService: PermissionAttributeService,
+    private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
   ) {
@@ -131,11 +131,11 @@ export class BlockController {
       const blk = transaction.create(Block, blockData);
       const savedBlock = await transaction.save(blk);
 
-      await this.stringAttributeService.create<Block>(transaction, Block2String, strings);
-      await this.pointAttributeService.create<Block>(transaction, Block2Point, points);
-      await this.permissionAttributeService.create<Block>(transaction, Block4Permission, permissions);
-      await this.descriptionAttributeService.create<Block>(transaction, Block2Description, descriptions);
-      await this.counterAttributeService.create<Block>(transaction, Block2Counter, counters);
+      await this.stringAttributeService.create<Block>(transaction, Block2String, savedBlock.id, strings);
+      await this.pointAttributeService.create<Block>(transaction, Block2Point, savedBlock.id, points);
+      await this.permissionService.create<Block>(transaction, Block4Permission, permissions, savedBlock.id);
+      await this.descriptionAttributeService.create<Block>(transaction, Block2Description, savedBlock.id, descriptions);
+      await this.counterAttributeService.create<Block>(transaction, Block2Counter, savedBlock.id, counters);
 
       return transaction.findOne(Block, {
         where: { id: savedBlock.id },
@@ -163,7 +163,7 @@ export class BlockController {
 
       await this.stringAttributeService.update<Block>(transaction, Block2String, id, strings);
       await this.pointAttributeService.update<Block>(transaction, Block2Point, id, points);
-      await this.permissionAttributeService.update<Block>(transaction, Block4Permission, id, permissions);
+      await this.permissionService.update<Block>(transaction, Block4Permission, id, permissions);
       await this.descriptionAttributeService.update<Block>(transaction, Block2Description, id, descriptions);
       await this.counterAttributeService.update<Block>(transaction, Block2Counter, id, counters);
 

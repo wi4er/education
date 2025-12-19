@@ -1,6 +1,22 @@
 version: "2.2"
 
 services:
+  frontend:
+    container_name: shop-project-frontend
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./front/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./front/logs:/var/log/nginx
+      - ./front/certs:/etc/nginx/certs:ro
+      - ./admin:/app/admin
+      - ./web:/app/site
+    links:
+      - api
+
   postgres:
     container_name: coffea-database
     image: postgres:16.0
@@ -35,7 +51,8 @@ services:
       DB_HOST: postgres
       DB_USERNAME: admin
       DB_NAME: ${DATABASE_NAME}
-      DB_PASSWORD:  ${DATABASE_PASSWORD}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+      ADMIN_GROUP: ${ADMIN_GROUP:-admin}
 
   web:
     container_name: coffea-web
@@ -53,3 +70,16 @@ services:
       - "./web:/app"
     environment:
       PORT: 3030
+
+  admin:
+    image: node:25-bullseye
+    container_name: shop-admin
+    restart: always
+    command: npm start
+    working_dir: /app
+    ports:
+      - "3010:3010"
+    volumes:
+      - ./admin:/app
+    environment:
+      PORT: 3010

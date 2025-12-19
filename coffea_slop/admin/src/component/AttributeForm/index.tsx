@@ -2,59 +2,21 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { apiContext } from '../../context/ApiProvider';
-import { AttributeInput } from '../../model/attribute.input';
 import Dialog from '@mui/material/Dialog';
-import { AttributeEntity } from '../../model/attribute.entity';
+import { AttributeView, AttributeType } from '../../model/attribute.view';
 import Snackbar from '@mui/material/Snackbar';
-
-interface AttributeData {
-  id: string;
-  error: string;
-}
-
-type AttributeAction = {
-  type: 'SET',
-  field: 'id';
-  value: string
-} | {
-  type: 'ERROR',
-  value: string;
-} | {
-  type: 'INIT',
-  data: AttributeEntity;
-};
-
-const authReducer = (state: AttributeData, action: AttributeAction): AttributeData => {
-  const update = {...state};
-
-  switch (action.type) {
-    case 'SET':
-
-      update[action.field] = action.value;
-      update.error = '';
-      return update;
-
-    case 'ERROR':
-      update.error = action.value;
-
-      return update;
-
-    case 'INIT':
-      update.id = action.data.id;
-      update.error = '';
-
-      return update;
-  }
-
-  return {
-    id: '',
-    error: '',
-  };
-};
+import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../StringEdit';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { DirectoryEdit } from '../DirectoryEdit';
 
 export function AttributeForm(
   {
@@ -65,44 +27,62 @@ export function AttributeForm(
     edit: string | null;
   },
 ) {
-  const [{id, error}, dispatch] = React.useReducer(authReducer, {id: ''} as AttributeData);
-  const {postData, putData, getItem} = React.useContext(apiContext);
+  const [id, setId] = useState('');
+  const [type, setType] = useState<AttributeType>(AttributeType.STRING);
+  const [asPoint, setAsPoint] = useState<string>('');
+  const [strings, setStrings] = useState<StringsByAttr>({});
+  const [error, setError] = useState('');
+  const [tab, setTab] = useState(0);
+  const {postItem, putItem, getItem} = React.useContext(apiContext);
 
   useEffect(() => {
     if (edit) {
-      getItem<AttributeEntity>(`attributes/${edit}`).then(res => {
-        if (res.status) {
-          dispatch({type: 'INIT', data: res.data});
-        } else {
-          dispatch({type: 'ERROR', value: res.error})
-        }
-      });
+      getItem<AttributeView>(`attribute/${edit}`)
+        .then(data => {
+          setId(data.id);
+          setType(data.type || AttributeType.STRING);
+          setAsPoint(data?.asPoint || '');
+          setStrings(stringsToGrouped(data.attributes?.strings || []));
+        })
+        .catch(err => setError(err?.message || 'Failed to load'));
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edit]);
+
+  const showDirectoryTab = type === AttributeType.POINT || type === AttributeType.COUNTER;
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const payload = {
+      id,
+      type,
+      asPoint: showDirectoryTab ? (asPoint || undefined) : undefined,
+      strings: groupedToStrings(strings),
+    };
+
+    if (edit) {
+      putItem<AttributeView>(`attribute/${edit}`, payload)
+        .then(() => onClose())
+        .catch(err => setError(err?.message || 'Failed to save'));
+    } else {
+      postItem<AttributeView>('attribute', payload)
+        .then(() => onClose())
+        .catch(err => setError(err?.message || 'Failed to create'));
+    }
+  };
 
   return (
     <Dialog
       open={true}
       onClose={onClose}
+      maxWidth="md"
+      fullWidth
     >
-      <DialogTitle>Create Attribute</DialogTitle>
+      <DialogTitle>{edit ? `Edit Attribute ${id}` : 'Create Attribute'}</DialogTitle>
 
       <DialogContent>
-        <form onSubmit={event => {
-          event.preventDefault();
-
-          if (edit) {
-            putData<AttributeInput>(`attributes/${edit}`, {item: {id}}).then(res => {
-              if (res.status) onClose();
-              else dispatch({type: 'ERROR', value: res.error});
-            });
-          } else {
-            postData<AttributeInput>('attributes', {item: {id}}).then(res => {
-              if (res.status) onClose();
-              else dispatch({type: 'ERROR', value: res.error});
-            });
-          }
-        }} id="subscription-form">
+        <form onSubmit={handleSubmit} id="attribute-form">
           <TextField
             autoFocus
             required
@@ -112,18 +92,47 @@ export function AttributeForm(
             fullWidth
             value={id}
             variant="standard"
-            onChange={event => dispatch({
-              type: 'SET',
-              field: 'id',
-              value: event.target.value,
-            })}
+            disabled={!!edit}
+            onChange={event => setId(event.target.value)}
           />
+
+          <FormControl fullWidth margin="dense" variant="standard">
+            <InputLabel id="type-label">Type</InputLabel>
+            <Select
+              labelId="type-label"
+              value={type}
+              label="Type"
+              onChange={event => setType(event.target.value as AttributeType)}
+            >
+              <MenuItem value={AttributeType.STRING}>String</MenuItem>
+              <MenuItem value={AttributeType.POINT}>Point</MenuItem>
+              <MenuItem value={AttributeType.COUNTER}>Counter</MenuItem>
+              <MenuItem value={AttributeType.DESCRIPTION}>Description</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Box sx={{borderBottom: 1, borderColor: 'divider', mt: 2}}>
+            <Tabs value={showDirectoryTab ? tab : 0} onChange={(_, v) => setTab(v)}>
+              {showDirectoryTab && <Tab label="Directory"/>}
+              <Tab label="Attributes"/>
+            </Tabs>
+          </Box>
+
+          {showDirectoryTab && tab === 0 && (
+            <Box sx={{mt: 2}}>
+              <DirectoryEdit value={asPoint} onChange={setAsPoint}/>
+            </Box>
+          )}
+
+          {(showDirectoryTab ? tab === 1 : true) && (
+            <StringEdit strings={strings} onChange={setStrings}/>
+          )}
         </form>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="subscription-form">
+        <Button type="submit" form="attribute-form">
           SAVE
         </Button>
       </DialogActions>
@@ -132,7 +141,7 @@ export function AttributeForm(
         open={!!error}
         autoHideDuration={6000}
         message={error}
-        onClose={() => dispatch({type: 'ERROR', value: ''})}
+        onClose={() => setError('')}
       /> : null}
     </Dialog>
   );

@@ -25,7 +25,7 @@ import { DirectoryView } from '../views/directory.view';
 import { DirectoryInput } from '../inputs/directory.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
 
 @Controller('directory')
 export class DirectoryController {
@@ -36,7 +36,7 @@ export class DirectoryController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-    private readonly permissionAttributeService: PermissionAttributeService,
+    private readonly permissionService: PermissionService,
   ) {
   }
 
@@ -114,9 +114,9 @@ export class DirectoryController {
       const dir = transaction.create(Directory, directoryData);
       const savedDirectory = await transaction.save(dir);
 
-      await this.stringAttributeService.create<Directory>(transaction, Directory2String, strings);
-      await this.pointAttributeService.create<Directory>(transaction, Directory2Point, points);
-      await this.permissionAttributeService.create<Directory>(transaction, Directory4Permission, permissions);
+      await this.stringAttributeService.create<Directory>(transaction, Directory2String, savedDirectory.id, strings);
+      await this.pointAttributeService.create<Directory>(transaction, Directory2Point, savedDirectory.id, points);
+      await this.permissionService.create<Directory>(transaction, Directory4Permission, permissions, savedDirectory.id);
 
       return transaction.findOne(Directory, {
         where: { id: savedDirectory.id },
@@ -144,7 +144,7 @@ export class DirectoryController {
 
       await this.stringAttributeService.update<Directory>(transaction, Directory2String, id, strings);
       await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
-      await this.permissionAttributeService.update<Directory>(transaction, Directory4Permission, id, permissions);
+      await this.permissionService.update<Directory>(transaction, Directory4Permission, id, permissions);
 
       return transaction.findOne(Directory, {
         where: { id },

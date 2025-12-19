@@ -91,8 +91,8 @@ export class MeasureController {
       const m = transaction.create(Measure, measureData);
       const savedMeasure = await transaction.save(m);
 
-      await this.stringAttributeService.create<Measure>(transaction, Measure2String, strings);
-      await this.pointAttributeService.create<Measure>(transaction, Measure2Point, points);
+      await this.stringAttributeService.create<Measure>(transaction, Measure2String, savedMeasure.id, strings);
+      await this.pointAttributeService.create<Measure>(transaction, Measure2Point, savedMeasure.id, points);
 
       return transaction.findOne(Measure, {
         where: { id: savedMeasure.id },

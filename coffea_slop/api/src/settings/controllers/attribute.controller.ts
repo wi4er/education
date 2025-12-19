@@ -21,6 +21,7 @@ import { AttributeView } from '../views/attribute.view';
 import { AttributeInput } from '../inputs/attribute.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { AsPointService } from '../services/as-point.service';
 
 @Controller('attribute')
 export class AttributeController {
@@ -31,12 +32,15 @@ export class AttributeController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
+    private readonly asPointService: AsPointService,
   ) {
   }
 
   toView(attribute: Attribute): AttributeView {
     return {
       id: attribute.id,
+      type: attribute.type,
+      asPoint: attribute.asPoint?.directoryId,
       createdAt: attribute.createdAt,
       updatedAt: attribute.updatedAt,
       attributes: {
@@ -62,7 +66,7 @@ export class AttributeController {
     offset?: number,
   ): Promise<AttributeView[]> {
     const attributes = await this.attributeRepository.find({
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'asPoint'],
       take: limit,
       skip: offset,
     });
@@ -79,7 +83,7 @@ export class AttributeController {
   ): Promise<AttributeView> {
     const attribute = await this.attributeRepository.findOne({
       where: { id },
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'asPoint'],
     });
 
     return this.toView(attribute);
@@ -91,18 +95,19 @@ export class AttributeController {
     @Body()
     data: AttributeInput
   ): Promise<AttributeView> {
-    const { strings, points, ...attributeData } = data;
+    const { strings, points, asPoint, ...attributeData } = data;
 
     const attribute = await this.dataSource.transaction(async transaction => {
       const attr = transaction.create(Attribute, attributeData);
       const savedAttribute = await transaction.save(attr);
 
-      await this.stringAttributeService.create<Attribute>(transaction, Attribute2String, strings);
-      await this.pointAttributeService.create<Attribute>(transaction, Attribute2Point, points);
+      await this.stringAttributeService.create<Attribute>(transaction, Attribute2String, savedAttribute.id, strings);
+      await this.pointAttributeService.create<Attribute>(transaction, Attribute2Point, savedAttribute.id, points);
+      await this.asPointService.create(transaction, savedAttribute.id, asPoint);
 
       return transaction.findOne(Attribute, {
         where: { id: savedAttribute.id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'asPoint'],
       });
     });
 
@@ -118,17 +123,18 @@ export class AttributeController {
     @Body()
     data: AttributeInput,
   ): Promise<AttributeView> {
-    const { strings, points, ...attributeData } = data;
+    const { strings, points, asPoint, ...attributeData } = data;
 
     const attribute = await this.dataSource.transaction(async transaction => {
       await transaction.update(Attribute, id, attributeData);
 
       await this.stringAttributeService.update<Attribute>(transaction, Attribute2String, id, strings);
       await this.pointAttributeService.update<Attribute>(transaction, Attribute2Point, id, points);
+      await this.asPointService.update(transaction, id, asPoint);
 
       return transaction.findOne(Attribute, {
         where: { id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'asPoint'],
       });
     });
 

@@ -1,7 +1,6 @@
 export interface CommonPointInput {
 
-  parentId: string;
-  attributeId: string;
-  pointId: string;
+  attr: string;
+  pnt: string;
 
 }

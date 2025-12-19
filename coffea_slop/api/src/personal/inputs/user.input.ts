@@ -7,7 +7,9 @@ import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.input';
 
 export interface UserInput
-  extends WithStringsInput, WithPointsInput, WithDescriptionsInput {
+  extends WithStringsInput,
+    WithPointsInput,
+    WithDescriptionsInput {
 
   id?: string;
   login?: string;

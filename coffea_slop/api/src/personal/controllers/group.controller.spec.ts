@@ -172,7 +172,7 @@ describe('GroupController', () => {
         .post('/group')
         .send({
           id: 'new-group',
-          strings: [{ parentId: 'new-group', attributeId: 'name', value: 'Administrators' }],
+          strings: [{ attr: 'name', value: 'Administrators' }],
         })
         .expect(201);
 
@@ -193,7 +193,7 @@ describe('GroupController', () => {
         .post('/group')
         .send({
           id: 'new-group',
-          descriptions: [{ parentId: 'new-group', attributeId: 'description', value: 'Group with full access' }],
+          descriptions: [{ attr: 'description', value: 'Group with full access' }],
         })
         .expect(201);
 

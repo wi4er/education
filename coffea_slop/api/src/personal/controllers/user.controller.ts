@@ -119,10 +119,10 @@ export class UserController {
       const u = transaction.create(User, { ...userData, password: hashedPassword });
       const savedUser = await transaction.save(u);
 
-      await this.stringAttributeService.create<User>(transaction, User2String, strings);
-      await this.pointAttributeService.create<User>(transaction, User2Point, points);
-      await this.descriptionAttributeService.create<User>(transaction, User2Description, descriptions);
-      await this.counterAttributeService.create<User>(transaction, User2Counter, counters);
+      await this.stringAttributeService.create<User>(transaction, User2String, savedUser.id, strings);
+      await this.pointAttributeService.create<User>(transaction, User2Point, savedUser.id, points);
+      await this.descriptionAttributeService.create<User>(transaction, User2Description, savedUser.id, descriptions);
+      await this.counterAttributeService.create<User>(transaction, User2Counter, savedUser.id, counters);
 
       return transaction.findOne(User, {
         where: { id: savedUser.id },

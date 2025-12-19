@@ -45,6 +45,9 @@ describe('DirectoryController', () => {
     dataSource = module.get<DataSource>(DataSource);
     jwtService = module.get<JwtService>(JwtService);
     await app.init();
+
+    // Create admin group for permission service
+    await dataSource.getRepository(Group).save({ id: 'admin' });
   });
 
   afterEach(async () => {
@@ -257,7 +260,7 @@ describe('DirectoryController', () => {
         .post('/directory')
         .send({
           id: 'new-dir',
-          strings: [{ parentId: 'new-dir', attributeId: 'name', value: 'Test Directory' }],
+          strings: [{ attr: 'name', value: 'Test Directory' }],
         })
         .expect(201);
 
@@ -307,6 +310,76 @@ describe('DirectoryController', () => {
         .expect(403);
 
       expect(response.body.message).toBe('Permission denied: WRITE on Directory with id dir-1');
+    });
+
+    it('should add new permissions without removing existing ones', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Group).save({ id: 'editors' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          permissions: [
+            { parentId: 'dir-1', groupId: 'admins', method: 'READ' },
+            { parentId: 'dir-1', groupId: 'editors', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(3);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'editors', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+    });
+
+    it('should remove permissions that are no longer in the list', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Group).save({ id: 'editors' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'editors', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          permissions: [
+            { parentId: 'dir-1', groupId: 'admins', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(2);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+    });
+
+    it('should keep existing permissions unchanged when same permissions are sent', async () => {
+      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
+      const existingPerm = await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ });
+      await dataSource.getRepository(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          permissions: [
+            { parentId: 'dir-1', groupId: 'admins', method: 'READ' },
+          ],
+        })
+        .expect(200);
+
+      expect(response.body.permissions).toHaveLength(2);
+      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
+      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+
+      const permAfter = await dataSource.getRepository(Directory4Permission).findOne({
+        where: { parentId: 'dir-1', groupId: 'admins', method: PermissionMethod.READ },
+      });
+      expect(permAfter.id).toBe(existingPerm.id);
     });
   });
 

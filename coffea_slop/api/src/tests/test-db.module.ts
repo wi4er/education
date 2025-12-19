@@ -2,6 +2,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Attribute } from '../settings/entities/attribute/attribute.entity';
 import { Attribute2String } from '../settings/entities/attribute/attribute2string.entity';
 import { Attribute2Point } from '../settings/entities/attribute/attribute2point.entity';
+import { Attribute2AsPoint } from '../settings/entities/attribute/attributeAsPoint.entity';
 import { Language } from '../settings/entities/language/language.entity';
 import { Language2String } from '../settings/entities/language/language2string.entity';
 import { Language2Point } from '../settings/entities/language/language2point.entity';
@@ -59,7 +60,7 @@ export const TestDbModule = TypeOrmModule.forRoot({
   dropSchema: true,
   entities: [
     Attribute,
-    Attribute2String, Attribute2Point,
+    Attribute2String, Attribute2Point, Attribute2AsPoint,
     Language,
     Language2String, Language2Point,
     Point,

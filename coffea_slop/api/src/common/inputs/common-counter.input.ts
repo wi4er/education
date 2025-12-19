@@ -1,9 +1,8 @@
 export interface CommonCounterInput {
 
-  parentId: string;
-  attributeId: string;
-  pointId?: string;
-  measureId?: string;
+  attr: string;
+  pnt?: string;
+  msr?: string;
   count: number;
 
 }

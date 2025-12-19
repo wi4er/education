@@ -103,9 +103,9 @@ export class GroupController {
       const g = transaction.create(Group, groupData);
       const savedGroup = await transaction.save(g);
 
-      await this.stringAttributeService.create<Group>(transaction, Group2String, strings);
-      await this.pointAttributeService.create<Group>(transaction, Group2Point, points);
-      await this.descriptionAttributeService.create<Group>(transaction, Group2Description, descriptions);
+      await this.stringAttributeService.create<Group>(transaction, Group2String, savedGroup.id, strings);
+      await this.pointAttributeService.create<Group>(transaction, Group2Point, savedGroup.id, points);
+      await this.descriptionAttributeService.create<Group>(transaction, Group2Description, savedGroup.id, descriptions);
 
       return transaction.findOne(Group, {
         where: { id: savedGroup.id },

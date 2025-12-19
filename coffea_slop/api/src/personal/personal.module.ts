@@ -10,6 +10,8 @@ import { UserController } from './controllers/user.controller';
 import { GroupController } from './controllers/group.controller';
 import { AccessController } from './controllers/access.controller';
 import { SignInController } from './controllers/sign-in.controller';
+import { MyselfController } from './controllers/myself.controller';
+import { AuthCookieService } from './services/auth-cookie.service';
 import { CommonModule } from '../common/common.module';
 
 @Module({
@@ -26,6 +28,10 @@ import { CommonModule } from '../common/common.module';
     GroupController,
     AccessController,
     SignInController,
+    MyselfController,
+  ],
+  providers: [
+    AuthCookieService,
   ],
 })
 export class PersonalModule {}

@@ -5,8 +5,7 @@ import { DataSource } from 'typeorm';
 import * as request from 'supertest';
 import { AttributeController } from './attribute.controller';
 import { Attribute } from '../entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { AsPointService } from '../services/as-point.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
@@ -25,7 +24,7 @@ describe('AttributeController', () => {
         TypeOrmModule.forFeature([Attribute]),
       ],
       controllers: [AttributeController],
-      providers: [],
+      providers: [AsPointService],
     }).compile();
 
     app = module.createNestApplication();
@@ -167,7 +166,7 @@ describe('AttributeController', () => {
         .post('/attribute')
         .send({
           id: 'new-attr',
-          strings: [{ parentId: 'new-attr', attributeId: 'label', value: 'Test Label' }],
+          strings: [{ attr: 'label', value: 'Test Label' }],
         })
         .expect(201);
 

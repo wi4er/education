@@ -1,15 +1,19 @@
 import {
   Entity,
   PrimaryColumn,
+  Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
   BaseEntity,
 } from 'typeorm';
 import { Attribute2String } from './attribute2string.entity';
 import { Attribute2Point } from './attribute2point.entity';
+import { Attribute2AsPoint } from './attributeAsPoint.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
+import { AttributeType } from './attribute-type.enum';
 
 @Entity('settings_attribute')
 export class Attribute extends BaseEntity
@@ -22,6 +26,13 @@ export class Attribute extends BaseEntity
   })
   id: string;
 
+  @Column({
+    type: 'varchar',
+    length: 16,
+    default: AttributeType.STRING,
+  })
+  type: AttributeType;
+
   @OneToMany(
     () => Attribute2String,
     (attrString: Attribute2String) => attrString.parent,
@@ -33,6 +44,12 @@ export class Attribute extends BaseEntity
     (attrPoint: Attribute2Point) => attrPoint.parent,
   )
   points: Attribute2Point[];
+
+  @OneToOne(
+    () => Attribute2AsPoint,
+    (asPoint: Attribute2AsPoint) => asPoint.parent,
+  )
+  asPoint: Attribute2AsPoint;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -187,7 +187,7 @@ describe('PointController', () => {
         .send({
           id: 'new-point',
           directoryId: 'dir-1',
-          strings: [{ parentId: 'new-point', attributeId: 'name', value: 'Test Point' }],
+          strings: [{ attr: 'name', value: 'Test Point' }],
         })
         .expect(201);
 

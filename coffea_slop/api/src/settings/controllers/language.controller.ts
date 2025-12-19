@@ -95,8 +95,8 @@ export class LanguageController {
       const lng = transaction.create(Language, languageData);
       const savedLanguage = await transaction.save(lng);
 
-      await this.stringAttributeService.create<Language>(transaction, Language2String, strings);
-      await this.pointAttributeService.create<Language>(transaction, Language2Point, points);
+      await this.stringAttributeService.create<Language>(transaction, Language2String, savedLanguage.id, strings);
+      await this.pointAttributeService.create<Language>(transaction, Language2Point, savedLanguage.id, points);
 
       return transaction.findOne(Language, {
         where: { id: savedLanguage.id },

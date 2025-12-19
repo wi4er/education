@@ -7,7 +7,6 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
@@ -15,11 +14,9 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user/user.entity';
 import { SignInInput } from '../inputs/sign-in.input';
 import { SignInView } from '../views/sign-in.view';
+import { AuthCookieService } from '../services/auth-cookie.service';
 import { PermissionException } from '../../exception/permission/permission.exception';
 import { PermissionMethod } from '../../common/permission/permission.method';
-
-const COOKIE_NAME = 'auth_token';
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 @Controller('sign-in')
 export class SignInController {
@@ -27,7 +24,7 @@ export class SignInController {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly jwtService: JwtService,
+    private readonly authCookieService: AuthCookieService,
   ) {
   }
 
@@ -38,30 +35,18 @@ export class SignInController {
     };
   }
 
-  private setAuthCookie(res: Response, token: string): void {
-    res.cookie(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: COOKIE_MAX_AGE,
-    });
-  }
-
   @Get()
   async check(
     @Req()
     req: Request,
   ): Promise<SignInView> {
-    const token = req.cookies?.[COOKIE_NAME];
+    const userId = this.authCookieService.getCurrentUserId(req);
 
-    if (!token) throw new PermissionException('User', PermissionMethod.AUTH);
-
-    const payload = this.jwtService.verify(token);
     const user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { id: userId },
     });
 
-    if (!user) throw new PermissionException('User', PermissionMethod.AUTH, payload.sub);
+    if (!user) throw new PermissionException('User', PermissionMethod.AUTH, userId);
 
     return this.toView(user);
   }
@@ -83,13 +68,7 @@ export class SignInController {
       || !await bcrypt.compare(data.password, user.password)
     ) throw new PermissionException('User', PermissionMethod.AUTH);
 
-    const token = this.jwtService.sign({
-      sub: user.id,
-      login: user.login,
-      groups: user.groups?.map(g => g.groupId) ?? [],
-    });
-
-    this.setAuthCookie(res, token);
+    this.authCookieService.setAuthCookie(res, user);
 
     return this.toView(user);
   }
@@ -99,11 +78,7 @@ export class SignInController {
     @Res({ passthrough: true })
     res: Response,
   ): Promise<void> {
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
+    this.authCookieService.clearAuthCookie(res);
   }
 
 }

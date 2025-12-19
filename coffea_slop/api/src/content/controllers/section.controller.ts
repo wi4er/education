@@ -26,7 +26,7 @@ import { SectionView } from '../views/section.view';
 import { SectionInput } from '../inputs/section.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionAttributeService } from '../../common/services/permission-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 import { Section4Permission } from '../entities/section/section4permission.entity';
@@ -40,7 +40,7 @@ export class SectionController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
-    private readonly permissionAttributeService: PermissionAttributeService,
+    private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
   ) {
@@ -132,11 +132,11 @@ export class SectionController {
       const sec = transaction.create(Section, sectionData);
       const savedSection = await transaction.save(sec);
 
-      await this.stringAttributeService.create<Section>(transaction, Section2String, strings);
-      await this.pointAttributeService.create<Section>(transaction, Section2Point, points);
-      await this.permissionAttributeService.create<Section>(transaction, Section4Permission, permissions);
-      await this.descriptionAttributeService.create<Section>(transaction, Section2Description, descriptions);
-      await this.counterAttributeService.create<Section>(transaction, Section2Counter, counters);
+      await this.stringAttributeService.create<Section>(transaction, Section2String, savedSection.id, strings);
+      await this.pointAttributeService.create<Section>(transaction, Section2Point, savedSection.id, points);
+      await this.permissionService.create<Section>(transaction, Section4Permission, permissions, savedSection.id);
+      await this.descriptionAttributeService.create<Section>(transaction, Section2Description, savedSection.id, descriptions);
+      await this.counterAttributeService.create<Section>(transaction, Section2Counter, savedSection.id, counters);
 
       return transaction.findOne(Section, {
         where: { id: savedSection.id },
@@ -164,7 +164,7 @@ export class SectionController {
 
       await this.stringAttributeService.update<Section>(transaction, Section2String, id, strings);
       await this.pointAttributeService.update<Section>(transaction, Section2Point, id, points);
-      await this.permissionAttributeService.update<Section>(transaction, Section4Permission, id, permissions);
+      await this.permissionService.update<Section>(transaction, Section4Permission, id, permissions);
       await this.descriptionAttributeService.update<Section>(transaction, Section2Description, id, descriptions);
       await this.counterAttributeService.update<Section>(transaction, Section2Counter, id, counters);
 

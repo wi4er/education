@@ -168,7 +168,7 @@ describe('MeasureController', () => {
         .post('/measure')
         .send({
           id: 'new-measure',
-          strings: [{ parentId: 'new-measure', attributeId: 'name', value: 'Kilogram' }],
+          strings: [{ attr: 'name', value: 'Kilogram' }],
         })
         .expect(201);
 

@@ -4,199 +4,128 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Coffee shop e-commerce platform - a monorepo with four services managed via Docker Compose.
+Coffea Shop - a full-stack e-commerce platform for a coffee shop with three applications:
+- **API** (`api/`): NestJS backend with PostgreSQL
+- **Web** (`web/`): Next.js 16 customer-facing storefront
+- **Admin** (`admin/`): React admin dashboard with Material-UI
 
-## Quick Start
+Each app has its own `CLAUDE.md` with detailed instructions.
 
-```bash
-# Start all services (database, API, web)
-docker compose up
+## Development Setup
 
-# Or start individual services
-docker compose up postgres    # PostgreSQL on port 5432
-docker compose up api         # NestJS API on port 3020
-docker compose up web         # Next.js web on port 3030
-
-# Admin requires manual start (not in docker-compose)
-cd admin && npm start         # React admin on port 3000
-```
-
-## Repository Structure
-
-```
-coffea_slop/
-├── api/          # NestJS backend
-├── web/          # Next.js frontend (see web/CLAUDE.md)
-├── admin/        # React admin dashboard (see admin/CLAUDE.md)
-├── init/         # Database initialization scripts
-├── data/         # Docker volumes (postgres data, storage)
-└── docker-compose.yml
-```
-
-## Services
-
-| Service | Technology | Port | Description |
-|---------|------------|------|-------------|
-| postgres | PostgreSQL 16 | 5432 | Database with uuid-ossp extension |
-| api | NestJS 10 + TypeORM | 3020 | REST API backend |
-| web | Next.js 16 | 3030 | E-commerce frontend |
-| admin | React 19 + MUI 7 | 3000 | Admin dashboard (manual start) |
-
-## Environment Variables
-
-Create `.env` in root with:
-- `DATABASE_NAME` - PostgreSQL database name
-- `DATABASE_PASSWORD` - PostgreSQL password (user is `admin`)
-
-## Development Workflow
-
-When working on a specific service, cd into that directory:
-```bash
-cd api && npm run start:dev   # API development with watch mode
-cd web && npm run dev         # Web development
-cd admin && npm start         # Admin development
-```
-
-Or use Docker for full stack development with hot reload (volumes are mounted for api and web).
-
----
-
-## API Commands
+Start all services with Docker Compose from the project root:
 
 ```bash
-# Development
-npm run start:dev      # Run in watch mode (auto-reload on changes)
-npm run start:debug    # Run with debugger attached
-
-# Build & Production
-npm run build          # Compile TypeScript to dist/
-npm run start:prod     # Run compiled app from dist/
-
-# Testing
-npm run test           # Run unit tests (*.spec.ts in src/)
-npm run test:watch     # Run tests in watch mode
-npm run test -- --testPathPattern="attribute.controller"  # Run single test file
-npm run test:e2e       # Run e2e tests (test/*.e2e-spec.ts)
-npm run test:cov       # Run tests with coverage report
-
-# Code Quality
-npm run lint           # ESLint with auto-fix
-npm run format         # Prettier formatting
+docker compose up        # Start all services (postgres, api, web, admin, nginx frontend)
+docker compose up -d     # Detached mode
+docker compose down      # Stop all services
 ```
 
-## API Architecture
+**Service URLs (via nginx on port 80):**
+- Web: `http://localhost/` (proxies to web:3030)
+- Admin: `http://localhost/admin` (proxies to admin:3010)
+- API: `http://localhost/api` (proxies to api:3000)
 
-NestJS application with TypeORM and PostgreSQL, organized into feature modules.
+**Direct service ports (bypass nginx):**
+- PostgreSQL: `localhost:5432`
+- API: `localhost:3020`
+- Web: `localhost:3030`
+- Admin: `localhost:3010`
 
-**Entry Point**: `src/main.ts` - Starts on port 3000 (mapped to 3020 via Docker).
+**Environment:** Create `.env` in project root with `DATABASE_NAME` and `DATABASE_PASSWORD`.
 
-**Database**: PostgreSQL via TypeORM. Config via env vars: `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`. Requires `uuid-ossp` extension.
+**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension when the database container starts.
 
-### Module Structure
+## Commands by App
 
-```
-api/src/
-├── app.module.ts       # Root module with TypeORM.forRoot()
-├── common/             # Shared services, entities, inputs, access control
-│   ├── access/         # Method-level access control (CheckMethodAccess guard)
-│   ├── permission/     # ID-level permission control (CheckIdPermission guard)
-│   ├── entities/       # Common interfaces (WithStrings, WithPoints, WithPermissions, WithDescriptions)
-│   ├── inputs/         # Shared input interfaces (CommonStringInput, CommonPointInput, etc.)
-│   └── services/       # Shared services (StringAttribute, PointAttribute, PermissionAttribute, DescriptionAttribute, CounterAttribute)
-├── settings/           # Attribute and Language entities
-├── registry/           # Directory, Point, Measure entities
-├── personal/           # User and Group entities
-├── content/            # Block, Element, Section entities
-│   └── services/       # Module-specific services (SectionService for Element-Section relations)
-└── feedback/           # Form and Result entities
-```
-
-### Table Naming Convention
-
-All database tables are prefixed with their module name: `{module}_{entity}` (e.g., `settings_attribute`, `registry_directory`, `personal_user`).
-
-### Controller Pattern
-
-Controllers use typed interfaces for request/response:
-- `*View` interfaces for return types (in `views/`)
-- `*Input` interfaces for `@Body()` parameters (in `inputs/`)
-- `toView(entity)` method to convert entity to view interface
-- `@CheckId(Entity)` decorator validates entity exists before processing
-- `@CheckMethodAccess(AccessEntity.*, AccessMethod.*)` decorator for access control
-- `@CheckIdPermission(PermissionEntity, PermissionMethod.*)` decorator for instance-level permissions
-- Tests use supertest with mocked repositories and DataSource
-
-POST/PUT methods handle subordinate entities in a transaction:
-```typescript
-@Post()
-@CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.POST)
-async create(@Body() data: DirectoryInput): Promise<DirectoryView> {
-  const { strings, points, permissions, ...directoryData } = data;
-  return this.dataSource.transaction(async manager => {
-    // Create parent, then subordinates via services
-    await this.stringAttributeService.create<Directory>(manager, Directory2String, saved);
-    await this.pointAttributeService.create<Directory>(manager, Directory2Point, saved);
-    await this.permissionAttributeService.create<Directory>(manager, Directory2Permission, saved);
-  });
-}
+### API (`cd api`)
+```bash
+npm run start:dev                                    # Watch mode
+npm run test                                         # Unit tests
+npm run test -- --testPathPattern="<pattern>"        # Single test
+npm run test:e2e                                     # E2E tests
+npm run lint                                         # ESLint
 ```
 
-## Entity Pattern (EAV)
+### Web (`cd web`)
+```bash
+npm run dev      # Development server
+npm run build    # Production build
+npm run lint     # ESLint
+```
 
-Entities follow an EAV (Entity-Attribute-Value) pattern with three types of subordinate relationships.
+### Admin (`cd admin`)
+```bash
+npm start        # Development server (localhost:3010 via Docker, or 3000 locally)
+npm run build    # Production build (served at /admin/)
+npm run test     # Jest tests with React Testing Library
+```
 
-### Main Entities
+## Architecture
 
-Main entities implement `WithStrings<T>`, `WithPoints<T>`, and optionally `WithPermissions<T>` and `WithDescriptions<T>`:
-- **settings**: `Attribute`, `Language`
-- **registry**: `Directory`, `Point`, `Measure`
-- **personal**: `User`, `Group`
-- **content**: `Block`, `Element`, `Section`
-- **feedback**: `Form`, `Result`
+### Backend (API)
 
-**ID Convention**: Main entities use `varchar(32)` with `uuid_generate_v4()` default. Subordinates use auto-increment.
+NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
-### Subordinate Entities
+**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`
 
-Named as `{Parent}2{Type}` for value attributes or `{Parent}4{Type}` for relations:
+**Main Entities:** `Attribute`, `Language`, `Directory`, `Point`, `Measure`, `User`, `Group`, `Block`, `Element`, `Section`, `Form`, `Result`
 
-| Type | Interface | Fields |
-|------|-----------|--------|
-| `*2string` | `CommonStringEntity<T>` | `parentId`, `languageId`, `attributeId`, `value` |
-| `*2point` | `CommonPointEntity<T>` | `parentId`, `attributeId`, `pointId` |
-| `*2description` | `CommonDescriptionEntity<T>` | `parentId`, `languageId`, `attributeId`, `value` |
-| `*2counter` | `CommonCounterEntity<T>` | `parentId`, `attributeId`, `pointId?`, `measureId?`, `count` |
-| `*4permission` | `CommonPermissionEntity<T>` | `parentId`, `groupId`, `method` |
+**Subordinate Entities:** Named `{Parent}2{Type}` (value attributes) or `{Parent}4{Type}` (relations):
+- `*2string` - string values with language support
+- `*2point` - point/location references
+- `*2description` - text descriptions with language
+- `*2counter` - numeric counts with optional measure/point
+- `*4permission` - group-based permissions
 
-All ManyToOne relations use `{ nullable: false, onDelete: 'CASCADE', onUpdate: 'CASCADE' }` (except nullable fields marked with `?`).
+**Access Control (3 levels):**
+1. `@CheckId(Entity)` - Validates entity exists
+2. `@CheckMethodAccess(AccessEntity.*, AccessMethod.*)` - HTTP method access
+3. `@CheckIdPermission(PermissionEntity, PermissionMethod.*)` - Instance-level permissions
 
-### Shared Services
+**Table naming:** `{module}_{entity}` (e.g., `personal_user`, `content_block`)
 
-Common module provides services for creating/updating subordinate entities:
-- `StringAttributeService.create/update<T>(manager, EntityClass, items)`
-- `PointAttributeService.create/update<T>(manager, EntityClass, items)`
-- `DescriptionAttributeService.create/update<T>(manager, EntityClass, items)`
-- `CounterAttributeService.create/update<T>(manager, EntityClass, items)`
-- `PermissionAttributeService.create/update<T>(manager, EntityClass, items)`
+### Frontend (Web)
 
-## Access Control
+Next.js 16 with App Router (`src/app/`):
 
-Three-level access control system in `common/`:
+- `src/components/` - React components with folder structure: `index.ts`, `ComponentName.tsx`, `ComponentName.module.css`, optional `svg/`
+- `src/contexts/` - React context providers (`UserProvider`)
+- `src/model/` - TypeScript entity interfaces (`*Entity` naming convention)
+- `src/widgets/` - Reusable UI organized by category (`buttons/`, `heading/`, `input/`)
+- `src/fonts/` - Font files and shared `text-styles.module.css`
 
-1. **CheckId**: Validates that the entity with given ID exists before proceeding
-2. **Method Access** (`CheckMethodAccess`): Controls access to controller methods by entity type and HTTP method
-3. **ID Permission** (`CheckIdPermission`): Controls access to specific entity instances by group and permission method (READ, WRITE, DELETE, CHILD)
+**Dependencies:** Uses Swiper for carousels/sliders.
 
-## Code Style
+**Path alias:** `@/*` maps to `./src/*`
 
+**SVG imports:** SVGs imported as React components via `@svgr/webpack`
+
+**Text styles:** `import txt from '@/fonts/text-styles.module.css'` with classes `txt.heading1`, `txt.heading2`, `txt.caption`, `txt.button`, `txt.input`
+
+### Admin Dashboard
+
+React with Create React App, Material-UI, React Router (basename `/admin/`):
+
+- `src/component/` - Feature components
+- `src/context/` - `ApiProvider` (backend communication), `UserProvider` (auth state)
+- `src/model/` - TypeScript interfaces
+- `src/widget/` - Reusable widgets
+
+## Code Patterns
+
+**API:**
 - Entity classes have blank line after opening brace and before closing brace
-- Arrow function parameters: no brackets for single untyped parameter (`s =>` not `(s) =>`)
-- Tests co-located with source as `*.spec.ts`
+- Arrow functions: no brackets for single untyped parameter (`s =>` not `(s) =>`)
+- Controllers use `*View` interfaces for responses, `*Input` for request bodies
+- POST/PUT methods handle subordinates in a transaction via shared services
 
-## Generating New Resources
+**Web:**
+- Named exports: `export { Header } from './Header'`
+- CSS Modules imported as `css`: `import css from './ComponentName.module.css'`
+- Use `classnames` library: `import cn from 'classnames'`
+- `'use client'` directive required for client components with hooks
 
-```bash
-npx nest generate module <name>
-npx nest generate controller <name>
-npx nest generate service <name>
-```
+**Admin:**
+- Default exports in `index.tsx` files
+- API calls via `useContext(apiContext)` with methods: `getData`, `getItem`, `postData`, `putData`, `deleteData`

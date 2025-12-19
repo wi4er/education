@@ -90,8 +90,8 @@ export class PointController {
       const pnt = transaction.create(Point, pointData);
       const savedPoint = await transaction.save(pnt);
 
-      await this.stringAttributeService.create<Point>(transaction, Point2String, strings);
-      await this.pointAttributeService.create<Point>(transaction, Point2Point, points);
+      await this.stringAttributeService.create<Point>(transaction, Point2String, savedPoint.id, strings);
+      await this.pointAttributeService.create<Point>(transaction, Point2Point, savedPoint.id, points);
 
       return transaction.findOne(Point, {
         where: { id: savedPoint.id },

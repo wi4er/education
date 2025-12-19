@@ -24,15 +24,12 @@ type AuthAction = {
 };
 
 const authReducer = (state: AuthData, action: AuthAction): AuthData => {
-
-  console.log(action.type);
-
   switch (action.type) {
     case 'SET':
-      const update = {...state};
+      const update = { ...state };
 
       update[action.field] = action.value;
-      return  update;
+      return update;
 
     case 'INIT':
       break;
@@ -46,8 +43,11 @@ const authReducer = (state: AuthData, action: AuthAction): AuthData => {
 };
 
 export function AuthForm() {
-  const {user ,logIn} = React.useContext(userContext);
-  const [{login, password, error}, dispatch] = React.useReducer(authReducer, {login: '333@ukr.net', password: 'qwerty', error: null});
+  const { user, logIn } = React.useContext(userContext);
+  const [{ login, password, error }, dispatch] = React.useReducer(
+    authReducer,
+    { login: 'admin', password: 'qwerty', error: null },
+  );
 
   return (
     <Dialog
@@ -55,7 +55,8 @@ export function AuthForm() {
       onSubmit={event => {
         event.preventDefault();
 
-        logIn(login, password);
+        logIn(login, password)
+          .catch(err => dispatch({ type: 'SET', field: 'error', value: err?.message || 'Login failed' }));
       }}
     >
       <DialogTitle>Authorization</DialogTitle>

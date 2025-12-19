@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.module.css';
-import { ApiContext } from './context/ApiProvider';
-import { UserContext } from './context/UserProvider';
+import { ApiProvider } from './context/ApiProvider';
+import { UserProvider } from './context/UserProvider';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { CommonLayout } from './component/CommonLayout';
 import { Dashboard } from './component/Dashboard';
@@ -10,8 +10,8 @@ import { AttributeList } from './component/AttributeList';
 
 function App() {
   return (
-    <ApiContext>
-      <UserContext>
+    <ApiProvider>
+      <UserProvider>
         <BrowserRouter  basename="/admin/">
           <CommonLayout>
             <Routes>
@@ -21,8 +21,8 @@ function App() {
             </Routes>
           </CommonLayout>
         </BrowserRouter>
-      </UserContext>
-    </ApiContext>
+      </UserProvider>
+    </ApiProvider>
   );
 }
 

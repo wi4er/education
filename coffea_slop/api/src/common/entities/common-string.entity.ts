@@ -1,4 +1,5 @@
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
+import { Language } from '../../settings/entities/language/language.entity';
 
 export interface CommonStringEntity<TParent> {
 
@@ -6,6 +7,9 @@ export interface CommonStringEntity<TParent> {
 
   parent: TParent;
   parentId: string;
+
+  language: Language | null;
+  languageId: string | null;
 
   attribute: Attribute;
   attributeId: string;
