@@ -9,6 +9,7 @@ import {
 import { Block2String } from './block2string.entity';
 import { Block2Point } from './block2point.entity';
 import { Block4Permission } from './block4permission.entity';
+import { Block4Status } from './block4status.entity';
 import { Block2Description } from './block2description.entity';
 import { Block2Counter } from './block2counter.entity';
 import { Element } from '../element/element.entity';
@@ -17,13 +18,15 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('content_block')
 export class Block extends BaseEntity
   implements WithStrings<Block>,
     WithPoints<Block>,
     WithPermissions<Block>,
-    WithDescriptions<Block> {
+    WithDescriptions<Block>,
+    WithStatuses<Block> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -73,6 +76,12 @@ export class Block extends BaseEntity
     (blockCounter: Block2Counter) => blockCounter.parent,
   )
   counters: Block2Counter[];
+
+  @OneToMany(
+    () => Block4Status,
+    (blockStatus: Block4Status) => blockStatus.parent,
+  )
+  statuses: Block4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

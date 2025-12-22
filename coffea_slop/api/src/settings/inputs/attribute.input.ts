@@ -10,6 +10,7 @@ export interface AttributeInput
   id?: string;
   type?: AttributeType;
   asPoint?: string;
+  status?: string[];
 
   strings?: CommonStringInput[];
   points?: CommonPointInput[];

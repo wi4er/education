@@ -53,6 +53,7 @@ services:
       DB_NAME: ${DATABASE_NAME}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       ADMIN_GROUP: ${ADMIN_GROUP:-admin}
+      JWT_SECRET: ${JWT_SECRET}
 
   web:
     container_name: coffea-web

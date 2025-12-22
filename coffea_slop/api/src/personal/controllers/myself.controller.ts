@@ -58,7 +58,7 @@ export class MyselfController {
         })) ?? [],
         points: user.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: user.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -67,8 +67,8 @@ export class MyselfController {
         })) ?? [],
         counters: user.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },

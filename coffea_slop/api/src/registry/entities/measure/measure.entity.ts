@@ -8,13 +8,15 @@ import {
 } from 'typeorm';
 import { Measure2String } from './measure2string.entity';
 import { Measure2Point } from './measure2point.entity';
+import { Measure4Status } from './measure4status.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_measure')
 export class Measure
   extends BaseEntity
-  implements WithStrings<Measure>, WithPoints<Measure> {
+  implements WithStrings<Measure>, WithPoints<Measure>, WithStatuses<Measure> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -34,6 +36,12 @@ export class Measure
     (measurePoint: Measure2Point) => measurePoint.parent,
   )
   points: Measure2Point[];
+
+  @OneToMany(
+    () => Measure4Status,
+    (measureStatus: Measure4Status) => measureStatus.parent,
+  )
+  statuses: Measure4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

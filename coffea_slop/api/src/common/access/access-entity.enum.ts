@@ -2,6 +2,7 @@ export enum AccessEntity {
 
   ATTRIBUTE = 'ATTRIBUTE',
   LANGUAGE = 'LANGUAGE',
+  STATUS = 'STATUS',
   DIRECTORY = 'DIRECTORY',
   MEASURE = 'MEASURE',
   POINT = 'POINT',

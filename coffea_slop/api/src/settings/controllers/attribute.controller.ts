@@ -21,7 +21,9 @@ import { AttributeView } from '../views/attribute.view';
 import { AttributeInput } from '../inputs/attribute.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 import { AsPointService } from '../services/as-point.service';
+import { Attribute4Status } from '../entities/attribute/attribute4status.entity';
 
 @Controller('attribute')
 export class AttributeController {
@@ -33,6 +35,7 @@ export class AttributeController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly asPointService: AsPointService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -41,6 +44,7 @@ export class AttributeController {
       id: attribute.id,
       type: attribute.type,
       asPoint: attribute.asPoint?.directoryId,
+      status: attribute.statuses?.map(s => s.statusId) ?? [],
       createdAt: attribute.createdAt,
       updatedAt: attribute.updatedAt,
       attributes: {
@@ -51,7 +55,7 @@ export class AttributeController {
         })) ?? [],
         points: attribute.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
       },
     };
@@ -66,7 +70,7 @@ export class AttributeController {
     offset?: number,
   ): Promise<AttributeView[]> {
     const attributes = await this.attributeRepository.find({
-      relations: ['strings', 'points', 'asPoint'],
+      relations: ['strings', 'points', 'asPoint', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -83,7 +87,7 @@ export class AttributeController {
   ): Promise<AttributeView> {
     const attribute = await this.attributeRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'asPoint'],
+      relations: ['strings', 'points', 'asPoint', 'statuses'],
     });
 
     return this.toView(attribute);
@@ -95,7 +99,7 @@ export class AttributeController {
     @Body()
     data: AttributeInput
   ): Promise<AttributeView> {
-    const { strings, points, asPoint, ...attributeData } = data;
+    const { strings, points, asPoint, status, ...attributeData } = data;
 
     const attribute = await this.dataSource.transaction(async transaction => {
       const attr = transaction.create(Attribute, attributeData);
@@ -104,10 +108,11 @@ export class AttributeController {
       await this.stringAttributeService.create<Attribute>(transaction, Attribute2String, savedAttribute.id, strings);
       await this.pointAttributeService.create<Attribute>(transaction, Attribute2Point, savedAttribute.id, points);
       await this.asPointService.create(transaction, savedAttribute.id, asPoint);
+      await this.statusService.create<Attribute>(transaction, Attribute4Status, savedAttribute.id, status);
 
       return transaction.findOne(Attribute, {
         where: { id: savedAttribute.id },
-        relations: ['strings', 'points', 'asPoint'],
+        relations: ['strings', 'points', 'asPoint', 'statuses'],
       });
     });
 
@@ -123,7 +128,7 @@ export class AttributeController {
     @Body()
     data: AttributeInput,
   ): Promise<AttributeView> {
-    const { strings, points, asPoint, ...attributeData } = data;
+    const { strings, points, asPoint, status, ...attributeData } = data;
 
     const attribute = await this.dataSource.transaction(async transaction => {
       await transaction.update(Attribute, id, attributeData);
@@ -131,10 +136,11 @@ export class AttributeController {
       await this.stringAttributeService.update<Attribute>(transaction, Attribute2String, id, strings);
       await this.pointAttributeService.update<Attribute>(transaction, Attribute2Point, id, points);
       await this.asPointService.update(transaction, id, asPoint);
+      await this.statusService.update<Attribute>(transaction, Attribute4Status, id, status);
 
       return transaction.findOne(Attribute, {
         where: { id },
-        relations: ['strings', 'points', 'asPoint'],
+        relations: ['strings', 'points', 'asPoint', 'statuses'],
       });
     });
 

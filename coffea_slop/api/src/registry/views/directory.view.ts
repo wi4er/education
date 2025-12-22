@@ -1,13 +1,12 @@
-import { Entity2permissionView } from '../../common/views/entity2permission.view';
 import { BaseAttributesView } from '../../common/views/attributes.view';
+import { WithPermissionsView } from '../../common/views/with-permissions.view';
+import { WithStatusesView } from '../../common/views/with-statuses.view';
 
-export interface DirectoryView {
+export interface DirectoryView extends WithPermissionsView, WithStatusesView {
 
-  id: string;
   createdAt: Date;
   updatedAt: Date;
 
   attributes: BaseAttributesView;
-  permissions: Entity2permissionView[];
 
 }

@@ -12,6 +12,7 @@ import {
 import { Element2String } from './element2string.entity';
 import { Element2Point } from './element2point.entity';
 import { Element4Permission } from './element4permission.entity';
+import { Element4Status } from './element4status.entity';
 import { Element2Description } from './element2description.entity';
 import { Element4Section } from './element4section.entity';
 import { Element2Counter } from './element2counter.entity';
@@ -19,6 +20,7 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 import { Block } from '../block/block.entity';
 
 @Entity('content_element')
@@ -27,7 +29,8 @@ export class Element
   implements WithStrings<Element>,
     WithPoints<Element>,
     WithPermissions<Element>,
-    WithDescriptions<Element> {
+    WithDescriptions<Element>,
+    WithStatuses<Element> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -86,6 +89,12 @@ export class Element
     (elemCounter: Element2Counter) => elemCounter.parent,
   )
   counters: Element2Counter[];
+
+  @OneToMany(
+    () => Element4Status,
+    (elemStatus: Element4Status) => elemStatus.parent,
+  )
+  statuses: Element4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

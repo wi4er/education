@@ -29,7 +29,9 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 import { Section4Permission } from '../entities/section/section4permission.entity';
+import { Section4Status } from '../entities/section/section4status.entity';
 
 @Controller('section')
 export class SectionController {
@@ -43,6 +45,7 @@ export class SectionController {
     private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -60,7 +63,7 @@ export class SectionController {
         })) ?? [],
         points: section.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: section.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -69,8 +72,8 @@ export class SectionController {
         })) ?? [],
         counters: section.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },
@@ -78,6 +81,7 @@ export class SectionController {
         group: perm.groupId,
         method: perm.method,
       })) ?? [],
+      status: section.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -98,7 +102,7 @@ export class SectionController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -115,7 +119,7 @@ export class SectionController {
   ): Promise<SectionView> {
     const section = await this.sectionRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
     });
     return this.toView(section);
   }
@@ -126,7 +130,7 @@ export class SectionController {
     @Body()
     data: SectionInput,
   ): Promise<SectionView> {
-    const { strings, points, permissions, descriptions, counters, ...sectionData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...sectionData } = data;
 
     const section = await this.dataSource.transaction(async transaction => {
       const sec = transaction.create(Section, sectionData);
@@ -137,10 +141,11 @@ export class SectionController {
       await this.permissionService.create<Section>(transaction, Section4Permission, permissions, savedSection.id);
       await this.descriptionAttributeService.create<Section>(transaction, Section2Description, savedSection.id, descriptions);
       await this.counterAttributeService.create<Section>(transaction, Section2Counter, savedSection.id, counters);
+      await this.statusService.create<Section>(transaction, Section4Status, savedSection.id, status);
 
       return transaction.findOne(Section, {
         where: { id: savedSection.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 
@@ -157,7 +162,7 @@ export class SectionController {
     @Body()
     data: SectionInput,
   ): Promise<SectionView> {
-    const { strings, points, permissions, descriptions, counters, ...sectionData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...sectionData } = data;
 
     const section = await this.dataSource.transaction(async transaction => {
       await transaction.update(Section, id, sectionData);
@@ -167,10 +172,11 @@ export class SectionController {
       await this.permissionService.update<Section>(transaction, Section4Permission, id, permissions);
       await this.descriptionAttributeService.update<Section>(transaction, Section2Description, id, descriptions);
       await this.counterAttributeService.update<Section>(transaction, Section2Counter, id, counters);
+      await this.statusService.update<Section>(transaction, Section4Status, id, status);
 
       return transaction.findOne(Section, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 

@@ -1,8 +1,8 @@
 export interface Entity2counterView {
 
   attr: string;
-  point: string | null;
-  measure: string | null;
+  pnt: string | null;
+  msr: string | null;
   count: number;
 
 }

@@ -9,6 +9,7 @@ import {
 import { Form2String } from './form2string.entity';
 import { Form2Point } from './form2point.entity';
 import { Form4Permission } from './form4permission.entity';
+import { Form4Status } from './form4status.entity';
 import { Form2Description } from './form2description.entity';
 import { Form2Counter } from './form2counter.entity';
 import { Result } from '../result/result.entity';
@@ -16,13 +17,15 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('feedback_form')
 export class Form extends BaseEntity
   implements WithStrings<Form>,
     WithPoints<Form>,
     WithPermissions<Form>,
-    WithDescriptions<Form> {
+    WithDescriptions<Form>,
+    WithStatuses<Form> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -66,6 +69,12 @@ export class Form extends BaseEntity
     (formCounter: Form2Counter) => formCounter.parent,
   )
   counters: Form2Counter[];
+
+  @OneToMany(
+    () => Form4Status,
+    (formStatus: Form4Status) => formStatus.parent,
+  )
+  statuses: Form4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

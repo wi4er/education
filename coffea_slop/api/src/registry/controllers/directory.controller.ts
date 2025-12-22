@@ -21,11 +21,13 @@ import { Directory } from '../entities/directory/directory.entity';
 import { Directory2String } from '../entities/directory/directory2string.entity';
 import { Directory2Point } from '../entities/directory/directory2point.entity';
 import { Directory4Permission } from '../entities/directory/directory4permission.entity';
+import { Directory4Status } from '../entities/directory/directory4status.entity';
 import { DirectoryView } from '../views/directory.view';
 import { DirectoryInput } from '../inputs/directory.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { PermissionService } from '../../common/services/permission.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('directory')
 export class DirectoryController {
@@ -37,6 +39,7 @@ export class DirectoryController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly permissionService: PermissionService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -53,13 +56,14 @@ export class DirectoryController {
         })) ?? [],
         points: directory.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
       },
       permissions: directory.permissions?.map(perm => ({
         group: perm.groupId,
         method: perm.method,
       })) ?? [],
+      status: directory.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -80,7 +84,7 @@ export class DirectoryController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions'],
+      relations: ['strings', 'points', 'permissions', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -97,7 +101,7 @@ export class DirectoryController {
   ): Promise<DirectoryView> {
     const directory = await this.directoryRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions'],
+      relations: ['strings', 'points', 'permissions', 'statuses'],
     });
     return this.toView(directory);
   }
@@ -108,7 +112,7 @@ export class DirectoryController {
     @Body()
     data: DirectoryInput,
   ): Promise<DirectoryView> {
-    const { strings, points, permissions, ...directoryData } = data;
+    const { strings, points, permissions, status, ...directoryData } = data;
 
     const directory = await this.dataSource.transaction(async transaction => {
       const dir = transaction.create(Directory, directoryData);
@@ -117,10 +121,11 @@ export class DirectoryController {
       await this.stringAttributeService.create<Directory>(transaction, Directory2String, savedDirectory.id, strings);
       await this.pointAttributeService.create<Directory>(transaction, Directory2Point, savedDirectory.id, points);
       await this.permissionService.create<Directory>(transaction, Directory4Permission, permissions, savedDirectory.id);
+      await this.statusService.create<Directory>(transaction, Directory4Status, savedDirectory.id, status);
 
       return transaction.findOne(Directory, {
         where: { id: savedDirectory.id },
-        relations: ['strings', 'points', 'permissions'],
+        relations: ['strings', 'points', 'permissions', 'statuses'],
       });
     });
 
@@ -137,7 +142,7 @@ export class DirectoryController {
     @Body()
     data: DirectoryInput,
   ): Promise<DirectoryView> {
-    const { strings, points, permissions, ...directoryData } = data;
+    const { strings, points, permissions, status, ...directoryData } = data;
 
     const directory = await this.dataSource.transaction(async transaction => {
       await transaction.update(Directory, id, directoryData);
@@ -145,10 +150,11 @@ export class DirectoryController {
       await this.stringAttributeService.update<Directory>(transaction, Directory2String, id, strings);
       await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
       await this.permissionService.update<Directory>(transaction, Directory4Permission, id, permissions);
+      await this.statusService.update<Directory>(transaction, Directory4Status, id, status);
 
       return transaction.findOne(Directory, {
         where: { id },
-        relations: ['strings', 'points', 'permissions'],
+        relations: ['strings', 'points', 'permissions', 'statuses'],
       });
     });
 

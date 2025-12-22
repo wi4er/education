@@ -9,14 +9,16 @@ import {
 import { Group2String } from './group2string.entity';
 import { Group2Point } from './group2point.entity';
 import { Group2Description } from './group2description.entity';
+import { Group4Status } from './group4status.entity';
 import { User4Group } from '../user/user4group.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('personal_group')
 export class Group extends BaseEntity
-  implements WithStrings<Group>, WithPoints<Group>, WithDescriptions<Group> {
+  implements WithStrings<Group>, WithPoints<Group>, WithDescriptions<Group>, WithStatuses<Group> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -48,6 +50,12 @@ export class Group extends BaseEntity
     (user4group: User4Group) => user4group.group,
   )
   users: User4Group[];
+
+  @OneToMany(
+    () => Group4Status,
+    (groupStatus: Group4Status) => groupStatus.parent,
+  )
+  statuses: Group4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

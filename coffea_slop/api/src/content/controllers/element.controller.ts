@@ -21,7 +21,9 @@ import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { PermissionMethod } from '../../common/permission/permission.method';
 import { Element4Permission } from '../entities/element/element4permission.entity';
+import { Element4Status } from '../entities/element/element4status.entity';
 import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('element')
 export class ElementController {
@@ -36,6 +38,7 @@ export class ElementController {
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
     private readonly sectionService: SectionService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -53,7 +56,7 @@ export class ElementController {
         })) ?? [],
         points: element.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: element.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -62,8 +65,8 @@ export class ElementController {
         })) ?? [],
         counters: element.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },
@@ -72,6 +75,7 @@ export class ElementController {
         method: perm.method,
       })) ?? [],
       sections: element.sections?.map(e4s => e4s.sectionId) ?? [],
+      status: element.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -92,7 +96,7 @@ export class ElementController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -109,7 +113,7 @@ export class ElementController {
   ): Promise<ElementView> {
     const element = await this.elementRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
     });
     return this.toView(element);
   }
@@ -120,7 +124,7 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const { strings, points, permissions, descriptions, counters, sections, ...elementData } = data;
+    const { strings, points, permissions, descriptions, counters, sections, status, ...elementData } = data;
 
     const element = await this.dataSource.transaction(async transaction => {
       const el = transaction.create(Element, elementData);
@@ -132,10 +136,11 @@ export class ElementController {
       await this.descriptionAttributeService.create<Element>(transaction, Element2Description, savedElement.id, descriptions);
       await this.counterAttributeService.create<Element>(transaction, Element2Counter, savedElement.id, counters);
       await this.sectionService.create(transaction, savedElement.id, sections);
+      await this.statusService.create<Element>(transaction, Element4Status, savedElement.id, status);
 
       return transaction.findOne(Element, {
         where: { id: savedElement.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
       });
     });
 
@@ -152,7 +157,7 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const { strings, points, permissions, descriptions, counters, sections, ...elementData } = data;
+    const { strings, points, permissions, descriptions, counters, sections, status, ...elementData } = data;
 
     const element = await this.dataSource.transaction(async transaction => {
       await transaction.update(Element, id, elementData);
@@ -163,10 +168,11 @@ export class ElementController {
       await this.descriptionAttributeService.update<Element>(transaction, Element2Description, id, descriptions);
       await this.counterAttributeService.update<Element>(transaction, Element2Counter, id, counters);
       await this.sectionService.update(transaction, id, sections);
+      await this.statusService.update<Element>(transaction, Element4Status, id, status);
 
       return transaction.findOne(Element, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
       });
     });
 

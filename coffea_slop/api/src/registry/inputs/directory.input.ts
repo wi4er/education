@@ -4,9 +4,10 @@ import { CommonPermissionInput } from '../../common/inputs/common-permission.inp
 import { WithStringsInput } from '../../common/inputs/with-strings.input';
 import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { WithPermissionsInput } from '../../common/inputs/with-permissions.input';
+import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface DirectoryInput
-  extends WithStringsInput, WithPointsInput, WithPermissionsInput {
+  extends WithStringsInput, WithPointsInput, WithPermissionsInput, WithStatusesInput {
 
   id?: string;
 

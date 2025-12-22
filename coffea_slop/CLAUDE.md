@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Coffea Shop - a full-stack e-commerce platform for a coffee shop with three applications:
 - **API** (`api/`): NestJS backend with PostgreSQL
-- **Web** (`web/`): Next.js 16 customer-facing storefront
+- **Web** (`web/`): Next.js customer-facing storefront
 - **Admin** (`admin/`): React admin dashboard with Material-UI
 
 Each app has its own `CLAUDE.md` with detailed instructions.
@@ -34,7 +34,9 @@ docker compose down      # Stop all services
 
 **Environment:** Create `.env` in project root with `DATABASE_NAME` and `DATABASE_PASSWORD`.
 
-**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension when the database container starts.
+**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts.
+
+**Default admin credentials:** login `admin`, password `qwerty`
 
 ## Commands by App
 
@@ -67,9 +69,9 @@ npm run test     # Jest tests with React Testing Library
 
 NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
-**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`
+**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`, `exception/`
 
-**Main Entities:** `Attribute`, `Language`, `Directory`, `Point`, `Measure`, `User`, `Group`, `Block`, `Element`, `Section`, `Form`, `Result`
+**Main Entities:** `Attribute`, `Language`, `Status`, `Directory`, `Point`, `Measure`, `User`, `Group`, `Block`, `Element`, `Section`, `Form`, `Result`
 
 **Subordinate Entities:** Named `{Parent}2{Type}` (value attributes) or `{Parent}4{Type}` (relations):
 - `*2string` - string values with language support
@@ -77,6 +79,7 @@ NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 - `*2description` - text descriptions with language
 - `*2counter` - numeric counts with optional measure/point
 - `*4permission` - group-based permissions
+- `*4status` - status associations
 
 **Access Control (3 levels):**
 1. `@CheckId(Entity)` - Validates entity exists
@@ -87,7 +90,7 @@ NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
 ### Frontend (Web)
 
-Next.js 16 with App Router (`src/app/`):
+Next.js with App Router (`src/app/`):
 
 - `src/components/` - React components with folder structure: `index.ts`, `ComponentName.tsx`, `ComponentName.module.css`, optional `svg/`
 - `src/contexts/` - React context providers (`UserProvider`)

@@ -18,11 +18,13 @@ import { Group } from '../entities/group/group.entity';
 import { Group2String } from '../entities/group/group2string.entity';
 import { Group2Point } from '../entities/group/group2point.entity';
 import { Group2Description } from '../entities/group/group2description.entity';
+import { Group4Status } from '../entities/group/group4status.entity';
 import { GroupView } from '../views/group.view';
 import { GroupInput } from '../inputs/group.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('group')
 export class GroupController {
@@ -34,6 +36,7 @@ export class GroupController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -50,7 +53,7 @@ export class GroupController {
         })) ?? [],
         points: group.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: group.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -58,6 +61,7 @@ export class GroupController {
           value: desc.value,
         })) ?? [],
       },
+      status: group.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -70,7 +74,7 @@ export class GroupController {
     offset?: number,
   ): Promise<GroupView[]> {
     const groups = await this.groupRepository.find({
-      relations: ['strings', 'points', 'descriptions'],
+      relations: ['strings', 'points', 'descriptions', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -86,7 +90,7 @@ export class GroupController {
   ): Promise<GroupView> {
     const group = await this.groupRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'descriptions'],
+      relations: ['strings', 'points', 'descriptions', 'statuses'],
     });
     return this.toView(group);
   }
@@ -97,7 +101,7 @@ export class GroupController {
     @Body()
     data: GroupInput,
   ): Promise<GroupView> {
-    const { strings, points, descriptions, ...groupData } = data;
+    const { strings, points, descriptions, status, ...groupData } = data;
 
     const group = await this.dataSource.transaction(async transaction => {
       const g = transaction.create(Group, groupData);
@@ -106,10 +110,11 @@ export class GroupController {
       await this.stringAttributeService.create<Group>(transaction, Group2String, savedGroup.id, strings);
       await this.pointAttributeService.create<Group>(transaction, Group2Point, savedGroup.id, points);
       await this.descriptionAttributeService.create<Group>(transaction, Group2Description, savedGroup.id, descriptions);
+      await this.statusService.create<Group>(transaction, Group4Status, savedGroup.id, status);
 
       return transaction.findOne(Group, {
         where: { id: savedGroup.id },
-        relations: ['strings', 'points', 'descriptions'],
+        relations: ['strings', 'points', 'descriptions', 'statuses'],
       });
     });
 
@@ -125,7 +130,7 @@ export class GroupController {
     @Body()
     data: GroupInput,
   ): Promise<GroupView> {
-    const { strings, points, descriptions, ...groupData } = data;
+    const { strings, points, descriptions, status, ...groupData } = data;
 
     const group = await this.dataSource.transaction(async transaction => {
       await transaction.update(Group, id, groupData);
@@ -133,10 +138,11 @@ export class GroupController {
       await this.stringAttributeService.update<Group>(transaction, Group2String, id, strings);
       await this.pointAttributeService.update<Group>(transaction, Group2Point, id, points);
       await this.descriptionAttributeService.update<Group>(transaction, Group2Description, id, descriptions);
+      await this.statusService.update<Group>(transaction, Group4Status, id, status);
 
       return transaction.findOne(Group, {
         where: { id },
-        relations: ['strings', 'points', 'descriptions'],
+        relations: ['strings', 'points', 'descriptions', 'statuses'],
       });
     });
 

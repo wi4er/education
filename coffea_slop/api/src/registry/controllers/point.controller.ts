@@ -14,10 +14,12 @@ import { Repository, DataSource } from 'typeorm';
 import { Point } from '../entities/point/point.entity';
 import { Point2String } from '../entities/point/point2string.entity';
 import { Point2Point } from '../entities/point/point2point.entity';
+import { Point4Status } from '../entities/point/point4status.entity';
 import { PointView } from '../views/point.view';
 import { PointInput } from '../inputs/point.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('point')
 export class PointController {
@@ -28,6 +30,7 @@ export class PointController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -45,9 +48,10 @@ export class PointController {
         })) ?? [],
         points: point.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
       },
+      status: point.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -59,7 +63,7 @@ export class PointController {
     offset?: number,
   ): Promise<PointView[]> {
     const points = await this.pointRepository.find({
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -74,7 +78,7 @@ export class PointController {
   ): Promise<PointView> {
     const point = await this.pointRepository.findOne({
       where: { id },
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
     });
     return this.toView(point);
   }
@@ -84,7 +88,7 @@ export class PointController {
     @Body()
     data: PointInput,
   ): Promise<PointView> {
-    const { strings, points, ...pointData } = data;
+    const { strings, points, status, ...pointData } = data;
 
     const point = await this.dataSource.transaction(async transaction => {
       const pnt = transaction.create(Point, pointData);
@@ -92,10 +96,11 @@ export class PointController {
 
       await this.stringAttributeService.create<Point>(transaction, Point2String, savedPoint.id, strings);
       await this.pointAttributeService.create<Point>(transaction, Point2Point, savedPoint.id, points);
+      await this.statusService.create<Point>(transaction, Point4Status, savedPoint.id, status);
 
       return transaction.findOne(Point, {
         where: { id: savedPoint.id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 
@@ -110,17 +115,18 @@ export class PointController {
     @Body()
     data: PointInput,
   ): Promise<PointView> {
-    const { strings, points, ...pointData } = data;
+    const { strings, points, status, ...pointData } = data;
 
     const point = await this.dataSource.transaction(async transaction => {
       await transaction.update(Point, id, pointData);
 
       await this.stringAttributeService.update<Point>(transaction, Point2String, id, strings);
       await this.pointAttributeService.update<Point>(transaction, Point2Point, id, points);
+      await this.statusService.update<Point>(transaction, Point4Status, id, status);
 
       return transaction.findOne(Point, {
         where: { id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 

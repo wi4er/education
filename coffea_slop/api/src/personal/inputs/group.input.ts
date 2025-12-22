@@ -4,9 +4,10 @@ import { CommonDescriptionInput } from '../../common/inputs/common-description.i
 import { WithStringsInput } from '../../common/inputs/with-strings.input';
 import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.input';
+import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface GroupInput
-  extends WithStringsInput, WithPointsInput, WithDescriptionsInput {
+  extends WithStringsInput, WithPointsInput, WithDescriptionsInput, WithStatusesInput {
 
   id?: string;
 

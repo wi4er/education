@@ -36,30 +36,39 @@ export class StringAttributeService {
     const toUpdate: Array<{ id: number; value?: string }> = [];
     const toInsert: CommonStringInput[] = [];
 
-    const existingMap = new Map(
-      existing.map(e => [`${e.attributeId}:${e.languageId ?? ''}`, e]),
-    );
+    const existingByKey = new Map<string, Array<CommonStringEntity<T>>>();
+    for (const e of existing) {
+      const key = `${e.attributeId}:${e.languageId ?? ''}`;
+      if (!existingByKey.has(key)) existingByKey.set(key, []);
+      existingByKey.get(key)!.push(e);
+    }
 
-    const inputSet = new Set<string>();
-
+    const inputByKey = new Map<string, CommonStringInput[]>();
     for (const str of strings) {
       const key = `${str.attr}:${str.lang ?? ''}`;
-      inputSet.add(key);
+      if (!inputByKey.has(key)) inputByKey.set(key, []);
+      inputByKey.get(key)!.push(str);
+    }
 
-      const found = existingMap.get(key);
-      if (found) {
-        if (found.value !== (str.value ?? '')) {
-          toUpdate.push({ id: found.id, value: str.value });
+    for (const [key, existingItems] of existingByKey) {
+      const inputItems = inputByKey.get(key) || [];
+
+      for (let i = 0; i < existingItems.length; i++) {
+        if (i < inputItems.length) {
+          if (existingItems[i].value !== (inputItems[i].value ?? '')) {
+            toUpdate.push({ id: existingItems[i].id, value: inputItems[i].value });
+          }
+        } else {
+          toDelete.push(existingItems[i].id);
         }
-      } else {
-        toInsert.push(str);
       }
     }
 
-    for (const e of existing) {
-      const key = `${e.attributeId}:${e.languageId ?? ''}`;
-      if (!inputSet.has(key)) {
-        toDelete.push(e.id);
+    for (const [key, inputItems] of inputByKey) {
+      const existingItems = existingByKey.get(key) || [];
+
+      for (let i = existingItems.length; i < inputItems.length; i++) {
+        toInsert.push(inputItems[i]);
       }
     }
 

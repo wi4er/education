@@ -3,11 +3,14 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 export interface ActionsItem {
 
   title: string;
   onClick: () => void;
+  icon?: React.ReactNode;
 
 }
 
@@ -45,7 +48,10 @@ export function Actions(
                 setOpen(false);
               }}
               key={item.title}
-            >{item.title}</MenuItem>
+            >
+              {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+              <ListItemText>{item.title}</ListItemText>
+            </MenuItem>
           ))}
         </Menu>
       </>

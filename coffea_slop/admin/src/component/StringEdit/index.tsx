@@ -7,12 +7,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
 import { apiContext } from '../../context/ApiProvider';
-import { AttributeView, AttributeType } from '../../model/attribute.view';
+import { AttributeView, AttributeType, LanguageView } from '../../view';
 import Button from '@mui/material/Button';
-
-interface LanguageView {
-  id: string;
-}
 
 export interface StringInput {
   attr: string;
@@ -176,6 +172,10 @@ export function stringsToGrouped(items: Array<{lang: string; attr: string; value
 
 export function groupedToStrings(grouped: StringsByAttr): StringInput[] {
   const result: StringInput[] = [];
+
+
+  console.log(grouped);
+
   for (const attr of Object.keys(grouped)) {
     for (const lang of Object.keys(grouped[attr])) {
       for (const value of grouped[attr][lang]) {

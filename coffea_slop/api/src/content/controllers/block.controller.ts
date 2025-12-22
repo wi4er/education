@@ -29,7 +29,10 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 import { Block4Permission } from '../entities/block/block4permission.entity';
+import { Block4Status } from '../entities/block/block4status.entity';
+import { log } from 'node:util';
 
 @Controller('block')
 export class BlockController {
@@ -43,6 +46,7 @@ export class BlockController {
     private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -59,7 +63,7 @@ export class BlockController {
         })) ?? [],
         points: block.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: block.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -68,8 +72,8 @@ export class BlockController {
         })) ?? [],
         counters: block.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },
@@ -77,6 +81,7 @@ export class BlockController {
         group: perm.groupId,
         method: perm.method,
       })) ?? [],
+      status: block.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -97,7 +102,7 @@ export class BlockController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -114,7 +119,7 @@ export class BlockController {
   ): Promise<BlockView> {
     const block = await this.blockRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
     });
     return this.toView(block);
   }
@@ -125,7 +130,7 @@ export class BlockController {
     @Body()
     data: BlockInput,
   ): Promise<BlockView> {
-    const { strings, points, permissions, descriptions, counters, ...blockData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...blockData } = data;
 
     const block = await this.dataSource.transaction(async transaction => {
       const blk = transaction.create(Block, blockData);
@@ -136,10 +141,11 @@ export class BlockController {
       await this.permissionService.create<Block>(transaction, Block4Permission, permissions, savedBlock.id);
       await this.descriptionAttributeService.create<Block>(transaction, Block2Description, savedBlock.id, descriptions);
       await this.counterAttributeService.create<Block>(transaction, Block2Counter, savedBlock.id, counters);
+      await this.statusService.create<Block>(transaction, Block4Status, savedBlock.id, status);
 
       return transaction.findOne(Block, {
         where: { id: savedBlock.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 
@@ -156,7 +162,7 @@ export class BlockController {
     @Body()
     data: BlockInput,
   ): Promise<BlockView> {
-    const { strings, points, permissions, descriptions, counters, ...blockData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...blockData } = data;
 
     const block = await this.dataSource.transaction(async transaction => {
       await transaction.update(Block, id, blockData);
@@ -166,10 +172,11 @@ export class BlockController {
       await this.permissionService.update<Block>(transaction, Block4Permission, id, permissions);
       await this.descriptionAttributeService.update<Block>(transaction, Block2Description, id, descriptions);
       await this.counterAttributeService.update<Block>(transaction, Block2Counter, id, counters);
+      await this.statusService.update<Block>(transaction, Block4Status, id, status);
 
       return transaction.findOne(Block, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 

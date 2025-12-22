@@ -20,12 +20,14 @@ import { User2String } from '../entities/user/user2string.entity';
 import { User2Point } from '../entities/user/user2point.entity';
 import { User2Description } from '../entities/user/user2description.entity';
 import { User2Counter } from '../entities/user/user2counter.entity';
+import { User4Status } from '../entities/user/user4status.entity';
 import { UserView } from '../views/user.view';
 import { UserInput } from '../inputs/user.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('user')
 export class UserController {
@@ -38,6 +40,7 @@ export class UserController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -57,7 +60,7 @@ export class UserController {
         })) ?? [],
         points: user.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: user.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -66,11 +69,12 @@ export class UserController {
         })) ?? [],
         counters: user.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },
+      status: user.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -83,7 +87,7 @@ export class UserController {
     offset?: number,
   ): Promise<UserView[]> {
     const users = await this.userRepository.find({
-      relations: ['strings', 'points', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -100,7 +104,7 @@ export class UserController {
   ): Promise<UserView> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
     });
 
     return this.toView(user);
@@ -112,7 +116,7 @@ export class UserController {
     @Body()
     data: UserInput,
   ): Promise<UserView> {
-    const { strings, points, descriptions, counters, password, ...userData } = data;
+    const { strings, points, descriptions, counters, status, password, ...userData } = data;
 
     const user = await this.dataSource.transaction(async transaction => {
       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
@@ -123,10 +127,11 @@ export class UserController {
       await this.pointAttributeService.create<User>(transaction, User2Point, savedUser.id, points);
       await this.descriptionAttributeService.create<User>(transaction, User2Description, savedUser.id, descriptions);
       await this.counterAttributeService.create<User>(transaction, User2Counter, savedUser.id, counters);
+      await this.statusService.create<User>(transaction, User4Status, savedUser.id, status);
 
       return transaction.findOne(User, {
         where: { id: savedUser.id },
-        relations: ['strings', 'points', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
       });
     });
 
@@ -142,7 +147,7 @@ export class UserController {
     @Body()
     data: UserInput,
   ): Promise<UserView> {
-    const { strings, points, descriptions, counters, password, ...userData } = data;
+    const { strings, points, descriptions, counters, status, password, ...userData } = data;
 
     const user = await this.dataSource.transaction(async transaction => {
       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
@@ -153,10 +158,11 @@ export class UserController {
       await this.pointAttributeService.update<User>(transaction, User2Point, id, points);
       await this.descriptionAttributeService.update<User>(transaction, User2Description, id, descriptions);
       await this.counterAttributeService.update<User>(transaction, User2Counter, id, counters);
+      await this.statusService.update<User>(transaction, User4Status, id, status);
 
       return transaction.findOne(User, {
         where: { id },
-        relations: ['strings', 'points', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
       });
     });
 

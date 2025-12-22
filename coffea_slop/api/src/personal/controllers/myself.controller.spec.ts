@@ -197,7 +197,7 @@ describe('MyselfController', () => {
       expect(response.body.attributes.points).toHaveLength(1);
       expect(response.body.attributes.points[0]).toEqual({
         attr: 'location',
-        point: 'city-1',
+        pnt: 'city-1',
       });
     });
 
@@ -241,8 +241,8 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0]).toEqual({
         attr: 'age',
-        point: null,
-        measure: null,
+        pnt: null,
+        msr: null,
         count: 25,
       });
     });
@@ -267,8 +267,8 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0]).toEqual({
         attr: 'score',
-        point: 'category-1',
-        measure: 'points',
+        pnt: 'category-1',
+        msr: 'points',
         count: 100,
       });
     });
@@ -364,8 +364,8 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0]).toEqual({
         attr: 'age',
-        point: null,
-        measure: null,
+        pnt: null,
+        msr: null,
         count: 30,
       });
     });
@@ -447,8 +447,8 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0]).toEqual({
         attr: 'score',
-        point: null,
-        measure: 'points',
+        pnt: null,
+        msr: 'points',
         count: 100,
       });
     });

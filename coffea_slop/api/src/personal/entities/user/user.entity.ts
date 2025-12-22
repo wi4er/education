@@ -12,16 +12,19 @@ import { User2Point } from './user2point.entity';
 import { User2Description } from './user2description.entity';
 import { User2Counter } from './user2counter.entity';
 import { User4Group } from './user4group.entity';
+import { User4Status } from './user4status.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('personal_user')
 export class User
   extends BaseEntity
   implements WithStrings<User>,
     WithPoints<User>,
-    WithDescriptions<User> {
+    WithDescriptions<User>,
+    WithStatuses<User> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -71,6 +74,12 @@ export class User
     (userCounter: User2Counter) => userCounter.parent,
   )
   counters: User2Counter[];
+
+  @OneToMany(
+    () => User4Status,
+    (userStatus: User4Status) => userStatus.parent,
+  )
+  statuses: User4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, SetMetadata } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -43,7 +43,8 @@ export class CheckIdPermissionGuard implements CanActivate {
     if (!token) return [];
 
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify(token, {secret: process.env.JWT_SECRET});
+
       return payload.groups ?? [];
     } catch {
       return [];
@@ -75,7 +76,10 @@ export class CheckIdPermissionGuard implements CanActivate {
     const userGroups = this.getUserGroups(request);
 
     const hasPermission = found.permissions?.some(
-      perm => perm.method === method && (
+      perm => (
+        perm.method === method
+        || perm.method === PermissionMethod.ALL
+      ) && (
         perm.groupId === null
         || perm.groupId === undefined
         || userGroups.includes(perm.groupId)

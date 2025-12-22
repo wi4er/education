@@ -11,15 +11,18 @@ import {
 } from 'typeorm';
 import { Point2String } from './point2string.entity';
 import { Point2Point } from './point2point.entity';
+import { Point4Status } from './point4status.entity';
 import { Directory } from '../directory/directory.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_point')
 export class Point
   extends BaseEntity
   implements WithStrings<Point>,
-    WithPoints<Point> {
+    WithPoints<Point>,
+    WithStatuses<Point> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -54,6 +57,12 @@ export class Point
     (pointPoint: Point2Point) => pointPoint.parent,
   )
   points: Point2Point[];
+
+  @OneToMany(
+    () => Point4Status,
+    (pointStatus: Point4Status) => pointStatus.parent,
+  )
+  statuses: Point4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

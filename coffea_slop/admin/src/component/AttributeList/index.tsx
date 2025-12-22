@@ -1,12 +1,17 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { AttributeView } from '../../model/attribute.view';
+import { AttributeView, StatusView } from '../../view';
 import { apiContext } from '../../context/ApiProvider';
+import { getStringValue, getStringColumns, Column } from '../../service/string.service';
+import { getPointValue, getPointColumns } from '../../service/point.service';
+import { getStatusValue, getStatusColumns, StatusColumn } from '../../service/status.service';
 import { AttributeForm } from '../AttributeForm';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,52 +20,35 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Actions } from '../../widget/Actions';
+import * as Icons from '@mui/icons-material';
 
-interface Column {
-  id: string;
-  label: string;
-  minWidth?: number;
-  align?: 'right';
-}
+const IconComponent = ({ name, color }: { name: string | null; color?: string | null }) => {
+  if (!name) return null;
+  const Icon = (Icons as Record<string, React.ComponentType<{ sx?: object }>>)[name];
+  return Icon ? <Icon sx={color ? { color } : undefined} /> : null;
+};
 
 const baseColumns: readonly Column[] = [
-  {id: 'id', label: 'ID', minWidth: 170},
-  {id: 'type', label: 'Type', minWidth: 100},
+  { id: 'id', label: 'ID', minWidth: 170 },
+  { id: 'type', label: 'Type', minWidth: 100 },
 ];
-
-function getAttrColumns(list: AttributeView[]): Column[] {
-  const attrSet = new Set<string>();
-  for (const row of list) {
-    for (const s of row.attributes?.strings || []) {
-      attrSet.add(s.attr);
-    }
-  }
-  return Array.from(attrSet).sort().map(attr => ({
-    id: `attr:${attr}`,
-    label: attr,
-    minWidth: 120,
-  }));
-}
-
-function getAttrValue(row: AttributeView, attrId: string): string {
-  const strings = row.attributes?.strings || [];
-  const values = strings
-    .filter(s => s.attr === attrId)
-    .map(s => `${s.lang}: ${s.value}`);
-  return values.join(', ');
-}
 
 export function AttributeList() {
   const {getList, deleteItem} = useContext(apiContext);
   const [list, setList] = useState<Array<AttributeView>>([]);
+  const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
 
+  const statusColumns = useMemo(() => getStatusColumns(list, statuses), [list, statuses]);
+
   const columns = useMemo(() => [
     ...baseColumns,
-    ...getAttrColumns(list),
-  ], [list]);
+    ...statusColumns,
+    ...getStringColumns(list),
+    ...getPointColumns(list),
+  ], [list, statuses, statusColumns]);
 
   function refreshData() {
     getList<AttributeView>('attribute')
@@ -68,7 +56,12 @@ export function AttributeList() {
       .catch(() => setList([]));
   }
 
-  useEffect(() => refreshData(), []);
+  useEffect(() => {
+    refreshData();
+    getList<StatusView>('status')
+      .then(data => setStatuses(data))
+      .catch(() => setStatuses([]));
+  }, []);
 
   return (
     <div>
@@ -119,10 +112,12 @@ export function AttributeList() {
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   <TableCell key={'actions'}>
                     <Actions list={[{
-                      title: 'edit',
+                      title: 'Edit',
+                      icon: <EditIcon fontSize="small"/>,
                       onClick: () => setEdit(row.id),
                     }, {
-                      title: 'delete',
+                      title: 'Delete',
+                      icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
                         deleteItem(`attribute/${row.id}`)
                           .then(() => refreshData());
@@ -130,10 +125,26 @@ export function AttributeList() {
                     }]}/>
                   </TableCell>
 
-                  {columns.map((column) => {
+                  {columns.map(column => {
+                    if (column.id.startsWith('sts:')) {
+                      const statusId = column.id.slice(4);
+                      const hasStatus = getStatusValue(row, statusId);
+                      const statusCol = statusColumns.find(c => c.id === column.id);
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {hasStatus && (statusCol?.icon
+                            ? <IconComponent name={statusCol.icon} color={statusCol.color} />
+                            : <Box component="span" sx={statusCol?.color ? { color: statusCol.color } : undefined}>✓</Box>
+                          )}
+                        </TableCell>
+                      );
+                    }
+
                     let displayValue: string;
-                    if (column.id.startsWith('attr:')) {
-                      displayValue = getAttrValue(row, column.id.slice(5));
+                    if (column.id.startsWith('str:')) {
+                      displayValue = getStringValue(row, column.id.slice(4));
+                    } else if (column.id.startsWith('pnt:')) {
+                      displayValue = getPointValue(row, column.id.slice(4));
                     } else {
                       const value = row[column.id as keyof AttributeView];
                       displayValue = value instanceof Date

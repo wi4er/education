@@ -17,10 +17,12 @@ import { Repository, DataSource } from 'typeorm';
 import { Language } from '../entities/language/language.entity';
 import { Language2String } from '../entities/language/language2string.entity';
 import { Language2Point } from '../entities/language/language2point.entity';
+import { Language4Status } from '../entities/language/language4status.entity';
 import { LanguageView } from '../views/language.view';
 import { LanguageInput } from '../inputs/language.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('language')
 export class LanguageController {
@@ -31,6 +33,7 @@ export class LanguageController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -47,9 +50,10 @@ export class LanguageController {
         })) ?? [],
         points: language.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
       },
+      status: language.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -62,7 +66,7 @@ export class LanguageController {
     offset?: number,
   ): Promise<LanguageView[]> {
     const languages = await this.languageRepository.find({
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -78,7 +82,7 @@ export class LanguageController {
   ): Promise<LanguageView> {
     const language = await this.languageRepository.findOne({
       where: { id },
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
     });
     return this.toView(language);
   }
@@ -89,7 +93,7 @@ export class LanguageController {
     @Body()
     data: LanguageInput,
   ): Promise<LanguageView> {
-    const { strings, points, ...languageData } = data;
+    const { strings, points, status, ...languageData } = data;
 
     const language = await this.dataSource.transaction(async transaction => {
       const lng = transaction.create(Language, languageData);
@@ -97,10 +101,11 @@ export class LanguageController {
 
       await this.stringAttributeService.create<Language>(transaction, Language2String, savedLanguage.id, strings);
       await this.pointAttributeService.create<Language>(transaction, Language2Point, savedLanguage.id, points);
+      await this.statusService.create<Language>(transaction, Language4Status, savedLanguage.id, status);
 
       return transaction.findOne(Language, {
         where: { id: savedLanguage.id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 
@@ -116,17 +121,18 @@ export class LanguageController {
     @Body()
     data: LanguageInput,
   ): Promise<LanguageView> {
-    const { strings, points, ...languageData } = data;
+    const { strings, points, status, ...languageData } = data;
 
     const language = await this.dataSource.transaction(async transaction => {
       await transaction.update(Language, id, languageData);
 
       await this.stringAttributeService.update<Language>(transaction, Language2String, id, strings);
       await this.pointAttributeService.update<Language>(transaction, Language2Point, id, points);
+      await this.statusService.update<Language>(transaction, Language4Status, id, status);
 
       return transaction.findOne(Language, {
         where: { id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 

@@ -32,40 +32,32 @@ export class PointAttributeService {
     const existing = await transaction.find(pointClass, { where: { parentId } as any });
 
     const toDelete: number[] = [];
-    const toUpdate: Array<{ id: number; pointId: string }> = [];
     const toInsert: CommonPointInput[] = [];
 
     const existingMap = new Map(
-      existing.map(e => [e.attributeId, e]),
+      existing.map(e => [`${e.attributeId}:${e.pointId}`, e]),
     );
 
     const inputSet = new Set<string>();
 
     for (const pnt of points) {
-      inputSet.add(pnt.attr);
+      const key = `${pnt.attr}:${pnt.pnt}`;
+      inputSet.add(key);
 
-      const found = existingMap.get(pnt.attr);
-      if (found) {
-        if (found.pointId !== pnt.pnt) {
-          toUpdate.push({ id: found.id, pointId: pnt.pnt });
-        }
-      } else {
+      if (!existingMap.has(key)) {
         toInsert.push(pnt);
       }
     }
 
     for (const e of existing) {
-      if (!inputSet.has(e.attributeId)) {
+      const key = `${e.attributeId}:${e.pointId}`;
+      if (!inputSet.has(key)) {
         toDelete.push(e.id);
       }
     }
 
     if (toDelete.length > 0) {
       await transaction.delete(pointClass, toDelete);
-    }
-
-    for (const upd of toUpdate) {
-      await transaction.update(pointClass, upd.id, { pointId: upd.pointId } as any);
     }
 
     if (toInsert.length > 0) {

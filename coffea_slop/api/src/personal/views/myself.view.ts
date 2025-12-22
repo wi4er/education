@@ -1,4 +1,4 @@
-import { UserAttributesView } from './user.view';
+import { FullAttributesView } from '../../common/views/attributes.view';
 
 export interface MyselfView {
 
@@ -9,6 +9,6 @@ export interface MyselfView {
   createdAt: Date;
   updatedAt: Date;
 
-  attributes: UserAttributesView;
+  attributes: FullAttributesView;
 
 }

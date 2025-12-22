@@ -12,6 +12,7 @@ import {
 import { Section2String } from './section2string.entity';
 import { Section2Point } from './section2point.entity';
 import { Section4Permission } from './section4permission.entity';
+import { Section4Status } from './section4status.entity';
 import { Section2Description } from './section2description.entity';
 import { Section2Counter } from './section2counter.entity';
 import { Element4Section } from '../element/element4section.entity';
@@ -19,6 +20,7 @@ import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 import { Block } from '../block/block.entity';
 
 @Entity('content_section')
@@ -27,7 +29,8 @@ export class Section
   implements WithStrings<Section>,
     WithPoints<Section>,
     WithPermissions<Section>,
-    WithDescriptions<Section> {
+    WithDescriptions<Section>,
+    WithStatuses<Section> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -86,6 +89,12 @@ export class Section
 
   @Column({ type: 'varchar', length: 32, nullable: true })
   parentId: string;
+
+  @OneToMany(
+    () => Section4Status,
+    (sectStatus: Section4Status) => sectStatus.parent,
+  )
+  statuses: Section4Status[];
 
   @CreateDateColumn()
   createdAt: Date;

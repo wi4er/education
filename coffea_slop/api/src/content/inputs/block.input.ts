@@ -7,9 +7,14 @@ import { WithStringsInput } from '../../common/inputs/with-strings.input';
 import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { WithPermissionsInput } from '../../common/inputs/with-permissions.input';
 import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.input';
+import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface BlockInput
-  extends WithStringsInput, WithPointsInput, WithPermissionsInput, WithDescriptionsInput {
+  extends WithStringsInput,
+    WithPointsInput,
+    WithPermissionsInput,
+    WithDescriptionsInput,
+    WithStatusesInput {
 
   id?: string;
 

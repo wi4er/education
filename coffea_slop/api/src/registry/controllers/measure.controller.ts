@@ -17,10 +17,12 @@ import { Repository, DataSource } from 'typeorm';
 import { Measure } from '../entities/measure/measure.entity';
 import { Measure2String } from '../entities/measure/measure2string.entity';
 import { Measure2Point } from '../entities/measure/measure2point.entity';
+import { Measure4Status } from '../entities/measure/measure4status.entity';
 import { MeasureView } from '../views/measure.view';
 import { MeasureInput } from '../inputs/measure.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('measure')
 export class MeasureController {
@@ -31,6 +33,7 @@ export class MeasureController {
     private readonly dataSource: DataSource,
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
+    private readonly statusService: StatusService,
   ) {}
 
   toView(measure: Measure): MeasureView {
@@ -46,9 +49,10 @@ export class MeasureController {
         })) ?? [],
         points: measure.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
       },
+      status: measure.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -61,7 +65,7 @@ export class MeasureController {
     offset?: number,
   ): Promise<MeasureView[]> {
     const measures = await this.measureRepository.find({
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -74,7 +78,7 @@ export class MeasureController {
   async findOne(@Param('id') id: string): Promise<MeasureView> {
     const measure = await this.measureRepository.findOne({
       where: { id },
-      relations: ['strings', 'points'],
+      relations: ['strings', 'points', 'statuses'],
     });
 
     return this.toView(measure);
@@ -85,7 +89,7 @@ export class MeasureController {
   async create(
     @Body() data: MeasureInput
   ): Promise<MeasureView> {
-    const { strings, points, ...measureData } = data;
+    const { strings, points, status, ...measureData } = data;
 
     const measure = await this.dataSource.transaction(async transaction => {
       const m = transaction.create(Measure, measureData);
@@ -93,10 +97,11 @@ export class MeasureController {
 
       await this.stringAttributeService.create<Measure>(transaction, Measure2String, savedMeasure.id, strings);
       await this.pointAttributeService.create<Measure>(transaction, Measure2Point, savedMeasure.id, points);
+      await this.statusService.create<Measure>(transaction, Measure4Status, savedMeasure.id, status);
 
       return transaction.findOne(Measure, {
         where: { id: savedMeasure.id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 
@@ -112,17 +117,18 @@ export class MeasureController {
     @Body()
     data: MeasureInput,
   ): Promise<MeasureView> {
-    const { strings, points, ...measureData } = data;
+    const { strings, points, status, ...measureData } = data;
 
     const measure = await this.dataSource.transaction(async transaction => {
       await transaction.update(Measure, id, measureData);
 
       await this.stringAttributeService.update<Measure>(transaction, Measure2String, id, strings);
       await this.pointAttributeService.update<Measure>(transaction, Measure2Point, id, points);
+      await this.statusService.update<Measure>(transaction, Measure4Status, id, status);
 
       return transaction.findOne(Measure, {
         where: { id },
-        relations: ['strings', 'points'],
+        relations: ['strings', 'points', 'statuses'],
       });
     });
 

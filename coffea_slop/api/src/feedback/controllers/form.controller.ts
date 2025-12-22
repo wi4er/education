@@ -30,6 +30,8 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { StatusService } from '../../common/services/status.service';
+import { Form4Status } from '../entities/form/form4status.entity';
 
 @Controller('form')
 export class FormController {
@@ -43,6 +45,7 @@ export class FormController {
     private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly statusService: StatusService,
   ) {
   }
 
@@ -59,7 +62,7 @@ export class FormController {
         })) ?? [],
         points: form.points?.map(pnt => ({
           attr: pnt.attributeId,
-          point: pnt.pointId,
+          pnt: pnt.pointId,
         })) ?? [],
         descriptions: form.descriptions?.map(desc => ({
           lang: desc.languageId,
@@ -68,8 +71,8 @@ export class FormController {
         })) ?? [],
         counters: form.counters?.map(cnt => ({
           attr: cnt.attributeId,
-          point: cnt.pointId,
-          measure: cnt.measureId,
+          pnt: cnt.pointId,
+          msr: cnt.measureId,
           count: cnt.count,
         })) ?? [],
       },
@@ -77,6 +80,7 @@ export class FormController {
         group: perm.groupId,
         method: perm.method,
       })) ?? [],
+      status: form.statuses?.map(s => s.statusId) ?? [],
     };
   }
 
@@ -97,7 +101,7 @@ export class FormController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       take: limit,
       skip: offset,
     });
@@ -114,7 +118,7 @@ export class FormController {
   ): Promise<FormView> {
     const form = await this.formRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
     });
     return this.toView(form);
   }
@@ -125,7 +129,7 @@ export class FormController {
     @Body()
     data: FormInput,
   ): Promise<FormView> {
-    const { strings, points, permissions, descriptions, counters, ...formData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...formData } = data;
 
     const form = await this.dataSource.transaction(async transaction => {
       const frm = transaction.create(Form, formData);
@@ -136,10 +140,11 @@ export class FormController {
       await this.permissionService.create<Form>(transaction, Form4Permission, permissions, savedForm.id);
       await this.descriptionAttributeService.create<Form>(transaction, Form2Description, savedForm.id, descriptions);
       await this.counterAttributeService.create<Form>(transaction, Form2Counter, savedForm.id, counters);
+      await this.statusService.create<Form>(transaction, Form4Status, savedForm.id, status);
 
       return transaction.findOne(Form, {
         where: { id: savedForm.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 
@@ -156,7 +161,7 @@ export class FormController {
     @Body()
     data: FormInput,
   ): Promise<FormView> {
-    const { strings, points, permissions, descriptions, counters, ...formData } = data;
+    const { strings, points, permissions, descriptions, counters, status, ...formData } = data;
 
     const form = await this.dataSource.transaction(async transaction => {
       await transaction.update(Form, id, formData);
@@ -166,10 +171,11 @@ export class FormController {
       await this.permissionService.update<Form>(transaction, Form4Permission, id, permissions);
       await this.descriptionAttributeService.update<Form>(transaction, Form2Description, id, descriptions);
       await this.counterAttributeService.update<Form>(transaction, Form2Counter, id, counters);
+      await this.statusService.update<Form>(transaction, Form4Status, id, status);
 
       return transaction.findOne(Form, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters'],
+        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
       });
     });
 
