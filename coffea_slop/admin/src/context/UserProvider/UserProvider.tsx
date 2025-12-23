@@ -1,6 +1,6 @@
 import { ReactNode, useContext, useState, useEffect } from 'react';
 import { apiContext } from '../ApiProvider';
-import { AuthForm } from '../../component/AuthForm';
+import { AuthForm } from '../../component/personal/AuthForm';
 import { userContext, SignInEntity } from './UserData';
 
 export function UserProvider(

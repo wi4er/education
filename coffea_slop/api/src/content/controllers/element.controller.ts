@@ -26,7 +26,12 @@ import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 import { SectionService } from '../services/section.service';
-import { ElementFilter, ElementFilterService } from '../services/element-filter.service';
+import {
+  ElementFilterService,
+  StringFilter,
+  PointFilter,
+  CounterFilter,
+} from '../services/element-filter.service';
 import { ElementSortService } from '../services/element-sort.service';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
@@ -110,8 +115,12 @@ export class ElementController {
     order?: string,
     @Query('orderDir')
     orderDir?: 'ASC' | 'DESC',
-    @Query('filter')
-    filterParam?: string,
+    @Query('string')
+    stringFilters?: StringFilter[],
+    @Query('point')
+    pointFilters?: PointFilter[],
+    @Query('counter')
+    counterFilters?: CounterFilter[],
   ): Promise<ElementView[]> {
     const qb = this.elementRepository
       .createQueryBuilder('element')
@@ -130,13 +139,9 @@ export class ElementController {
         methods: [PermissionMethod.READ, PermissionMethod.ALL],
       });
 
-    if (filterParam) {
-      const filter: ElementFilter = JSON.parse(filterParam);
-
-      this.elementFilterService.applyStringFilters(qb, filter.strings);
-      this.elementFilterService.applyPointFilters(qb, filter.points);
-      this.elementFilterService.applyCounterFilters(qb, filter.counters);
-    }
+    this.elementFilterService.applyStringFilters(qb, stringFilters);
+    this.elementFilterService.applyPointFilters(qb, pointFilters);
+    this.elementFilterService.applyCounterFilters(qb, counterFilters);
 
     if (order) {
       const direction = orderDir === 'DESC' ? 'DESC' : 'ASC';

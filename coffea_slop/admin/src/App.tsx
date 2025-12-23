@@ -3,15 +3,18 @@ import './App.module.css';
 import { ApiProvider } from './context/ApiProvider';
 import { UserProvider } from './context/UserProvider';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { CommonLayout } from './component/CommonLayout';
-import { Dashboard } from './component/Dashboard';
-import { UserList } from './component/UserList';
-import { AttributeList } from './component/AttributeList';
-import { LanguageList } from './component/LanguageList';
-import { StatusList } from './component/StatusList';
-import { BlockList } from './component/BlockList';
-import { ElementList } from './component/ElementList';
-import { SectionList } from './component/SectionList';
+import { CommonLayout } from './component/common/CommonLayout';
+import { Dashboard } from './component/common/Dashboard';
+import { UserList } from './component/personal/UserList';
+import { AttributeList } from './component/settings/AttributeList';
+import { LanguageList } from './component/settings/LanguageList';
+import { StatusList } from './component/settings/StatusList';
+import { BlockList } from './component/content/BlockList';
+import { BlockDetail } from './component/content/BlockDetail';
+import { DirectoryList } from './component/registry/DirectoryList';
+import { DirectoryDetail } from './component/registry/DirectoryDetail';
+import { FormList } from './component/feedback/FormList';
+import { FormDetail } from './component/feedback/FormDetail';
 
 function App() {
   return (
@@ -26,8 +29,11 @@ function App() {
               <Route path={'/languages'} element={<LanguageList />} />
               <Route path={'/statuses'} element={<StatusList />} />
               <Route path={'/blocks'} element={<BlockList />} />
-              <Route path={'/elements'} element={<ElementList />} />
-              <Route path={'/sections'} element={<SectionList />} />
+              <Route path={'/blocks/:id'} element={<BlockDetail />} />
+              <Route path={'/directories'} element={<DirectoryList />} />
+              <Route path={'/directories/:id'} element={<DirectoryDetail />} />
+              <Route path={'/forms'} element={<FormList />} />
+              <Route path={'/forms/:id'} element={<FormDetail />} />
             </Routes>
           </CommonLayout>
         </BrowserRouter>

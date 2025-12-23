@@ -50,6 +50,19 @@ Routes defined in `App.tsx` with `basename="/admin/"`:
 - `/` → Dashboard
 - `/users` → UserList
 - `/attributes` → AttributeList
+- `/languages` → LanguageList
+- `/statuses` → StatusList
+- `/blocks` → BlockList
+- `/elements` → ElementList
+- `/sections` → SectionList
+
+### Services
+
+Helper functions in `src/service/` for dynamic column generation and value extraction:
+- `string.service.ts` - `getStringColumns`, `getStringValue`, `Column` interface
+- `point.service.ts` - `getPointColumns`, `getPointValue`
+- `description.service.ts` - `getDescriptionColumns`, `getDescriptionValue`
+- `status.service.ts` - `getStatusColumns`, `getStatusValue`, `StatusColumn` interface
 
 ## Patterns
 

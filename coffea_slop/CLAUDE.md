@@ -28,11 +28,16 @@ docker compose down      # Stop all services
 
 **Direct service ports (bypass nginx):**
 - PostgreSQL: `localhost:5432`
-- API: `localhost:3020`
+- API: `localhost:3020` (container runs on 3000, mapped to 3020)
 - Web: `localhost:3030`
 - Admin: `localhost:3010`
 
-**Environment:** Create `.env` in project root with `DATABASE_NAME`, `DATABASE_PASSWORD`, and `JWT_SECRET`.
+**Environment:** Create `.env` in project root:
+```
+DATABASE_NAME=coffea
+DATABASE_PASSWORD=your_password
+JWT_SECRET=your_secret
+```
 
 **First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts.
 
@@ -40,13 +45,15 @@ docker compose down      # Stop all services
 
 ## Commands by App
 
+Commands can run inside Docker containers or locally. Docker containers auto-start in watch mode.
+
 ### API (`cd api`)
 ```bash
 npm run start:dev                                    # Watch mode
 npm run test                                         # Unit tests
-npm run test -- --testPathPattern="<pattern>"        # Single test
+npm run test -- --testPathPattern="<pattern>"        # Single test file
 npm run test:e2e                                     # E2E tests
-npm run lint                                         # ESLint
+npm run lint                                         # ESLint with auto-fix
 ```
 
 ### Web (`cd web`)
@@ -60,7 +67,8 @@ npm run lint     # ESLint
 ```bash
 npm start        # Development server (localhost:3010 via Docker, or 3000 locally)
 npm run build    # Production build (served at /admin/)
-npm run test     # Jest tests with React Testing Library
+npm run test     # Jest tests in watch mode
+npm run test -- --watchAll=false                     # Run tests once
 ```
 
 ## Architecture
@@ -69,7 +77,7 @@ npm run test     # Jest tests with React Testing Library
 
 NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
-**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`, `exception/`
+**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`
 
 **Main Entities:** `Attribute`, `Language`, `Status`, `Directory`, `Point`, `Measure`, `User`, `Group`, `Block`, `Element`, `Section`, `Form`, `Result`
 
@@ -133,3 +141,4 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 **Admin:**
 - Default exports in `index.tsx` files
 - API calls via `useContext(apiContext)` with methods: `getList`, `getItem`, `postItem`, `putItem`, `deleteItem`
+- Material-UI components from `@mui/material` and `@mui/icons-material`

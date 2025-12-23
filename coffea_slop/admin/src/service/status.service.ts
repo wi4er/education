@@ -1,5 +1,5 @@
 import { Column } from './string.service';
-import { StatusView } from '../view';
+import { StatusView } from '../component/settings/view';
 import { getStringValue } from './string.service';
 
 interface WithStatus {

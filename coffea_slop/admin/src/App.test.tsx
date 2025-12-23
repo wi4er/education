@@ -3,8 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { ApiProvider } from './context/ApiProvider';
 import { UserProvider } from './context/UserProvider';
-import { CommonLayout } from './component/CommonLayout';
-import { Dashboard } from './component/Dashboard';
+import { CommonLayout } from './component/common/CommonLayout';
+import { Dashboard } from './component/common/Dashboard';
 
 beforeEach(() => {
   global.fetch = jest.fn(() =>

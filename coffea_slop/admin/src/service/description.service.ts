@@ -1,4 +1,4 @@
-import { AttributesView } from '../view';
+import { AttributesView } from '../component/common/view';
 import { Column } from './string.service';
 
 interface WithAttributes {

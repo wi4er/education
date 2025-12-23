@@ -16,9 +16,9 @@ export interface PointFilter {
 
 export interface CounterFilter {
   attr: string;
-  min?: number;
-  max?: number;
-  eq?: number;
+  min?: number | string;
+  max?: number | string;
+  eq?: number | string;
 }
 
 export interface ElementFilter {
@@ -93,15 +93,15 @@ export class ElementFilterService {
 
       if (cf.eq !== undefined) {
         conditions.push(`${alias}.count = :${alias}_eq`);
-        params[`${alias}_eq`] = cf.eq;
+        params[`${alias}_eq`] = Number(cf.eq);
       }
       if (cf.min !== undefined) {
         conditions.push(`${alias}.count >= :${alias}_min`);
-        params[`${alias}_min`] = cf.min;
+        params[`${alias}_min`] = Number(cf.min);
       }
       if (cf.max !== undefined) {
         conditions.push(`${alias}.count <= :${alias}_max`);
-        params[`${alias}_max`] = cf.max;
+        params[`${alias}_max`] = Number(cf.max);
       }
 
       qb.innerJoin('element.counters', alias, conditions.join(' AND '), params);

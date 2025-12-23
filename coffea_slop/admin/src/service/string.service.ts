@@ -1,4 +1,4 @@
-import { BaseAttributesView } from '../view';
+import { BaseAttributesView } from '../component/common/view';
 
 interface WithAttributes {
   attributes?: BaseAttributesView;

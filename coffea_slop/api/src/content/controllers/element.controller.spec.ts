@@ -369,11 +369,9 @@ describe('ElementController', () => {
           value: 'Espresso',
         });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', value: 'Latte' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'string[0][attr]': 'name', 'string[0][value]': 'Latte' })
           .expect(200);
 
         expect(response.body).toHaveLength(1);
@@ -399,11 +397,9 @@ describe('ElementController', () => {
         });
         await repo(Element2String).save({ parentId: 'element-3', attributeId: 'name', value: 'Mocha' });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', like: 'Latte' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'string[0][attr]': 'name', 'string[0][like]': 'Latte' })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
@@ -437,11 +433,13 @@ describe('ElementController', () => {
           value: 'Чай',
         });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', lang: 'en', value: 'Coffee' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({
+            'string[0][attr]': 'name',
+            'string[0][lang]': 'en',
+            'string[0][value]': 'Coffee',
+          })
           .expect(200);
 
         expect(response.body).toHaveLength(1);
@@ -457,27 +455,13 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
-        await repo(Element2Point).save({
-          parentId: 'element-1',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-2',
-          attributeId: 'category',
-          pointId: 'tea',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-3',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
+        await repo(Element2Point).save({ parentId: 'element-1', attributeId: 'category', pointId: 'coffee' });
+        await repo(Element2Point).save({ parentId: 'element-2', attributeId: 'category', pointId: 'tea' });
+        await repo(Element2Point).save({ parentId: 'element-3', attributeId: 'category', pointId: 'coffee' });
 
-        const filter = JSON.stringify({
-          points: [{ attr: 'category', point: 'coffee' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'point[0][attr]': 'category', 'point[0][point]': 'coffee' })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
@@ -494,22 +478,12 @@ describe('ElementController', () => {
         await repo(Element).save({ id: 'element-2', parentId: 'block-1' });
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
-        await repo(Element2Counter).save({
-          parentId: 'element-1',
-          attributeId: 'price',
-          count: 5.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-2',
-          attributeId: 'price',
-          count: 10.0,
-        });
+        await repo(Element2Counter).save({ parentId: 'element-1', attributeId: 'price', count: 5.0 });
+        await repo(Element2Counter).save({ parentId: 'element-2', attributeId: 'price', count: 10.0 });
 
-        const filter = JSON.stringify({
-          counters: [{ attr: 'price', eq: 5 }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'counter[0][attr]': 'price', 'counter[0][eq]': '5' })
           .expect(200);
 
         expect(response.body).toHaveLength(1);
@@ -523,27 +497,13 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
-        await repo(Element2Counter).save({
-          parentId: 'element-1',
-          attributeId: 'price',
-          count: 5.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-2',
-          attributeId: 'price',
-          count: 10.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-3',
-          attributeId: 'price',
-          count: 15.0,
-        });
+        await repo(Element2Counter).save({ parentId: 'element-1', attributeId: 'price', count: 5.0 });
+        await repo(Element2Counter).save({ parentId: 'element-2', attributeId: 'price', count: 10.0 });
+        await repo(Element2Counter).save({ parentId: 'element-3', attributeId: 'price', count: 15.0 });
 
-        const filter = JSON.stringify({
-          counters: [{ attr: 'price', min: 10 }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'counter[0][attr]': 'price', 'counter[0][min]': '10' })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
@@ -560,27 +520,13 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
-        await repo(Element2Counter).save({
-          parentId: 'element-1',
-          attributeId: 'price',
-          count: 5.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-2',
-          attributeId: 'price',
-          count: 10.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-3',
-          attributeId: 'price',
-          count: 15.0,
-        });
+        await repo(Element2Counter).save({ parentId: 'element-1', attributeId: 'price', count: 5.0 });
+        await repo(Element2Counter).save({ parentId: 'element-2', attributeId: 'price', count: 10.0 });
+        await repo(Element2Counter).save({ parentId: 'element-3', attributeId: 'price', count: 15.0 });
 
-        const filter = JSON.stringify({
-          counters: [{ attr: 'price', max: 10 }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({ 'counter[0][attr]': 'price', 'counter[0][max]': '10' })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
@@ -599,32 +545,18 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-4', method: PermissionMethod.READ });
-        await repo(Element2Counter).save({
-          parentId: 'element-1',
-          attributeId: 'price',
-          count: 3.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-2',
-          attributeId: 'price',
-          count: 7.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-3',
-          attributeId: 'price',
-          count: 12.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-4',
-          attributeId: 'price',
-          count: 20.0,
-        });
+        await repo(Element2Counter).save({ parentId: 'element-1', attributeId: 'price', count: 3.0 });
+        await repo(Element2Counter).save({ parentId: 'element-2', attributeId: 'price', count: 7.0 });
+        await repo(Element2Counter).save({ parentId: 'element-3', attributeId: 'price', count: 12.0 });
+        await repo(Element2Counter).save({ parentId: 'element-4', attributeId: 'price', count: 20.0 });
 
-        const filter = JSON.stringify({
-          counters: [{ attr: 'price', min: 5, max: 15 }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({
+            'counter[0][attr]': 'price',
+            'counter[0][min]': '5',
+            'counter[0][max]': '15',
+          })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
@@ -643,43 +575,21 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
-        await repo(Element2String).save({
-          parentId: 'element-1',
-          attributeId: 'name',
-          value: 'Premium Latte',
-        });
-        await repo(Element2String).save({
-          parentId: 'element-2',
-          attributeId: 'name',
-          value: 'Green Tea Latte',
-        });
-        await repo(Element2String).save({
-          parentId: 'element-3',
-          attributeId: 'name',
-          value: 'Black Coffee',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-1',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-2',
-          attributeId: 'category',
-          pointId: 'tea',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-3',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
+        await repo(Element2String).save({ parentId: 'element-1', attributeId: 'name', value: 'Premium Latte' });
+        await repo(Element2String).save({ parentId: 'element-2', attributeId: 'name', value: 'Green Tea Latte' });
+        await repo(Element2String).save({ parentId: 'element-3', attributeId: 'name', value: 'Black Coffee' });
+        await repo(Element2Point).save({ parentId: 'element-1', attributeId: 'category', pointId: 'coffee' });
+        await repo(Element2Point).save({ parentId: 'element-2', attributeId: 'category', pointId: 'tea' });
+        await repo(Element2Point).save({ parentId: 'element-3', attributeId: 'category', pointId: 'coffee' });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', like: 'Latte' }],
-          points: [{ attr: 'category', point: 'coffee' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({
+            'string[0][attr]': 'name',
+            'string[0][like]': 'Latte',
+            'point[0][attr]': 'category',
+            'point[0][point]': 'coffee',
+          })
           .expect(200);
 
         expect(response.body).toHaveLength(1);
@@ -693,34 +603,21 @@ describe('ElementController', () => {
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element2String).save({ parentId: 'element-1', attributeId: 'name', value: 'Latte' });
         await repo(Element2String).save({ parentId: 'element-2', attributeId: 'name', value: 'Latte' });
-        await repo(Element2Point).save({
-          parentId: 'element-1',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
-        await repo(Element2Point).save({
-          parentId: 'element-2',
-          attributeId: 'category',
-          pointId: 'coffee',
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-1',
-          attributeId: 'price',
-          count: 5.0,
-        });
-        await repo(Element2Counter).save({
-          parentId: 'element-2',
-          attributeId: 'price',
-          count: 15.0,
-        });
+        await repo(Element2Point).save({ parentId: 'element-1', attributeId: 'category', pointId: 'coffee' });
+        await repo(Element2Point).save({ parentId: 'element-2', attributeId: 'category', pointId: 'coffee' });
+        await repo(Element2Counter).save({ parentId: 'element-1', attributeId: 'price', count: 5.0 });
+        await repo(Element2Counter).save({ parentId: 'element-2', attributeId: 'price', count: 15.0 });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', value: 'Latte' }],
-          points: [{ attr: 'category', point: 'coffee' }],
-          counters: [{ attr: 'price', max: 10 }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({
+            'string[0][attr]': 'name',
+            'string[0][value]': 'Latte',
+            'point[0][attr]': 'category',
+            'point[0][point]': 'coffee',
+            'counter[0][attr]': 'price',
+            'counter[0][max]': '10',
+          })
           .expect(200);
 
         expect(response.body).toHaveLength(1);
@@ -731,18 +628,16 @@ describe('ElementController', () => {
         await repo(Element).save({ id: 'element-1', parentId: 'block-1' });
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element2String).save({ parentId: 'element-1', attributeId: 'name', value: 'Latte' });
-        await repo(Element2Point).save({
-          parentId: 'element-1',
-          attributeId: 'category',
-          pointId: 'tea',
-        });
+        await repo(Element2Point).save({ parentId: 'element-1', attributeId: 'category', pointId: 'tea' });
 
-        const filter = JSON.stringify({
-          strings: [{ attr: 'name', value: 'Latte' }],
-          points: [{ attr: 'category', point: 'coffee' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(`/element?filter=${encodeURIComponent(filter)}`)
+          .get('/element')
+          .query({
+            'string[0][attr]': 'name',
+            'string[0][value]': 'Latte',
+            'point[0][attr]': 'category',
+            'point[0][point]': 'coffee',
+          })
           .expect(200);
 
         expect(response.body).toEqual([]);
@@ -760,9 +655,9 @@ describe('ElementController', () => {
 
     describe('date sorting', () => {
       it('should sort by createdAt ASC', async () => {
-        await repo(Element).save({id: 'element-2',parentId: 'block-1',createdAt: new Date('2024-01-02')});
-        await repo(Element).save({id: 'element-1', parentId: 'block-1', createdAt: new Date('2024-01-01')});
-        await repo(Element).save({id: 'element-3', parentId: 'block-1', createdAt: new Date('2024-01-03')});
+        await repo(Element).save({ id: 'element-2', parentId: 'block-1', createdAt: new Date('2024-01-02') });
+        await repo(Element).save({ id: 'element-1', parentId: 'block-1', createdAt: new Date('2024-01-01') });
+        await repo(Element).save({ id: 'element-3', parentId: 'block-1', createdAt: new Date('2024-01-03') });
         await repo(Element4Permission).save({ parentId: 'element-1', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-2', method: PermissionMethod.READ });
         await repo(Element4Permission).save({ parentId: 'element-3', method: PermissionMethod.READ });
@@ -1064,13 +959,14 @@ describe('ElementController', () => {
           pointId: 'coffee',
         });
 
-        const filter = JSON.stringify({
-          points: [{ attr: 'category', point: 'coffee' }],
-        });
         const response = await request(app.getHttpServer())
-          .get(
-            `/element?filter=${encodeURIComponent(filter)}&order=createdAt&orderDir=ASC`,
-          )
+          .get('/element')
+          .query({
+            'point[0][attr]': 'category',
+            'point[0][point]': 'coffee',
+            order: 'createdAt',
+            orderDir: 'ASC',
+          })
           .expect(200);
 
         expect(response.body).toHaveLength(2);
