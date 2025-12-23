@@ -15,13 +15,14 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('settings_status')
-export class Status extends BaseEntity
-  implements WithStrings<Status>, WithPoints<Status>, WithStatuses<Status> {
-
+export class Status
+  extends BaseEntity
+  implements WithStrings<Status>, WithPoints<Status>, WithStatuses<Status>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
-    default: () => 'uuid_generate_v4()'
+    default: () => 'uuid_generate_v4()',
   })
   id: string;
 
@@ -54,5 +55,4 @@ export class Status extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

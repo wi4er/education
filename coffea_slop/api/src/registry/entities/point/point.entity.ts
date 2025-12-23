@@ -20,10 +20,8 @@ import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 @Entity('registry_point')
 export class Point
   extends BaseEntity
-  implements WithStrings<Point>,
-    WithPoints<Point>,
-    WithStatuses<Point> {
-
+  implements WithStrings<Point>, WithPoints<Point>, WithStatuses<Point>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -31,15 +29,11 @@ export class Point
   })
   id: string;
 
-  @ManyToOne(
-    () => Directory,
-    (directory: Directory) => directory.points,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Directory, (directory: Directory) => directory.points, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'directoryId' })
   directory: Directory;
 
@@ -52,10 +46,7 @@ export class Point
   )
   strings: Point2String[];
 
-  @OneToMany(
-    () => Point2Point,
-    (pointPoint: Point2Point) => pointPoint.parent,
-  )
+  @OneToMany(() => Point2Point, (pointPoint: Point2Point) => pointPoint.parent)
   points: Point2Point[];
 
   @OneToMany(
@@ -69,5 +60,4 @@ export class Point
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

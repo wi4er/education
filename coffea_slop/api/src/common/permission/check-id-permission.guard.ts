@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, SetMetadata } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  SetMetadata,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -12,15 +17,13 @@ const COOKIE_NAME = 'auth_token';
 export const CHECK_ID_PERMISSION = 'CHECK_ID_PERMISSION';
 
 export interface CheckIdPermissionOptions<T> {
-
-  entity: new() => WithPermissions<T>;
+  entity: new () => WithPermissions<T>;
   method: PermissionMethod;
   idParam?: string;
-
 }
 
 export function CheckIdPermission<T>(
-  entity: new() => WithPermissions<T>,
+  entity: new () => WithPermissions<T>,
   method: PermissionMethod,
   idParam: string = 'id',
 ) {
@@ -29,21 +32,21 @@ export function CheckIdPermission<T>(
 
 @Injectable()
 export class CheckIdPermissionGuard implements CanActivate {
-
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
     private readonly jwtService: JwtService,
-  ) {
-  }
+  ) {}
 
   private getUserGroups(request: any): string[] {
     const token = request.cookies?.[COOKIE_NAME];
     if (!token) return [];
 
     try {
-      const payload = this.jwtService.verify(token, {secret: process.env.JWT_SECRET});
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
 
       return payload.groups ?? [];
     } catch {
@@ -76,19 +79,15 @@ export class CheckIdPermissionGuard implements CanActivate {
     const userGroups = this.getUserGroups(request);
 
     const hasPermission = found.permissions?.some(
-      perm => (
-        perm.method === method
-        || perm.method === PermissionMethod.ALL
-      ) && (
-        perm.groupId === null
-        || perm.groupId === undefined
-        || userGroups.includes(perm.groupId)
-      ),
+      (perm) =>
+        (perm.method === method || perm.method === PermissionMethod.ALL) &&
+        (perm.groupId === null ||
+          perm.groupId === undefined ||
+          userGroups.includes(perm.groupId)),
     );
 
     if (!hasPermission) throw new PermissionException(entity.name, method, id);
 
     return true;
   }
-
 }

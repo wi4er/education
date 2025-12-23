@@ -13,7 +13,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('LanguageController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -119,7 +118,9 @@ describe('LanguageController', () => {
         .get('/language/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Language with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Language with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Language',
         id: 'non-existent-id',
@@ -189,7 +190,9 @@ describe('LanguageController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('Language with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Language with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Language',
         id: 'non-existent-id',
@@ -215,7 +218,9 @@ describe('LanguageController', () => {
         .delete('/language/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Language with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Language with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Language',
         id: 'non-existent-id',
@@ -226,13 +231,10 @@ describe('LanguageController', () => {
       const repo = dataSource.getRepository(Language);
       await repo.save(repo.create({ id: 'lang-1' }));
 
-      await request(app.getHttpServer())
-        .delete('/language/lang-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/language/lang-1').expect(200);
 
       const found = await repo.findOne({ where: { id: 'lang-1' } });
       expect(found).toBeNull();
     });
   });
-
 });

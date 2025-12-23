@@ -14,52 +14,41 @@ import { CommonPointEntity } from '../../../common/entities/common-point.entity'
 @Entity('content_section2point')
 export class Section2Point
   extends BaseEntity
-  implements CommonPointEntity<Section> {
-
+  implements CommonPointEntity<Section>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Section,
-    (section: Section) => section.points,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Section, (section: Section) => section.points, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Section;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Attribute,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
   @Column({ type: 'varchar', length: 32 })
   attributeId: string;
 
-  @ManyToOne(
-    () => Point,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Point, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'pointId' })
   point: Point;
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
 }

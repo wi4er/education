@@ -11,9 +11,7 @@ import {
 import { Form } from '../form/form.entity';
 
 @Entity('feedback_result')
-export class Result
-  extends BaseEntity {
-
+export class Result extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -21,15 +19,11 @@ export class Result
   })
   id: string;
 
-  @ManyToOne(
-    () => Form,
-    (form: Form) => form.results,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Form, (form: Form) => form.results, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'formId' })
   form: Form;
 
@@ -41,5 +35,4 @@ export class Result
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

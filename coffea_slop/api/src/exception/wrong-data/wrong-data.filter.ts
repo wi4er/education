@@ -9,7 +9,6 @@ import { WrongDataException } from './wrong-data.exception';
 
 @Catch(WrongDataException)
 export class WrongDataFilter implements ExceptionFilter {
-
   catch(exception: WrongDataException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -25,5 +24,4 @@ export class WrongDataFilter implements ExceptionFilter {
       },
     });
   }
-
 }

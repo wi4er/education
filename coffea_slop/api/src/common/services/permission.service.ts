@@ -7,10 +7,12 @@ import { env } from '../config/env.config';
 
 @Injectable()
 export class PermissionService {
-
-  private ensureAdminPermission(permissions: CommonPermissionInput[], parentId: string): CommonPermissionInput[] {
+  private ensureAdminPermission(
+    permissions: CommonPermissionInput[],
+    parentId: string,
+  ): CommonPermissionInput[] {
     const hasAdminAll = permissions.some(
-      p => p.groupId === env.ADMIN_GROUP && p.method === PermissionMethod.ALL,
+      (p) => p.groupId === env.ADMIN_GROUP && p.method === PermissionMethod.ALL,
     );
 
     if (!hasAdminAll) {
@@ -34,11 +36,8 @@ export class PermissionService {
       parentId || permissions[0]?.parentId,
     );
 
-    const permissionEntities = permissionsWithAdmin.map(
-      perm => transaction.create(
-        permissionClass,
-        perm,
-      ),
+    const permissionEntities = permissionsWithAdmin.map((perm) =>
+      transaction.create(permissionClass, perm),
     );
 
     return transaction.save(permissionEntities);
@@ -50,7 +49,10 @@ export class PermissionService {
     parentId: string,
     permissions: CommonPermissionInput[] = [],
   ): Promise<Array<CommonPermissionEntity<T>>> {
-    const permissionsWithAdmin = this.ensureAdminPermission(permissions, parentId);
+    const permissionsWithAdmin = this.ensureAdminPermission(
+      permissions,
+      parentId,
+    );
 
     const existing = await transaction.find(permissionClass, {
       where: { parentId } as any,
@@ -61,7 +63,7 @@ export class PermissionService {
 
     for (const perm of permissionsWithAdmin) {
       const found = existing.find(
-        e => e.groupId === perm.groupId && e.method === perm.method,
+        (e) => e.groupId === perm.groupId && e.method === perm.method,
       );
 
       if (!found) {
@@ -71,7 +73,7 @@ export class PermissionService {
 
     for (const e of existing) {
       const found = permissionsWithAdmin.find(
-        p => p.groupId === e.groupId && p.method === e.method,
+        (p) => p.groupId === e.groupId && p.method === e.method,
       );
 
       if (!found) {
@@ -83,14 +85,11 @@ export class PermissionService {
       await transaction.delete(permissionClass, toDelete);
     }
 
-    const createdEntities = toCreate.map(
-      perm => transaction.create(
-        permissionClass,
-        {
-          ...perm,
-          parentId,
-        },
-      ),
+    const createdEntities = toCreate.map((perm) =>
+      transaction.create(permissionClass, {
+        ...perm,
+        parentId,
+      }),
     );
 
     if (createdEntities.length > 0) {
@@ -101,5 +100,4 @@ export class PermissionService {
       where: { parentId } as any,
     });
   }
-
 }

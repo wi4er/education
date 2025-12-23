@@ -14,34 +14,27 @@ import { CommonPermissionEntity } from '../../../common/entities/common-permissi
 @Entity('feedback_form4permission')
 export class Form4Permission
   extends BaseEntity
-  implements CommonPermissionEntity<Form> {
-
+  implements CommonPermissionEntity<Form>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Form,
-    (form) => form.permissions,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Form, (form) => form.permissions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Group,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Group, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 
@@ -50,5 +43,4 @@ export class Form4Permission
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;
-
 }

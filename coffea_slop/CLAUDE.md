@@ -32,7 +32,7 @@ docker compose down      # Stop all services
 - Web: `localhost:3030`
 - Admin: `localhost:3010`
 
-**Environment:** Create `.env` in project root with `DATABASE_NAME` and `DATABASE_PASSWORD`.
+**Environment:** Create `.env` in project root with `DATABASE_NAME`, `DATABASE_PASSWORD`, and `JWT_SECRET`.
 
 **First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts.
 
@@ -112,7 +112,8 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 
 - `src/component/` - Feature components
 - `src/context/` - `ApiProvider` (backend communication), `UserProvider` (auth state)
-- `src/model/` - TypeScript interfaces
+- `src/view/` - TypeScript view interfaces (`*View` naming convention)
+- `src/service/` - Helper services for attribute manipulation
 - `src/widget/` - Reusable widgets
 
 ## Code Patterns
@@ -131,4 +132,4 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 
 **Admin:**
 - Default exports in `index.tsx` files
-- API calls via `useContext(apiContext)` with methods: `getData`, `getItem`, `postData`, `putData`, `deleteData`
+- API calls via `useContext(apiContext)` with methods: `getList`, `getItem`, `postItem`, `putItem`, `deleteItem`

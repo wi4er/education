@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Body,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Req, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
@@ -20,13 +12,11 @@ import { PermissionMethod } from '../../common/permission/permission.method';
 
 @Controller('sign-in')
 export class SignInController {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly authCookieService: AuthCookieService,
-  ) {
-  }
+  ) {}
 
   toView(user: User): SignInView {
     return {
@@ -46,7 +36,8 @@ export class SignInController {
       where: { id: userId },
     });
 
-    if (!user) throw new PermissionException('User', PermissionMethod.AUTH, userId);
+    if (!user)
+      throw new PermissionException('User', PermissionMethod.AUTH, userId);
 
     return this.toView(user);
   }
@@ -63,10 +54,8 @@ export class SignInController {
       relations: ['groups'],
     });
 
-    if (
-      !user
-      || !await bcrypt.compare(data.password, user.password)
-    ) throw new PermissionException('User', PermissionMethod.AUTH);
+    if (!user || !(await bcrypt.compare(data.password, user.password)))
+      throw new PermissionException('User', PermissionMethod.AUTH);
 
     this.authCookieService.setAuthCookie(res, user);
 
@@ -80,5 +69,4 @@ export class SignInController {
   ): Promise<void> {
     this.authCookieService.clearAuthCookie(res);
   }
-
 }

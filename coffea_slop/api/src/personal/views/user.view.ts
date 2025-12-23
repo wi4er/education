@@ -2,7 +2,6 @@ import { FullAttributesView } from '../../common/views/attributes.view';
 import { WithStatusesView } from '../../common/views/with-statuses.view';
 
 export interface UserView extends WithStatusesView {
-
   id: string;
   login?: string;
   email?: string;
@@ -11,5 +10,4 @@ export interface UserView extends WithStatusesView {
   updatedAt: Date;
 
   attributes: FullAttributesView;
-
 }

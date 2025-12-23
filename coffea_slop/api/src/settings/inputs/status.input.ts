@@ -6,12 +6,10 @@ import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface StatusInput
   extends WithStringsInput, WithPointsInput, WithStatusesInput {
-
   id?: string;
   icon?: string | null;
   color?: string | null;
 
   strings?: CommonStringInput[];
   points?: CommonPointInput[];
-
 }

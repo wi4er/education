@@ -47,5 +47,4 @@ import { JwtService } from '@nestjs/jwt';
     StatusService,
   ],
 })
-export class CommonModule {
-}
+export class CommonModule {}

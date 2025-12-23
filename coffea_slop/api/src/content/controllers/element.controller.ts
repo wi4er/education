@@ -1,9 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, IsNull, Or, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Element } from '../entities/element/element.entity';
 import { Element2String } from '../entities/element/element2string.entity';
 import { Element2Point } from '../entities/element/element2point.entity';
@@ -17,6 +26,8 @@ import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
 import { SectionService } from '../services/section.service';
+import { ElementFilter, ElementFilterService } from '../services/element-filter.service';
+import { ElementSortService } from '../services/element-sort.service';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
 import { PermissionMethod } from '../../common/permission/permission.method';
@@ -39,6 +50,8 @@ export class ElementController {
     private readonly counterAttributeService: CounterAttributeService,
     private readonly sectionService: SectionService,
     private readonly statusService: StatusService,
+    private readonly elementFilterService: ElementFilterService,
+    private readonly elementSortService: ElementSortService,
   ) {
   }
 
@@ -49,33 +62,38 @@ export class ElementController {
       createdAt: element.createdAt,
       updatedAt: element.updatedAt,
       attributes: {
-        strings: element.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: element.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
-        descriptions: element.descriptions?.map(desc => ({
-          lang: desc.languageId,
-          attr: desc.attributeId,
-          value: desc.value,
-        })) ?? [],
-        counters: element.counters?.map(cnt => ({
-          attr: cnt.attributeId,
-          pnt: cnt.pointId,
-          msr: cnt.measureId,
-          count: cnt.count,
-        })) ?? [],
+        strings:
+          element.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          element.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
+        descriptions:
+          element.descriptions?.map((desc) => ({
+            lang: desc.languageId,
+            attr: desc.attributeId,
+            value: desc.value,
+          })) ?? [],
+        counters:
+          element.counters?.map((cnt) => ({
+            attr: cnt.attributeId,
+            pnt: cnt.pointId,
+            msr: cnt.measureId,
+            count: cnt.count,
+          })) ?? [],
       },
-      permissions: element.permissions?.map(perm => ({
-        group: perm.groupId,
-        method: perm.method,
-      })) ?? [],
-      sections: element.sections?.map(e4s => e4s.sectionId) ?? [],
-      status: element.statuses?.map(s => s.statusId) ?? [],
+      permissions:
+        element.permissions?.map((perm) => ({
+          group: perm.groupId,
+          method: perm.method,
+        })) ?? [],
+      sections: element.sections?.map((e4s) => e4s.sectionId) ?? [],
+      status: element.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -88,19 +106,48 @@ export class ElementController {
     limit?: number,
     @Query('offset')
     offset?: number,
+    @Query('order')
+    order?: string,
+    @Query('orderDir')
+    orderDir?: 'ASC' | 'DESC',
+    @Query('filter')
+    filterParam?: string,
   ): Promise<ElementView[]> {
-    const elements = await this.elementRepository.find({
-      where: {
-        permissions: {
-          groupId: Or(In(groups), IsNull()),
-          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
-        },
-      },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
-      take: limit,
-      skip: offset,
-    });
-    return elements.map(el => this.toView(el));
+    const qb = this.elementRepository
+      .createQueryBuilder('element')
+      .leftJoinAndSelect('element.strings', 'strings')
+      .leftJoinAndSelect('element.points', 'points')
+      .leftJoinAndSelect('element.permissions', 'permissions')
+      .leftJoinAndSelect('element.descriptions', 'descriptions')
+      .leftJoinAndSelect('element.counters', 'counters')
+      .leftJoinAndSelect('element.sections', 'sections')
+      .leftJoinAndSelect('element.statuses', 'statuses')
+      .where(
+        'permissions.groupId IN (:...groups) OR permissions.groupId IS NULL',
+        { groups },
+      )
+      .andWhere('permissions.method IN (:...methods)', {
+        methods: [PermissionMethod.READ, PermissionMethod.ALL],
+      });
+
+    if (filterParam) {
+      const filter: ElementFilter = JSON.parse(filterParam);
+
+      this.elementFilterService.applyStringFilters(qb, filter.strings);
+      this.elementFilterService.applyPointFilters(qb, filter.points);
+      this.elementFilterService.applyCounterFilters(qb, filter.counters);
+    }
+
+    if (order) {
+      const direction = orderDir === 'DESC' ? 'DESC' : 'ASC';
+      this.elementSortService.apply(qb, order, direction);
+    }
+
+    if (limit) qb.take(limit);
+    if (offset) qb.skip(offset);
+
+    const elements = await qb.getMany();
+    return elements.map((el) => this.toView(el));
   }
 
   @Get(':id')
@@ -115,6 +162,7 @@ export class ElementController {
       where: { id },
       relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
     });
+
     return this.toView(element);
   }
 
@@ -124,22 +172,22 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const { strings, points, permissions, descriptions, counters, sections, status, ...elementData } = data;
+    const {strings, points, permissions, descriptions, counters, sections, status, ...elementData} = data;
 
-    const element = await this.dataSource.transaction(async transaction => {
+    const element = await this.dataSource.transaction(async (transaction) => {
       const el = transaction.create(Element, elementData);
-      const savedElement = await transaction.save(el);
+      const { id } = await transaction.save(el);
 
-      await this.stringAttributeService.create<Element>(transaction, Element2String, savedElement.id, strings);
-      await this.pointAttributeService.create<Element>(transaction, Element2Point, savedElement.id, points);
-      await this.permissionService.create<Element>(transaction, Element4Permission, permissions, savedElement.id);
-      await this.descriptionAttributeService.create<Element>(transaction, Element2Description, savedElement.id, descriptions);
-      await this.counterAttributeService.create<Element>(transaction, Element2Counter, savedElement.id, counters);
-      await this.sectionService.create(transaction, savedElement.id, sections);
-      await this.statusService.create<Element>(transaction, Element4Status, savedElement.id, status);
+      await this.stringAttributeService.create<Element>(transaction, Element2String, id, strings);
+      await this.pointAttributeService.create<Element>(transaction, Element2Point, id, points);
+      await this.permissionService.create<Element>(transaction, Element4Permission, permissions, id);
+      await this.descriptionAttributeService.create<Element>(transaction, Element2Description, id, descriptions);
+      await this.counterAttributeService.create<Element>(transaction, Element2Counter, id, counters);
+      await this.sectionService.create(transaction, id, sections);
+      await this.statusService.create<Element>(transaction, Element4Status, id, status);
 
       return transaction.findOne(Element, {
-        where: { id: savedElement.id },
+        where: { id },
         relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
       });
     });
@@ -157,9 +205,9 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const { strings, points, permissions, descriptions, counters, sections, status, ...elementData } = data;
+    const {strings, points, permissions, descriptions, counters, sections, status, ...elementData} = data;
 
-    const element = await this.dataSource.transaction(async transaction => {
+    const element = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Element, id, elementData);
 
       await this.stringAttributeService.update<Element>(transaction, Element2String, id, strings);

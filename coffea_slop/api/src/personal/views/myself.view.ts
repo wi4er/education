@@ -1,7 +1,6 @@
 import { FullAttributesView } from '../../common/views/attributes.view';
 
 export interface MyselfView {
-
   id: string;
   login?: string;
   email?: string;
@@ -10,5 +9,4 @@ export interface MyselfView {
   updatedAt: Date;
 
   attributes: FullAttributesView;
-
 }

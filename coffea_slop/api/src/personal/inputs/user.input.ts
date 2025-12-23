@@ -8,11 +8,11 @@ import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.inp
 import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface UserInput
-  extends WithStringsInput,
+  extends
+    WithStringsInput,
     WithPointsInput,
     WithDescriptionsInput,
     WithStatusesInput {
-
   id?: string;
   login?: string;
   password?: string;
@@ -23,5 +23,4 @@ export interface UserInput
   points?: CommonPointInput[];
   descriptions?: CommonDescriptionInput[];
   counters?: CommonCounterInput[];
-
 }

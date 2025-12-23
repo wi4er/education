@@ -12,9 +12,6 @@ import { CommonModule } from '../common/common.module';
     TypeOrmModule.forFeature([Form, Form4Status, Result]),
     CommonModule,
   ],
-  controllers: [
-    FormController,
-    ResultController,
-  ],
+  controllers: [FormController, ResultController],
 })
 export class FeedbackModule {}

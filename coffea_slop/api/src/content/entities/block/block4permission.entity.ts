@@ -12,35 +12,29 @@ import { PermissionMethod } from '../../../common/permission/permission.method';
 import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
 @Entity('content_block4permission')
-export class Block4Permission extends BaseEntity
-  implements CommonPermissionEntity<Block> {
-
+export class Block4Permission
+  extends BaseEntity
+  implements CommonPermissionEntity<Block>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Block,
-    (block) => block.permissions,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Block, (block) => block.permissions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Group,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Group, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 
@@ -49,5 +43,4 @@ export class Block4Permission extends BaseEntity
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;
-
 }

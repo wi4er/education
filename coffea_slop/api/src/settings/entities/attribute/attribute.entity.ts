@@ -17,13 +17,14 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 import { AttributeType } from './attribute-type.enum';
 
 @Entity('settings_attribute')
-export class Attribute extends BaseEntity
-  implements WithStrings<Attribute>, WithPoints<Attribute> {
-
+export class Attribute
+  extends BaseEntity
+  implements WithStrings<Attribute>, WithPoints<Attribute>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
-    default: () => 'uuid_generate_v4()'
+    default: () => 'uuid_generate_v4()',
   })
   id: string;
 
@@ -63,5 +64,4 @@ export class Attribute extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

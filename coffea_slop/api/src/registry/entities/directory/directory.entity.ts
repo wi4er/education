@@ -18,10 +18,11 @@ import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 @Entity('registry_directory')
 export class Directory
   extends BaseEntity
-  implements WithStrings<Directory>,
+  implements
+    WithStrings<Directory>,
     WithPoints<Directory>,
-    WithStatuses<Directory> {
-
+    WithStatuses<Directory>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -53,10 +54,7 @@ export class Directory
   )
   statuses: Directory4Status[];
 
-  @OneToMany(
-    () => Point,
-    (point: Point) => point.directory,
-  )
+  @OneToMany(() => Point, (point: Point) => point.directory)
   children: Point[];
 
   @CreateDateColumn()
@@ -64,5 +62,4 @@ export class Directory
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

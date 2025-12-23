@@ -22,11 +22,7 @@ interface TokenPayload {
 
 @Injectable()
 export class AuthCookieService {
-
-  constructor(
-    private readonly jwtService: JwtService,
-  ) {
-  }
+  constructor(private readonly jwtService: JwtService) {}
 
   private createPayload(
     userId: string,
@@ -36,10 +32,7 @@ export class AuthCookieService {
     return { sub: userId, login: login ?? userId, groups };
   }
 
-  private signToken(
-    payload: TokenPayload,
-    options?: JwtSignOptions,
-  ): string {
+  private signToken(payload: TokenPayload, options?: JwtSignOptions): string {
     return this.jwtService.sign(payload, options);
   }
 
@@ -60,14 +53,10 @@ export class AuthCookieService {
     const payload = this.createPayload(
       user.id,
       user.login,
-      user.groups?.map(g => g.groupId),
+      user.groups?.map((g) => g.groupId),
     );
 
-    res.cookie(
-      COOKIE_NAME,
-      this.signToken(payload),
-      COOKIE_OPTIONS,
-    );
+    res.cookie(COOKIE_NAME, this.signToken(payload), COOKIE_OPTIONS);
   }
 
   clearAuthCookie(res: Response): void {
@@ -85,5 +74,4 @@ export class AuthCookieService {
   createExpiredAuthCookie(userId: string): string {
     return `${COOKIE_NAME}=${this.signToken(this.createPayload(userId), { expiresIn: '-1s' })}`;
   }
-
 }

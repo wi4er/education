@@ -14,48 +14,38 @@ import { CommonStringEntity } from '../../../common/entities/common-string.entit
 @Entity('content_section2string')
 export class Section2String
   extends BaseEntity
-  implements CommonStringEntity<Section> {
-
+  implements CommonStringEntity<Section>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Section,
-    (section) => section.strings,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Section, (section) => section.strings, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Section;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Language,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Language, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
   languageId: string | null;
 
-  @ManyToOne(
-    () => Attribute,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
@@ -64,5 +54,4 @@ export class Section2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
-
 }

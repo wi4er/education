@@ -18,10 +18,10 @@ import { Block4Permission } from '../entities/block/block4permission.entity';
 const JWT_SECRET = 'test-secret';
 
 describe('BlockController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
   let jwtService: JwtService;
+  let repo;
 
   beforeAll(() => {
     process.env.JWT_SECRET = JWT_SECRET;
@@ -46,8 +46,10 @@ describe('BlockController', () => {
     jwtService = module.get<JwtService>(JwtService);
     await app.init();
 
+    repo = dataSource.getRepository.bind(dataSource);
+
     // Create admin group for permission service
-    await dataSource.getRepository(Group).save({ id: 'admin' });
+    await repo(Group).save({ id: 'admin' });
   });
 
   afterEach(() => app.close());
@@ -62,8 +64,8 @@ describe('BlockController', () => {
     });
 
     it('should return an array of blocks with relations', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block')
@@ -81,26 +83,30 @@ describe('BlockController', () => {
     });
 
     it('should filter out blocks without READ permission', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block).save({ id: 'block-3' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block).save({ id: 'block-3' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block')
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(b => b.id)).toEqual(['block-1', 'block-3']);
+      expect(response.body.map((b) => b.id)).toEqual(['block-1', 'block-3']);
     });
 
     it('should return blocks with group permission when user has matching group in token', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block4Permission).save({
+        parentId: 'block-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
 
@@ -110,15 +116,19 @@ describe('BlockController', () => {
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(b => b.id)).toEqual(['block-1', 'block-2']);
+      expect(response.body.map((b) => b.id)).toEqual(['block-1', 'block-2']);
     });
 
     it('should not return blocks with group permission when user lacks that group', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block4Permission).save({
+        parentId: 'block-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
 
@@ -134,12 +144,12 @@ describe('BlockController', () => {
 
   describe('GET /block with pagination', () => {
     it('should return limited blocks when limit is provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block).save({ id: 'block-3' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block).save({ id: 'block-3' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?limit=2')
@@ -149,12 +159,12 @@ describe('BlockController', () => {
     });
 
     it('should skip blocks when offset is provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block).save({ id: 'block-3' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block).save({ id: 'block-3' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?offset=1')
@@ -164,14 +174,14 @@ describe('BlockController', () => {
     });
 
     it('should return paginated blocks when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block).save({ id: 'block-2' });
-      await dataSource.getRepository(Block).save({ id: 'block-3' });
-      await dataSource.getRepository(Block).save({ id: 'block-4' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-4', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-2' });
+      await repo(Block).save({ id: 'block-3' });
+      await repo(Block).save({ id: 'block-4' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-2', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-3', method: PermissionMethod.READ });
+      await repo(Block4Permission).save({ parentId: 'block-4', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?limit=2&offset=1')
@@ -181,8 +191,8 @@ describe('BlockController', () => {
     });
 
     it('should return empty array when offset exceeds total blocks', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block?offset=10')
@@ -194,8 +204,8 @@ describe('BlockController', () => {
 
   describe('GET /block/:id', () => {
     it('should return a single block with relations', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/block/block-1')
@@ -216,7 +226,9 @@ describe('BlockController', () => {
         .get('/block/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Block with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Block with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Block',
         id: 'non-existent-id',
@@ -224,13 +236,15 @@ describe('BlockController', () => {
     });
 
     it('should return 403 when no READ permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .get('/block/block-1')
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: READ on Block with id block-1');
+      expect(response.body.message).toBe(
+        'Permission denied: READ on Block with id block-1',
+      );
     });
   });
 
@@ -249,12 +263,13 @@ describe('BlockController', () => {
         counters: [],
       });
 
-      const found = await dataSource.getRepository(Block).findOne({ where: { id: 'new-block' } });
+      const found = await repo(Block)
+        .findOne({ where: { id: 'new-block' } });
       expect(found).not.toBeNull();
     });
 
     it('should create block with strings', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'name' });
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
@@ -274,7 +289,7 @@ describe('BlockController', () => {
     });
 
     it('should create block with descriptions', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'content' });
+      await repo(Attribute).save({ id: 'content' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
@@ -294,20 +309,28 @@ describe('BlockController', () => {
     });
 
     it('should create block with permissions', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'admins' });
 
       const response = await request(app.getHttpServer())
         .post('/block')
         .send({
           id: 'new-block',
-          permissions: [{ parentId: 'new-block', groupId: 'admins', method: 'READ' }],
+          permissions: [
+            { parentId: 'new-block', groupId: 'admins', method: 'READ' },
+          ],
         })
         .expect(201);
 
       expect(response.body.id).toBe('new-block');
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
   });
 
@@ -318,7 +341,9 @@ describe('BlockController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('Block with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Block with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Block',
         id: 'non-existent-id',
@@ -326,8 +351,8 @@ describe('BlockController', () => {
     });
 
     it('should update and return the block', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
@@ -338,22 +363,28 @@ describe('BlockController', () => {
     });
 
     it('should return 403 when no WRITE permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
         .send({})
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: WRITE on Block with id block-1');
+      expect(response.body.message).toBe(
+        'Permission denied: WRITE on Block with id block-1',
+      );
     });
 
     it('should add new permissions without removing existing ones', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({
+        parentId: 'block-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
@@ -366,18 +397,35 @@ describe('BlockController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(3);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'editors', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'editors',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
 
     it('should remove permissions that are no longer in the list', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'editors', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({
+        parentId: 'block-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Block4Permission).save({
+        parentId: 'block-1',
+        groupId: 'editors',
+        method: PermissionMethod.READ,
+      });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
@@ -389,15 +437,26 @@ describe('BlockController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
 
     it('should keep existing permissions unchanged when same permissions are sent', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      const existingPerm = await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      const existingPerm = await repo(Block4Permission)
+        .save({
+          parentId: 'block-1',
+          groupId: 'admins',
+          method: PermissionMethod.READ,
+        });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/block/block-1')
@@ -409,12 +468,23 @@ describe('BlockController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
-
-      const permAfter = await dataSource.getRepository(Block4Permission).findOne({
-        where: { parentId: 'block-1', groupId: 'admins', method: PermissionMethod.READ },
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
       });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
+
+      const permAfter = await repo(Block4Permission)
+        .findOne({
+          where: {
+            parentId: 'block-1',
+            groupId: 'admins',
+            method: PermissionMethod.READ,
+          },
+        });
       expect(permAfter.id).toBe(existingPerm.id);
     });
   });
@@ -425,7 +495,9 @@ describe('BlockController', () => {
         .delete('/block/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Block with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Block with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Block',
         id: 'non-existent-id',
@@ -433,26 +505,26 @@ describe('BlockController', () => {
     });
 
     it('should delete the block', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.DELETE });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.DELETE });
 
-      await request(app.getHttpServer())
-        .delete('/block/block-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/block/block-1').expect(200);
 
-      const found = await dataSource.getRepository(Block).findOne({ where: { id: 'block-1' } });
+      const found = await repo(Block)
+        .findOne({ where: { id: 'block-1' } });
       expect(found).toBeNull();
     });
 
     it('should return 403 when no DELETE permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .delete('/block/block-1')
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: DELETE on Block with id block-1');
+      expect(response.body.message).toBe(
+        'Permission denied: DELETE on Block with id block-1',
+      );
     });
   });
-
 });

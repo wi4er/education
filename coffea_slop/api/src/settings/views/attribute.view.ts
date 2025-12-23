@@ -3,7 +3,6 @@ import { WithStatusesView } from '../../common/views/with-statuses.view';
 import { AttributeType } from '../entities/attribute/attribute-type.enum';
 
 export interface AttributeView extends WithStatusesView {
-
   id: string;
   type: AttributeType;
   asPoint?: string;
@@ -11,5 +10,4 @@ export interface AttributeView extends WithStatusesView {
   updatedAt: Date;
 
   attributes: BaseAttributesView;
-
 }

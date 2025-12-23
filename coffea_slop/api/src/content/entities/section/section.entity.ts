@@ -26,12 +26,13 @@ import { Block } from '../block/block.entity';
 @Entity('content_section')
 export class Section
   extends BaseEntity
-  implements WithStrings<Section>,
+  implements
+    WithStrings<Section>,
     WithPoints<Section>,
     WithPermissions<Section>,
     WithDescriptions<Section>,
-    WithStatuses<Section> {
-
+    WithStatuses<Section>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -75,15 +76,11 @@ export class Section
   )
   counters: Section2Counter[];
 
-  @ManyToOne(
-    () => Block,
-    (block: Block) => block.sections,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Block, (block: Block) => block.sections, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
@@ -101,5 +98,4 @@ export class Section
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

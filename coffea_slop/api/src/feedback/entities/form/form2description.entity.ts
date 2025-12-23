@@ -14,48 +14,38 @@ import { CommonDescriptionEntity } from '../../../common/entities/common-descrip
 @Entity('feedback_form2description')
 export class Form2Description
   extends BaseEntity
-  implements CommonDescriptionEntity<Form> {
-
+  implements CommonDescriptionEntity<Form>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Form,
-    (form: Form) => form.descriptions,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Form, (form: Form) => form.descriptions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Language,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Language, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
   languageId: string | null;
 
-  @ManyToOne(
-    () => Attribute,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
@@ -64,5 +54,4 @@ export class Form2Description
 
   @Column({ type: 'text' })
   value: string;
-
 }

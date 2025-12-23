@@ -5,15 +5,14 @@ import { CommonPointInput } from '../inputs/common-point.input';
 
 @Injectable()
 export class PointAttributeService {
-
   async create<T>(
     transaction: EntityManager,
     pointClass: EntityTarget<CommonPointEntity<T>>,
     parentId: string,
     points: CommonPointInput[] = [],
   ): Promise<Array<CommonPointEntity<T>>> {
-    const pointEntities = points.map(
-      pnt => transaction.create(pointClass, {
+    const pointEntities = points.map((pnt) =>
+      transaction.create(pointClass, {
         parentId,
         attributeId: pnt.attr,
         pointId: pnt.pnt,
@@ -29,13 +28,15 @@ export class PointAttributeService {
     parentId: string,
     points: CommonPointInput[] = [],
   ): Promise<Array<CommonPointEntity<T>>> {
-    const existing = await transaction.find(pointClass, { where: { parentId } as any });
+    const existing = await transaction.find(pointClass, {
+      where: { parentId } as any,
+    });
 
     const toDelete: number[] = [];
     const toInsert: CommonPointInput[] = [];
 
     const existingMap = new Map(
-      existing.map(e => [`${e.attributeId}:${e.pointId}`, e]),
+      existing.map((e) => [`${e.attributeId}:${e.pointId}`, e]),
     );
 
     const inputSet = new Set<string>();
@@ -61,8 +62,8 @@ export class PointAttributeService {
     }
 
     if (toInsert.length > 0) {
-      const entities = toInsert.map(
-        pnt => transaction.create(pointClass, {
+      const entities = toInsert.map((pnt) =>
+        transaction.create(pointClass, {
           parentId,
           attributeId: pnt.attr,
           pointId: pnt.pnt,
@@ -73,5 +74,4 @@ export class PointAttributeService {
 
     return transaction.find(pointClass, { where: { parentId } as any });
   }
-
 }

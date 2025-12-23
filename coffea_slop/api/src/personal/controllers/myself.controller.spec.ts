@@ -19,7 +19,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('MyselfController', () => {
-
   let app: INestApplication;
   let ds: DataSource;
   let authCookieService: AuthCookieService;
@@ -71,7 +70,10 @@ describe('MyselfController', () => {
     });
 
     it('should return 403 when token is expired', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'testuser' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'testuser' })
+        .save();
 
       const cookie = authCookieService.createExpiredAuthCookie('user-1');
 
@@ -84,7 +86,10 @@ describe('MyselfController', () => {
     });
 
     it('should return current user with relations', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'testuser' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'testuser' })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'testuser');
 
@@ -181,7 +186,10 @@ describe('MyselfController', () => {
     it('should register user with points', async () => {
       await ds.getRepository(Attribute).create({ id: 'location' }).save();
       await ds.getRepository(Directory).create({ id: 'cities' }).save();
-      await ds.getRepository(Point).create({ id: 'city-1', directoryId: 'cities' }).save();
+      await ds
+        .getRepository(Point)
+        .create({ id: 'city-1', directoryId: 'cities' })
+        .save();
 
       const response = await request(app.getHttpServer())
         .post('/myself')
@@ -250,7 +258,10 @@ describe('MyselfController', () => {
     it('should register user with counters with point and measure', async () => {
       await ds.getRepository(Attribute).create({ id: 'score' }).save();
       await ds.getRepository(Directory).create({ id: 'categories' }).save();
-      await ds.getRepository(Point).create({ id: 'category-1', directoryId: 'categories' }).save();
+      await ds
+        .getRepository(Point)
+        .create({ id: 'category-1', directoryId: 'categories' })
+        .save();
       await ds.getRepository(Measure).create({ id: 'points' }).save();
 
       const response = await request(app.getHttpServer())
@@ -259,7 +270,9 @@ describe('MyselfController', () => {
           id: 'new-user-7',
           login: 'newuser',
           password: 'password123',
-          counters: [{ attr: 'score', pnt: 'category-1', msr: 'points', count: 100 }],
+          counters: [
+            { attr: 'score', pnt: 'category-1', msr: 'points', count: 100 },
+          ],
         })
         .expect(201);
 
@@ -297,7 +310,10 @@ describe('MyselfController', () => {
     });
 
     it('should update current user', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -312,7 +328,10 @@ describe('MyselfController', () => {
     });
 
     it('should update current user with phone', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -327,7 +346,10 @@ describe('MyselfController', () => {
     });
 
     it('should update current user with strings', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'bio' }).save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
@@ -350,7 +372,10 @@ describe('MyselfController', () => {
     });
 
     it('should add counter when not exists', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'age' }).save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
@@ -371,9 +396,15 @@ describe('MyselfController', () => {
     });
 
     it('should update counter when count changes', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'age' }).save();
-      await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'age', count: 25 }).save();
+      await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'age', count: 25 })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -386,14 +417,22 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0].count).toBe(30);
 
-      const counters = await ds.getRepository(User2Counter).find({ where: { parentId: 'user-1' } });
+      const counters = await ds
+        .getRepository(User2Counter)
+        .find({ where: { parentId: 'user-1' } });
       expect(counters).toHaveLength(1);
     });
 
     it('should delete counter when not in input', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'age' }).save();
-      await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'age', count: 25 }).save();
+      await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'age', count: 25 })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -405,14 +444,22 @@ describe('MyselfController', () => {
 
       expect(response.body.attributes.counters).toHaveLength(0);
 
-      const counters = await ds.getRepository(User2Counter).find({ where: { parentId: 'user-1' } });
+      const counters = await ds
+        .getRepository(User2Counter)
+        .find({ where: { parentId: 'user-1' } });
       expect(counters).toHaveLength(0);
     });
 
     it('should not change counter when values are same', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'age' }).save();
-      const original = await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'age', count: 25 }).save();
+      const original = await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'age', count: 25 })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -425,16 +472,24 @@ describe('MyselfController', () => {
       expect(response.body.attributes.counters).toHaveLength(1);
       expect(response.body.attributes.counters[0].count).toBe(25);
 
-      const counters = await ds.getRepository(User2Counter).find({ where: { parentId: 'user-1' } });
+      const counters = await ds
+        .getRepository(User2Counter)
+        .find({ where: { parentId: 'user-1' } });
       expect(counters).toHaveLength(1);
       expect(counters[0].id).toBe(original.id);
     });
 
     it('should update counter measure', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'score' }).save();
       await ds.getRepository(Measure).create({ id: 'points' }).save();
-      await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'score', count: 100 }).save();
+      await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'score', count: 100 })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -454,12 +509,21 @@ describe('MyselfController', () => {
     });
 
     it('should handle mixed counter operations', async () => {
-      await ds.getRepository(User).create({ id: 'user-1', login: 'test-user' }).save();
+      await ds
+        .getRepository(User)
+        .create({ id: 'user-1', login: 'test-user' })
+        .save();
       await ds.getRepository(Attribute).create({ id: 'age' }).save();
       await ds.getRepository(Attribute).create({ id: 'score' }).save();
       await ds.getRepository(Attribute).create({ id: 'level' }).save();
-      await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'age', count: 25 }).save();
-      await ds.getRepository(User2Counter).create({ parentId: 'user-1', attributeId: 'score', count: 100 }).save();
+      await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'age', count: 25 })
+        .save();
+      await ds
+        .getRepository(User2Counter)
+        .create({ parentId: 'user-1', attributeId: 'score', count: 100 })
+        .save();
 
       const cookie = authCookieService.createAuthCookie('user-1', 'test-user');
 
@@ -477,17 +541,18 @@ describe('MyselfController', () => {
 
       expect(response.body.attributes.counters).toHaveLength(3);
 
-      const counters = await ds.getRepository(User2Counter).find({ where: { parentId: 'user-1' } });
+      const counters = await ds
+        .getRepository(User2Counter)
+        .find({ where: { parentId: 'user-1' } });
       expect(counters).toHaveLength(3);
 
-      const ageCounter = counters.find(c => c.attributeId === 'age');
-      const scoreCounter = counters.find(c => c.attributeId === 'score');
-      const levelCounter = counters.find(c => c.attributeId === 'level');
+      const ageCounter = counters.find((c) => c.attributeId === 'age');
+      const scoreCounter = counters.find((c) => c.attributeId === 'score');
+      const levelCounter = counters.find((c) => c.attributeId === 'level');
 
       expect(ageCounter.count).toBe(25);
       expect(scoreCounter.count).toBe(150);
       expect(levelCounter.count).toBe(5);
     });
   });
-
 });

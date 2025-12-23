@@ -23,7 +23,6 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('point')
 export class PointController {
-
   constructor(
     @InjectRepository(Point)
     private readonly pointRepository: Repository<Point>,
@@ -31,8 +30,7 @@ export class PointController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(point: Point): PointView {
     return {
@@ -41,17 +39,19 @@ export class PointController {
       updatedAt: point.updatedAt,
       directoryId: point.directoryId,
       attributes: {
-        strings: point.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: point.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
+        strings:
+          point.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          point.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
       },
-      status: point.statuses?.map(s => s.statusId) ?? [],
+      status: point.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -67,7 +67,7 @@ export class PointController {
       take: limit,
       skip: offset,
     });
-    return points.map(pnt => this.toView(pnt));
+    return points.map((pnt) => this.toView(pnt));
   }
 
   @Get(':id')
@@ -90,13 +90,28 @@ export class PointController {
   ): Promise<PointView> {
     const { strings, points, status, ...pointData } = data;
 
-    const point = await this.dataSource.transaction(async transaction => {
+    const point = await this.dataSource.transaction(async (transaction) => {
       const pnt = transaction.create(Point, pointData);
       const savedPoint = await transaction.save(pnt);
 
-      await this.stringAttributeService.create<Point>(transaction, Point2String, savedPoint.id, strings);
-      await this.pointAttributeService.create<Point>(transaction, Point2Point, savedPoint.id, points);
-      await this.statusService.create<Point>(transaction, Point4Status, savedPoint.id, status);
+      await this.stringAttributeService.create<Point>(
+        transaction,
+        Point2String,
+        savedPoint.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Point>(
+        transaction,
+        Point2Point,
+        savedPoint.id,
+        points,
+      );
+      await this.statusService.create<Point>(
+        transaction,
+        Point4Status,
+        savedPoint.id,
+        status,
+      );
 
       return transaction.findOne(Point, {
         where: { id: savedPoint.id },
@@ -117,12 +132,27 @@ export class PointController {
   ): Promise<PointView> {
     const { strings, points, status, ...pointData } = data;
 
-    const point = await this.dataSource.transaction(async transaction => {
+    const point = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Point, id, pointData);
 
-      await this.stringAttributeService.update<Point>(transaction, Point2String, id, strings);
-      await this.pointAttributeService.update<Point>(transaction, Point2Point, id, points);
-      await this.statusService.update<Point>(transaction, Point4Status, id, status);
+      await this.stringAttributeService.update<Point>(
+        transaction,
+        Point2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Point>(
+        transaction,
+        Point2Point,
+        id,
+        points,
+      );
+      await this.statusService.update<Point>(
+        transaction,
+        Point4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Point, {
         where: { id },
@@ -141,5 +171,4 @@ export class PointController {
   ): Promise<void> {
     await this.pointRepository.delete(id);
   }
-
 }

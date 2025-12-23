@@ -4,7 +4,6 @@ import { Attribute2AsPoint } from '../entities/attribute/attributeAsPoint.entity
 
 @Injectable()
 export class AsPointService {
-
   async create(
     transaction: EntityManager,
     parentId: string,
@@ -34,7 +33,9 @@ export class AsPointService {
     if (directoryId) {
       if (existing) {
         if (existing.directoryId !== directoryId) {
-          await transaction.update(Attribute2AsPoint, existing.id, { directoryId });
+          await transaction.update(Attribute2AsPoint, existing.id, {
+            directoryId,
+          });
         }
       } else {
         const entity = transaction.create(Attribute2AsPoint, {
@@ -49,5 +50,4 @@ export class AsPointService {
 
     return transaction.findOne(Attribute2AsPoint, { where: { parentId } });
   }
-
 }

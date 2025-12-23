@@ -11,49 +11,40 @@ import { Language } from '../language/language.entity';
 import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('settings_attribute2string')
-export class Attribute2String extends BaseEntity
-  implements CommonStringEntity<Attribute> {
-
+export class Attribute2String
+  extends BaseEntity
+  implements CommonStringEntity<Attribute>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Attribute,
-    (attribute: Attribute) => attribute.strings,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, (attribute: Attribute) => attribute.strings, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Attribute;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Language,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Language, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
   languageId: string | null;
 
-  @ManyToOne(
-    () => Attribute,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
@@ -62,5 +53,4 @@ export class Attribute2String extends BaseEntity
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
-
 }

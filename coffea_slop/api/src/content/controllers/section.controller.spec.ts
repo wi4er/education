@@ -19,10 +19,10 @@ import { Section4Permission } from '../entities/section/section4permission.entit
 const JWT_SECRET = 'test-secret';
 
 describe('SectionController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
   let jwtService: JwtService;
+  let repo;
 
   beforeAll(() => {
     process.env.JWT_SECRET = JWT_SECRET;
@@ -47,8 +47,10 @@ describe('SectionController', () => {
     jwtService = module.get<JwtService>(JwtService);
     await app.init();
 
+    repo = dataSource.getRepository.bind(dataSource);
+
     // Create admin group for permission service
-    await dataSource.getRepository(Group).save({ id: 'admin' });
+    await repo(Group).save({ id: 'admin' });
   });
 
   afterEach(() => app.close());
@@ -63,9 +65,9 @@ describe('SectionController', () => {
     });
 
     it('should return an array of sections with relations', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section')
@@ -84,28 +86,35 @@ describe('SectionController', () => {
     });
 
     it('should filter out sections without READ permission', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-3', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-3', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section')
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(s => s.id)).toEqual(['section-1', 'section-3']);
+      expect(response.body.map((s) => s.id)).toEqual([
+        'section-1',
+        'section-3',
+      ]);
     });
 
     it('should return sections with group permission when user has matching group in token', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section4Permission).save({
+        parentId: 'section-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
 
@@ -115,16 +124,23 @@ describe('SectionController', () => {
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(s => s.id)).toEqual(['section-1', 'section-2']);
+      expect(response.body.map((s) => s.id)).toEqual([
+        'section-1',
+        'section-2',
+      ]);
     });
 
     it('should not return sections with group permission when user lacks that group', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section4Permission).save({
+        parentId: 'section-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
 
@@ -140,13 +156,13 @@ describe('SectionController', () => {
 
   describe('GET /section with pagination', () => {
     it('should return limited sections when limit is provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-3', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-3', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section?limit=2')
@@ -156,13 +172,13 @@ describe('SectionController', () => {
     });
 
     it('should skip sections when offset is provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-3', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-3', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section?offset=1')
@@ -172,15 +188,15 @@ describe('SectionController', () => {
     });
 
     it('should return paginated sections when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-2', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-3', parentId: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-4', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-4', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-2', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-3', parentId: 'block-1' });
+      await repo(Section).save({ id: 'section-4', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-2', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-3', method: PermissionMethod.READ });
+      await repo(Section4Permission).save({ parentId: 'section-4', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section?limit=2&offset=1')
@@ -190,9 +206,9 @@ describe('SectionController', () => {
     });
 
     it('should return empty array when offset exceeds total sections', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section?offset=10')
@@ -204,9 +220,9 @@ describe('SectionController', () => {
 
   describe('GET /section/:id', () => {
     it('should return a single section with relations', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.READ });
 
       const response = await request(app.getHttpServer())
         .get('/section/section-1')
@@ -228,7 +244,9 @@ describe('SectionController', () => {
         .get('/section/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Section with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Section with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Section',
         id: 'non-existent-id',
@@ -236,20 +254,22 @@ describe('SectionController', () => {
     });
 
     it('should return 403 when no READ permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .get('/section/section-1')
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: READ on Section with id section-1');
+      expect(response.body.message).toBe(
+        'Permission denied: READ on Section with id section-1',
+      );
     });
   });
 
   describe('POST /section', () => {
     it('should create and return a new section', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .post('/section')
@@ -265,13 +285,14 @@ describe('SectionController', () => {
         counters: [],
       });
 
-      const found = await dataSource.getRepository(Section).findOne({ where: { id: 'new-section' } });
+      const found = await repo(Section)
+        .findOne({ where: { id: 'new-section' } });
       expect(found).not.toBeNull();
     });
 
     it('should create section with strings', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Attribute).save({ id: 'name' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/section')
@@ -292,8 +313,8 @@ describe('SectionController', () => {
     });
 
     it('should create section with descriptions', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Attribute).save({ id: 'content' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Attribute).save({ id: 'content' });
 
       const response = await request(app.getHttpServer())
         .post('/section')
@@ -314,22 +335,30 @@ describe('SectionController', () => {
     });
 
     it('should create section with permissions', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Group).save({ id: 'admins' });
 
       const response = await request(app.getHttpServer())
         .post('/section')
         .send({
           id: 'new-section',
           parentId: 'block-1',
-          permissions: [{ parentId: 'new-section', groupId: 'admins', method: 'READ' }],
+          permissions: [
+            { parentId: 'new-section', groupId: 'admins', method: 'READ' },
+          ],
         })
         .expect(201);
 
       expect(response.body.id).toBe('new-section');
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
   });
 
@@ -340,7 +369,9 @@ describe('SectionController', () => {
         .send({ parentId: 'block-1' })
         .expect(404);
 
-      expect(response.body.message).toBe('Section with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Section with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Section',
         id: 'non-existent-id',
@@ -348,11 +379,11 @@ describe('SectionController', () => {
     });
 
     it('should update and return the section', async () => {
-      const blockRepo = dataSource.getRepository(Block);
+      const blockRepo = repo(Block);
       await blockRepo.save({ id: 'block-1' });
       await blockRepo.save({ id: 'block-2' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/section/section-1')
@@ -364,24 +395,30 @@ describe('SectionController', () => {
     });
 
     it('should return 403 when no WRITE permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .put('/section/section-1')
         .send({ parentId: 'block-1' })
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: WRITE on Section with id section-1');
+      expect(response.body.message).toBe(
+        'Permission denied: WRITE on Section with id section-1',
+      );
     });
 
     it('should add new permissions without removing existing ones', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({
+        parentId: 'section-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/section/section-1')
@@ -395,19 +432,36 @@ describe('SectionController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(3);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'editors', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'editors',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
 
     it('should remove permissions that are no longer in the list', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'editors', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({
+        parentId: 'section-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Section4Permission).save({
+        parentId: 'section-1',
+        groupId: 'editors',
+        method: PermissionMethod.READ,
+      });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/section/section-1')
@@ -420,16 +474,27 @@ describe('SectionController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
+      });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
     });
 
     it('should keep existing permissions unchanged when same permissions are sent', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      const existingPerm = await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      const existingPerm = await repo(Section4Permission)
+        .save({
+          parentId: 'section-1',
+          groupId: 'admins',
+          method: PermissionMethod.READ,
+        });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.WRITE });
 
       const response = await request(app.getHttpServer())
         .put('/section/section-1')
@@ -442,12 +507,23 @@ describe('SectionController', () => {
         .expect(200);
 
       expect(response.body.permissions).toHaveLength(2);
-      expect(response.body.permissions).toContainEqual({ group: 'admins', method: 'READ' });
-      expect(response.body.permissions).toContainEqual({ group: 'admin', method: 'ALL' });
-
-      const permAfter = await dataSource.getRepository(Section4Permission).findOne({
-        where: { parentId: 'section-1', groupId: 'admins', method: PermissionMethod.READ },
+      expect(response.body.permissions).toContainEqual({
+        group: 'admins',
+        method: 'READ',
       });
+      expect(response.body.permissions).toContainEqual({
+        group: 'admin',
+        method: 'ALL',
+      });
+
+      const permAfter = await repo(Section4Permission)
+        .findOne({
+          where: {
+            parentId: 'section-1',
+            groupId: 'admins',
+            method: PermissionMethod.READ,
+          },
+        });
       expect(permAfter.id).toBe(existingPerm.id);
     });
   });
@@ -458,7 +534,9 @@ describe('SectionController', () => {
         .delete('/section/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Section with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Section with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Section',
         id: 'non-existent-id',
@@ -466,28 +544,30 @@ describe('SectionController', () => {
     });
 
     it('should delete the section', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
-      await dataSource.getRepository(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.DELETE });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Section4Permission).save({ parentId: 'section-1', method: PermissionMethod.DELETE });
 
       await request(app.getHttpServer())
         .delete('/section/section-1')
         .expect(200);
 
-      const found = await dataSource.getRepository(Section).findOne({ where: { id: 'section-1' } });
+      const found = await repo(Section)
+        .findOne({ where: { id: 'section-1' } });
       expect(found).toBeNull();
     });
 
     it('should return 403 when no DELETE permission exists', async () => {
-      await dataSource.getRepository(Block).save({ id: 'block-1' });
-      await dataSource.getRepository(Section).save({ id: 'section-1', parentId: 'block-1' });
+      await repo(Block).save({ id: 'block-1' });
+      await repo(Section).save({ id: 'section-1', parentId: 'block-1' });
 
       const response = await request(app.getHttpServer())
         .delete('/section/section-1')
         .expect(403);
 
-      expect(response.body.message).toBe('Permission denied: DELETE on Section with id section-1');
+      expect(response.body.message).toBe(
+        'Permission denied: DELETE on Section with id section-1',
+      );
     });
   });
-
 });

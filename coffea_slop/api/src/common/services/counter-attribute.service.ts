@@ -5,24 +5,20 @@ import { CommonCounterInput } from '../inputs/common-counter.input';
 
 @Injectable()
 export class CounterAttributeService {
-
   async create<T>(
     transaction: EntityManager,
     counterClass: EntityTarget<CommonCounterEntity<T>>,
     parentId: string,
     counters: CommonCounterInput[] = [],
   ): Promise<Array<CommonCounterEntity<T>>> {
-    const counterEntities = counters.map(
-      cnt => transaction.create(
-        counterClass,
-        {
-          parentId,
-          attributeId: cnt.attr,
-          pointId: cnt.pnt,
-          measureId: cnt.msr,
-          count: cnt.count,
-        },
-      ),
+    const counterEntities = counters.map((cnt) =>
+      transaction.create(counterClass, {
+        parentId,
+        attributeId: cnt.attr,
+        pointId: cnt.pnt,
+        measureId: cnt.msr,
+        count: cnt.count,
+      }),
     );
 
     return transaction.save(counterEntities);
@@ -34,14 +30,17 @@ export class CounterAttributeService {
     parentId: string,
     counters: CommonCounterInput[] = [],
   ): Promise<Array<CommonCounterEntity<T>>> {
-    const existing = await transaction.find(counterClass, { where: { parentId } as any });
+    const existing = await transaction.find(counterClass, {
+      where: { parentId } as any,
+    });
 
     const toDelete: number[] = [];
-    const toUpdate: Array<{ id: number; count: number; measureId?: string }> = [];
+    const toUpdate: Array<{ id: number; count: number; measureId?: string }> =
+      [];
     const toInsert: CommonCounterInput[] = [];
 
     const existingMap = new Map(
-      existing.map(e => [`${e.attributeId}:${e.pointId ?? ''}`, e]),
+      existing.map((e) => [`${e.attributeId}:${e.pointId ?? ''}`, e]),
     );
 
     const inputSet = new Set<string>();
@@ -52,7 +51,10 @@ export class CounterAttributeService {
 
       const found = existingMap.get(key);
       if (found) {
-        if (found.count !== cnt.count || found.measureId !== (cnt.msr ?? null)) {
+        if (
+          found.count !== cnt.count ||
+          found.measureId !== (cnt.msr ?? null)
+        ) {
           toUpdate.push({ id: found.id, count: cnt.count, measureId: cnt.msr });
         }
       } else {
@@ -72,12 +74,15 @@ export class CounterAttributeService {
     }
 
     for (const upd of toUpdate) {
-      await transaction.update(counterClass, upd.id, { count: upd.count, measureId: upd.measureId } as any);
+      await transaction.update(counterClass, upd.id, {
+        count: upd.count,
+        measureId: upd.measureId,
+      } as any);
     }
 
     if (toInsert.length > 0) {
-      const entities = toInsert.map(
-        cnt => transaction.create(counterClass, {
+      const entities = toInsert.map((cnt) =>
+        transaction.create(counterClass, {
           parentId,
           attributeId: cnt.attr,
           pointId: cnt.pnt,
@@ -90,5 +95,4 @@ export class CounterAttributeService {
 
     return transaction.find(counterClass, { where: { parentId } as any });
   }
-
 }

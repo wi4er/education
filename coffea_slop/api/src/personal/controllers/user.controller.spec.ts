@@ -14,7 +14,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('UserController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -122,7 +121,9 @@ describe('UserController', () => {
         .get('/user/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('User with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'User with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'User',
         id: 'non-existent-id',
@@ -217,7 +218,9 @@ describe('UserController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('User with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'User with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'User',
         id: 'non-existent-id',
@@ -243,7 +246,9 @@ describe('UserController', () => {
         .delete('/user/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('User with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'User with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'User',
         id: 'non-existent-id',
@@ -254,13 +259,10 @@ describe('UserController', () => {
       const repo = dataSource.getRepository(User);
       await repo.save(repo.create({ id: 'user-1' }));
 
-      await request(app.getHttpServer())
-        .delete('/user/user-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/user/user-1').expect(200);
 
       const found = await repo.findOne({ where: { id: 'user-1' } });
       expect(found).toBeNull();
     });
   });
-
 });

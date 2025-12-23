@@ -4,7 +4,6 @@ import { Element4Section } from '../entities/element/element4section.entity';
 
 @Injectable()
 export class SectionService {
-
   async create(
     transaction: EntityManager,
     elementId: string,
@@ -14,7 +13,7 @@ export class SectionService {
       return [];
     }
 
-    const element4sections = sections.map(sectionId =>
+    const element4sections = sections.map((sectionId) =>
       transaction.create(Element4Section, { elementId, sectionId }),
     );
 
@@ -32,11 +31,10 @@ export class SectionService {
       return [];
     }
 
-    const element4sections = sections.map(sectionId =>
+    const element4sections = sections.map((sectionId) =>
       transaction.create(Element4Section, { elementId, sectionId }),
     );
 
     return transaction.save(element4sections);
   }
-
 }

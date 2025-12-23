@@ -14,7 +14,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('GroupController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -121,7 +120,9 @@ describe('GroupController', () => {
         .get('/group/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Group with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Group with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Group',
         id: 'non-existent-id',
@@ -193,7 +194,9 @@ describe('GroupController', () => {
         .post('/group')
         .send({
           id: 'new-group',
-          descriptions: [{ attr: 'description', value: 'Group with full access' }],
+          descriptions: [
+            { attr: 'description', value: 'Group with full access' },
+          ],
         })
         .expect(201);
 
@@ -214,7 +217,9 @@ describe('GroupController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('Group with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Group with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Group',
         id: 'non-existent-id',
@@ -240,7 +245,9 @@ describe('GroupController', () => {
         .delete('/group/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Group with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Group with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Group',
         id: 'non-existent-id',
@@ -251,13 +258,10 @@ describe('GroupController', () => {
       const repo = dataSource.getRepository(Group);
       await repo.save(repo.create({ id: 'group-1' }));
 
-      await request(app.getHttpServer())
-        .delete('/group/group-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/group/group-1').expect(200);
 
       const found = await repo.findOne({ where: { id: 'group-1' } });
       expect(found).toBeNull();
     });
   });
-
 });

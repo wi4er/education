@@ -20,13 +20,15 @@ import { WithDescriptions } from '../../../common/entities/with-descriptions.ent
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('feedback_form')
-export class Form extends BaseEntity
-  implements WithStrings<Form>,
+export class Form
+  extends BaseEntity
+  implements
+    WithStrings<Form>,
     WithPoints<Form>,
     WithPermissions<Form>,
     WithDescriptions<Form>,
-    WithStatuses<Form> {
-
+    WithStatuses<Form>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -34,16 +36,10 @@ export class Form extends BaseEntity
   })
   id: string;
 
-  @OneToMany(
-    () => Form2String,
-    (formString: Form2String) => formString.parent,
-  )
+  @OneToMany(() => Form2String, (formString: Form2String) => formString.parent)
   strings: Form2String[];
 
-  @OneToMany(
-    () => Form2Point,
-    (formPoint: Form2Point) => formPoint.parent,
-  )
+  @OneToMany(() => Form2Point, (formPoint: Form2Point) => formPoint.parent)
   points: Form2Point[];
 
   @OneToMany(
@@ -58,10 +54,7 @@ export class Form extends BaseEntity
   )
   descriptions: Form2Description[];
 
-  @OneToMany(
-    () => Result,
-    (result: Result) => result.form,
-  )
+  @OneToMany(() => Result, (result: Result) => result.form)
   results: Result[];
 
   @OneToMany(
@@ -70,10 +63,7 @@ export class Form extends BaseEntity
   )
   counters: Form2Counter[];
 
-  @OneToMany(
-    () => Form4Status,
-    (formStatus: Form4Status) => formStatus.parent,
-  )
+  @OneToMany(() => Form4Status, (formStatus: Form4Status) => formStatus.parent)
   statuses: Form4Status[];
 
   @CreateDateColumn()
@@ -81,5 +71,4 @@ export class Form extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

@@ -26,7 +26,6 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('language')
 export class LanguageController {
-
   constructor(
     @InjectRepository(Language)
     private readonly languageRepository: Repository<Language>,
@@ -34,8 +33,7 @@ export class LanguageController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(language: Language): LanguageView {
     return {
@@ -43,17 +41,19 @@ export class LanguageController {
       createdAt: language.createdAt,
       updatedAt: language.updatedAt,
       attributes: {
-        strings: language.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: language.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
+        strings:
+          language.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          language.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
       },
-      status: language.statuses?.map(s => s.statusId) ?? [],
+      status: language.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -70,7 +70,7 @@ export class LanguageController {
       take: limit,
       skip: offset,
     });
-    return languages.map(lng => this.toView(lng));
+    return languages.map((lng) => this.toView(lng));
   }
 
   @Get(':id')
@@ -95,13 +95,28 @@ export class LanguageController {
   ): Promise<LanguageView> {
     const { strings, points, status, ...languageData } = data;
 
-    const language = await this.dataSource.transaction(async transaction => {
+    const language = await this.dataSource.transaction(async (transaction) => {
       const lng = transaction.create(Language, languageData);
       const savedLanguage = await transaction.save(lng);
 
-      await this.stringAttributeService.create<Language>(transaction, Language2String, savedLanguage.id, strings);
-      await this.pointAttributeService.create<Language>(transaction, Language2Point, savedLanguage.id, points);
-      await this.statusService.create<Language>(transaction, Language4Status, savedLanguage.id, status);
+      await this.stringAttributeService.create<Language>(
+        transaction,
+        Language2String,
+        savedLanguage.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Language>(
+        transaction,
+        Language2Point,
+        savedLanguage.id,
+        points,
+      );
+      await this.statusService.create<Language>(
+        transaction,
+        Language4Status,
+        savedLanguage.id,
+        status,
+      );
 
       return transaction.findOne(Language, {
         where: { id: savedLanguage.id },
@@ -123,12 +138,27 @@ export class LanguageController {
   ): Promise<LanguageView> {
     const { strings, points, status, ...languageData } = data;
 
-    const language = await this.dataSource.transaction(async transaction => {
+    const language = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Language, id, languageData);
 
-      await this.stringAttributeService.update<Language>(transaction, Language2String, id, strings);
-      await this.pointAttributeService.update<Language>(transaction, Language2Point, id, points);
-      await this.statusService.update<Language>(transaction, Language4Status, id, status);
+      await this.stringAttributeService.update<Language>(
+        transaction,
+        Language2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Language>(
+        transaction,
+        Language2Point,
+        id,
+        points,
+      );
+      await this.statusService.update<Language>(
+        transaction,
+        Language4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Language, {
         where: { id },
@@ -148,5 +178,4 @@ export class LanguageController {
   ): Promise<void> {
     await this.languageRepository.delete(id);
   }
-
 }

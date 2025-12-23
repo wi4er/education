@@ -11,7 +11,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('AttributeController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -117,7 +116,9 @@ describe('AttributeController', () => {
         .get('/attribute/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Attribute with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Attribute with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Attribute',
         id: 'non-existent-id',
@@ -187,7 +188,9 @@ describe('AttributeController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('Attribute with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Attribute with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Attribute',
         id: 'non-existent-id',
@@ -213,7 +216,9 @@ describe('AttributeController', () => {
         .delete('/attribute/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Attribute with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Attribute with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Attribute',
         id: 'non-existent-id',
@@ -232,5 +237,4 @@ describe('AttributeController', () => {
       expect(found).toBeNull();
     });
   });
-
 });

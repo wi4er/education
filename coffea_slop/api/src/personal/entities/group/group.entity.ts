@@ -17,9 +17,14 @@ import { WithDescriptions } from '../../../common/entities/with-descriptions.ent
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('personal_group')
-export class Group extends BaseEntity
-  implements WithStrings<Group>, WithPoints<Group>, WithDescriptions<Group>, WithStatuses<Group> {
-
+export class Group
+  extends BaseEntity
+  implements
+    WithStrings<Group>,
+    WithPoints<Group>,
+    WithDescriptions<Group>,
+    WithStatuses<Group>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -27,16 +32,10 @@ export class Group extends BaseEntity
   })
   id: string;
 
-  @OneToMany(
-    () => Group2String,
-    (groupString) => groupString.parent,
-  )
+  @OneToMany(() => Group2String, (groupString) => groupString.parent)
   strings: Group2String[];
 
-  @OneToMany(
-    () => Group2Point,
-    (groupPoint: Group2Point) => groupPoint.parent,
-  )
+  @OneToMany(() => Group2Point, (groupPoint: Group2Point) => groupPoint.parent)
   points: Group2Point[];
 
   @OneToMany(
@@ -45,10 +44,7 @@ export class Group extends BaseEntity
   )
   descriptions: Group2Description[];
 
-  @OneToMany(
-    () => User4Group,
-    (user4group: User4Group) => user4group.group,
-  )
+  @OneToMany(() => User4Group, (user4group: User4Group) => user4group.group)
   users: User4Group[];
 
   @OneToMany(
@@ -62,5 +58,4 @@ export class Group extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

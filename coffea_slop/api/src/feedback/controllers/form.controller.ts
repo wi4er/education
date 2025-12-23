@@ -35,7 +35,6 @@ import { Form4Status } from '../entities/form/form4status.entity';
 
 @Controller('form')
 export class FormController {
-
   constructor(
     @InjectRepository(Form)
     private readonly formRepository: Repository<Form>,
@@ -46,8 +45,7 @@ export class FormController {
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(form: Form): FormView {
     return {
@@ -55,32 +53,37 @@ export class FormController {
       createdAt: form.createdAt,
       updatedAt: form.updatedAt,
       attributes: {
-        strings: form.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: form.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
-        descriptions: form.descriptions?.map(desc => ({
-          lang: desc.languageId,
-          attr: desc.attributeId,
-          value: desc.value,
-        })) ?? [],
-        counters: form.counters?.map(cnt => ({
-          attr: cnt.attributeId,
-          pnt: cnt.pointId,
-          msr: cnt.measureId,
-          count: cnt.count,
-        })) ?? [],
+        strings:
+          form.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          form.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
+        descriptions:
+          form.descriptions?.map((desc) => ({
+            lang: desc.languageId,
+            attr: desc.attributeId,
+            value: desc.value,
+          })) ?? [],
+        counters:
+          form.counters?.map((cnt) => ({
+            attr: cnt.attributeId,
+            pnt: cnt.pointId,
+            msr: cnt.measureId,
+            count: cnt.count,
+          })) ?? [],
       },
-      permissions: form.permissions?.map(perm => ({
-        group: perm.groupId,
-        method: perm.method,
-      })) ?? [],
-      status: form.statuses?.map(s => s.statusId) ?? [],
+      permissions:
+        form.permissions?.map((perm) => ({
+          group: perm.groupId,
+          method: perm.method,
+        })) ?? [],
+      status: form.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -101,11 +104,18 @@ export class FormController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+      relations: [
+        'strings',
+        'points',
+        'permissions',
+        'descriptions',
+        'counters',
+        'statuses',
+      ],
       take: limit,
       skip: offset,
     });
-    return forms.map(form => this.toView(form));
+    return forms.map((form) => this.toView(form));
   }
 
   @Get(':id')
@@ -118,7 +128,14 @@ export class FormController {
   ): Promise<FormView> {
     const form = await this.formRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+      relations: [
+        'strings',
+        'points',
+        'permissions',
+        'descriptions',
+        'counters',
+        'statuses',
+      ],
     });
     return this.toView(form);
   }
@@ -129,22 +146,67 @@ export class FormController {
     @Body()
     data: FormInput,
   ): Promise<FormView> {
-    const { strings, points, permissions, descriptions, counters, status, ...formData } = data;
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      status,
+      ...formData
+    } = data;
 
-    const form = await this.dataSource.transaction(async transaction => {
+    const form = await this.dataSource.transaction(async (transaction) => {
       const frm = transaction.create(Form, formData);
       const savedForm = await transaction.save(frm);
 
-      await this.stringAttributeService.create<Form>(transaction, Form2String, savedForm.id, strings);
-      await this.pointAttributeService.create<Form>(transaction, Form2Point, savedForm.id, points);
-      await this.permissionService.create<Form>(transaction, Form4Permission, permissions, savedForm.id);
-      await this.descriptionAttributeService.create<Form>(transaction, Form2Description, savedForm.id, descriptions);
-      await this.counterAttributeService.create<Form>(transaction, Form2Counter, savedForm.id, counters);
-      await this.statusService.create<Form>(transaction, Form4Status, savedForm.id, status);
+      await this.stringAttributeService.create<Form>(
+        transaction,
+        Form2String,
+        savedForm.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Form>(
+        transaction,
+        Form2Point,
+        savedForm.id,
+        points,
+      );
+      await this.permissionService.create<Form>(
+        transaction,
+        Form4Permission,
+        permissions,
+        savedForm.id,
+      );
+      await this.descriptionAttributeService.create<Form>(
+        transaction,
+        Form2Description,
+        savedForm.id,
+        descriptions,
+      );
+      await this.counterAttributeService.create<Form>(
+        transaction,
+        Form2Counter,
+        savedForm.id,
+        counters,
+      );
+      await this.statusService.create<Form>(
+        transaction,
+        Form4Status,
+        savedForm.id,
+        status,
+      );
 
       return transaction.findOne(Form, {
         where: { id: savedForm.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+        relations: [
+          'strings',
+          'points',
+          'permissions',
+          'descriptions',
+          'counters',
+          'statuses',
+        ],
       });
     });
 
@@ -161,21 +223,66 @@ export class FormController {
     @Body()
     data: FormInput,
   ): Promise<FormView> {
-    const { strings, points, permissions, descriptions, counters, status, ...formData } = data;
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      status,
+      ...formData
+    } = data;
 
-    const form = await this.dataSource.transaction(async transaction => {
+    const form = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Form, id, formData);
 
-      await this.stringAttributeService.update<Form>(transaction, Form2String, id, strings);
-      await this.pointAttributeService.update<Form>(transaction, Form2Point, id, points);
-      await this.permissionService.update<Form>(transaction, Form4Permission, id, permissions);
-      await this.descriptionAttributeService.update<Form>(transaction, Form2Description, id, descriptions);
-      await this.counterAttributeService.update<Form>(transaction, Form2Counter, id, counters);
-      await this.statusService.update<Form>(transaction, Form4Status, id, status);
+      await this.stringAttributeService.update<Form>(
+        transaction,
+        Form2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Form>(
+        transaction,
+        Form2Point,
+        id,
+        points,
+      );
+      await this.permissionService.update<Form>(
+        transaction,
+        Form4Permission,
+        id,
+        permissions,
+      );
+      await this.descriptionAttributeService.update<Form>(
+        transaction,
+        Form2Description,
+        id,
+        descriptions,
+      );
+      await this.counterAttributeService.update<Form>(
+        transaction,
+        Form2Counter,
+        id,
+        counters,
+      );
+      await this.statusService.update<Form>(
+        transaction,
+        Form4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Form, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+        relations: [
+          'strings',
+          'points',
+          'permissions',
+          'descriptions',
+          'counters',
+          'statuses',
+        ],
       });
     });
 
@@ -192,5 +299,4 @@ export class FormController {
   ): Promise<void> {
     await this.formRepository.delete(id);
   }
-
 }

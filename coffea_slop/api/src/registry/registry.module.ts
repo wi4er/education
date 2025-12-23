@@ -23,10 +23,6 @@ import { CommonModule } from '../common/common.module';
     ]),
     CommonModule,
   ],
-  controllers: [
-    DirectoryController,
-    PointController,
-    MeasureController,
-  ],
+  controllers: [DirectoryController, PointController, MeasureController],
 })
 export class RegistryModule {}

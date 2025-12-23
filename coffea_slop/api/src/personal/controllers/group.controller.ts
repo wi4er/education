@@ -28,7 +28,6 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('group')
 export class GroupController {
-
   constructor(
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
@@ -37,8 +36,7 @@ export class GroupController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(group: Group): GroupView {
     return {
@@ -46,22 +44,25 @@ export class GroupController {
       createdAt: group.createdAt,
       updatedAt: group.updatedAt,
       attributes: {
-        strings: group.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: group.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
-        descriptions: group.descriptions?.map(desc => ({
-          lang: desc.languageId,
-          attr: desc.attributeId,
-          value: desc.value,
-        })) ?? [],
+        strings:
+          group.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          group.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
+        descriptions:
+          group.descriptions?.map((desc) => ({
+            lang: desc.languageId,
+            attr: desc.attributeId,
+            value: desc.value,
+          })) ?? [],
       },
-      status: group.statuses?.map(s => s.statusId) ?? [],
+      status: group.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -78,7 +79,7 @@ export class GroupController {
       take: limit,
       skip: offset,
     });
-    return groups.map(g => this.toView(g));
+    return groups.map((g) => this.toView(g));
   }
 
   @Get(':id')
@@ -103,14 +104,34 @@ export class GroupController {
   ): Promise<GroupView> {
     const { strings, points, descriptions, status, ...groupData } = data;
 
-    const group = await this.dataSource.transaction(async transaction => {
+    const group = await this.dataSource.transaction(async (transaction) => {
       const g = transaction.create(Group, groupData);
       const savedGroup = await transaction.save(g);
 
-      await this.stringAttributeService.create<Group>(transaction, Group2String, savedGroup.id, strings);
-      await this.pointAttributeService.create<Group>(transaction, Group2Point, savedGroup.id, points);
-      await this.descriptionAttributeService.create<Group>(transaction, Group2Description, savedGroup.id, descriptions);
-      await this.statusService.create<Group>(transaction, Group4Status, savedGroup.id, status);
+      await this.stringAttributeService.create<Group>(
+        transaction,
+        Group2String,
+        savedGroup.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Group>(
+        transaction,
+        Group2Point,
+        savedGroup.id,
+        points,
+      );
+      await this.descriptionAttributeService.create<Group>(
+        transaction,
+        Group2Description,
+        savedGroup.id,
+        descriptions,
+      );
+      await this.statusService.create<Group>(
+        transaction,
+        Group4Status,
+        savedGroup.id,
+        status,
+      );
 
       return transaction.findOne(Group, {
         where: { id: savedGroup.id },
@@ -132,13 +153,33 @@ export class GroupController {
   ): Promise<GroupView> {
     const { strings, points, descriptions, status, ...groupData } = data;
 
-    const group = await this.dataSource.transaction(async transaction => {
+    const group = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Group, id, groupData);
 
-      await this.stringAttributeService.update<Group>(transaction, Group2String, id, strings);
-      await this.pointAttributeService.update<Group>(transaction, Group2Point, id, points);
-      await this.descriptionAttributeService.update<Group>(transaction, Group2Description, id, descriptions);
-      await this.statusService.update<Group>(transaction, Group4Status, id, status);
+      await this.stringAttributeService.update<Group>(
+        transaction,
+        Group2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Group>(
+        transaction,
+        Group2Point,
+        id,
+        points,
+      );
+      await this.descriptionAttributeService.update<Group>(
+        transaction,
+        Group2Description,
+        id,
+        descriptions,
+      );
+      await this.statusService.update<Group>(
+        transaction,
+        Group4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Group, {
         where: { id },
@@ -158,5 +199,4 @@ export class GroupController {
   ): Promise<void> {
     await this.groupRepository.delete(id);
   }
-
 }

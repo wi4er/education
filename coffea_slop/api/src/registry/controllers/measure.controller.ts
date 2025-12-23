@@ -26,7 +26,6 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('measure')
 export class MeasureController {
-
   constructor(
     @InjectRepository(Measure)
     private readonly measureRepository: Repository<Measure>,
@@ -42,17 +41,19 @@ export class MeasureController {
       createdAt: measure.createdAt,
       updatedAt: measure.updatedAt,
       attributes: {
-        strings: measure.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: measure.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
+        strings:
+          measure.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          measure.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
       },
-      status: measure.statuses?.map(s => s.statusId) ?? [],
+      status: measure.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -69,7 +70,7 @@ export class MeasureController {
       take: limit,
       skip: offset,
     });
-    return measures.map(m => this.toView(m));
+    return measures.map((m) => this.toView(m));
   }
 
   @Get(':id')
@@ -86,18 +87,31 @@ export class MeasureController {
 
   @Post()
   @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.POST)
-  async create(
-    @Body() data: MeasureInput
-  ): Promise<MeasureView> {
+  async create(@Body() data: MeasureInput): Promise<MeasureView> {
     const { strings, points, status, ...measureData } = data;
 
-    const measure = await this.dataSource.transaction(async transaction => {
+    const measure = await this.dataSource.transaction(async (transaction) => {
       const m = transaction.create(Measure, measureData);
       const savedMeasure = await transaction.save(m);
 
-      await this.stringAttributeService.create<Measure>(transaction, Measure2String, savedMeasure.id, strings);
-      await this.pointAttributeService.create<Measure>(transaction, Measure2Point, savedMeasure.id, points);
-      await this.statusService.create<Measure>(transaction, Measure4Status, savedMeasure.id, status);
+      await this.stringAttributeService.create<Measure>(
+        transaction,
+        Measure2String,
+        savedMeasure.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Measure>(
+        transaction,
+        Measure2Point,
+        savedMeasure.id,
+        points,
+      );
+      await this.statusService.create<Measure>(
+        transaction,
+        Measure4Status,
+        savedMeasure.id,
+        status,
+      );
 
       return transaction.findOne(Measure, {
         where: { id: savedMeasure.id },
@@ -119,12 +133,27 @@ export class MeasureController {
   ): Promise<MeasureView> {
     const { strings, points, status, ...measureData } = data;
 
-    const measure = await this.dataSource.transaction(async transaction => {
+    const measure = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Measure, id, measureData);
 
-      await this.stringAttributeService.update<Measure>(transaction, Measure2String, id, strings);
-      await this.pointAttributeService.update<Measure>(transaction, Measure2Point, id, points);
-      await this.statusService.update<Measure>(transaction, Measure4Status, id, status);
+      await this.stringAttributeService.update<Measure>(
+        transaction,
+        Measure2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Measure>(
+        transaction,
+        Measure2Point,
+        id,
+        points,
+      );
+      await this.statusService.update<Measure>(
+        transaction,
+        Measure4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Measure, {
         where: { id },
@@ -141,5 +170,4 @@ export class MeasureController {
   async remove(@Param('id') id: string): Promise<void> {
     await this.measureRepository.delete(id);
   }
-
 }

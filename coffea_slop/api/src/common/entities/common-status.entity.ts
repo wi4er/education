@@ -1,7 +1,6 @@
 import { Status } from '../../settings/entities/status/status.entity';
 
 export interface CommonStatusEntity<TParent> {
-
   id: number;
 
   parent: TParent;
@@ -9,5 +8,4 @@ export interface CommonStatusEntity<TParent> {
 
   status: Status;
   statusId: string;
-
 }

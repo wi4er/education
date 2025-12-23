@@ -10,6 +10,8 @@ import { BlockController } from './controllers/block.controller';
 import { ElementController } from './controllers/element.controller';
 import { SectionController } from './controllers/section.controller';
 import { SectionService } from './services/section.service';
+import { ElementFilterService } from './services/element-filter.service';
+import { ElementSortService } from './services/element-sort.service';
 import { CommonModule } from '../common/common.module';
 
 @Module({
@@ -24,13 +26,7 @@ import { CommonModule } from '../common/common.module';
     ]),
     CommonModule,
   ],
-  controllers: [
-    BlockController,
-    ElementController,
-    SectionController,
-  ],
-  providers: [
-    SectionService,
-  ],
+  controllers: [BlockController, ElementController, SectionController],
+  providers: [SectionService, ElementFilterService, ElementSortService],
 })
 export class ContentModule {}

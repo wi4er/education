@@ -10,8 +10,12 @@ import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.inp
 import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface FormInput
-  extends WithStringsInput, WithPointsInput, WithPermissionsInput, WithDescriptionsInput, WithStatusesInput {
-
+  extends
+    WithStringsInput,
+    WithPointsInput,
+    WithPermissionsInput,
+    WithDescriptionsInput,
+    WithStatusesInput {
   id?: string;
 
   strings?: CommonStringInput[];
@@ -19,5 +23,4 @@ export interface FormInput
   permissions?: CommonPermissionInput[];
   descriptions?: CommonDescriptionInput[];
   counters?: CommonCounterInput[];
-
 }

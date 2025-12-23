@@ -11,7 +11,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('ResultController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -68,7 +67,9 @@ describe('ResultController', () => {
         .get('/result/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Result with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Result with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Result',
         id: 'non-existent-id',
@@ -117,7 +118,9 @@ describe('ResultController', () => {
         .send({ formId: 'form-1' })
         .expect(404);
 
-      expect(response.body.message).toBe('Result with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Result with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Result',
         id: 'non-existent-id',
@@ -148,7 +151,9 @@ describe('ResultController', () => {
         .delete('/result/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Result with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Result with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Result',
         id: 'non-existent-id',
@@ -162,13 +167,10 @@ describe('ResultController', () => {
       const repo = dataSource.getRepository(Result);
       await repo.save(repo.create({ id: 'result-1', formId: 'form-1' }));
 
-      await request(app.getHttpServer())
-        .delete('/result/result-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/result/result-1').expect(200);
 
       const found = await repo.findOne({ where: { id: 'result-1' } });
       expect(found).toBeNull();
     });
   });
-
 });

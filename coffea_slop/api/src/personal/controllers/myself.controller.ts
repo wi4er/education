@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Body,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Req, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Request, Response } from 'express';
@@ -29,7 +21,6 @@ import { WrongDataException } from '../../exception/wrong-data/wrong-data.except
 
 @Controller('myself')
 export class MyselfController {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -39,8 +30,7 @@ export class MyselfController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
-  ) {
-  }
+  ) {}
 
   toView(user: User): MyselfView {
     return {
@@ -51,26 +41,30 @@ export class MyselfController {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       attributes: {
-        strings: user.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: user.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
-        descriptions: user.descriptions?.map(desc => ({
-          lang: desc.languageId,
-          attr: desc.attributeId,
-          value: desc.value,
-        })) ?? [],
-        counters: user.counters?.map(cnt => ({
-          attr: cnt.attributeId,
-          pnt: cnt.pointId,
-          msr: cnt.measureId,
-          count: cnt.count,
-        })) ?? [],
+        strings:
+          user.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          user.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
+        descriptions:
+          user.descriptions?.map((desc) => ({
+            lang: desc.languageId,
+            attr: desc.attributeId,
+            value: desc.value,
+          })) ?? [],
+        counters:
+          user.counters?.map((cnt) => ({
+            attr: cnt.attributeId,
+            pnt: cnt.pointId,
+            msr: cnt.measureId,
+            count: cnt.count,
+          })) ?? [],
       },
     };
   }
@@ -87,7 +81,8 @@ export class MyselfController {
       relations: ['strings', 'points', 'descriptions', 'counters'],
     });
 
-    if (!user) throw new PermissionException('User', PermissionMethod.AUTH, userId);
+    if (!user)
+      throw new PermissionException('User', PermissionMethod.AUTH, userId);
 
     return this.toView(user);
   }
@@ -99,21 +94,50 @@ export class MyselfController {
     @Res({ passthrough: true })
     res: Response,
   ): Promise<MyselfView> {
-    const { strings, points, descriptions, counters, password, ...userData } = data;
+    const { strings, points, descriptions, counters, password, ...userData } =
+      data;
 
     if (!password) {
-      throw new WrongDataException('Password is required', 'password', undefined, 'required');
+      throw new WrongDataException(
+        'Password is required',
+        'password',
+        undefined,
+        'required',
+      );
     }
 
-    const user = await this.dataSource.transaction(async transaction => {
+    const user = await this.dataSource.transaction(async (transaction) => {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const u = transaction.create(User, { ...userData, password: hashedPassword });
+      const u = transaction.create(User, {
+        ...userData,
+        password: hashedPassword,
+      });
       const savedUser = await transaction.save(u);
 
-      await this.stringAttributeService.create<User>(transaction, User2String, savedUser.id, strings);
-      await this.pointAttributeService.create<User>(transaction, User2Point, savedUser.id, points);
-      await this.descriptionAttributeService.create<User>(transaction, User2Description, savedUser.id, descriptions);
-      await this.counterAttributeService.create<User>(transaction, User2Counter, savedUser.id, counters);
+      await this.stringAttributeService.create<User>(
+        transaction,
+        User2String,
+        savedUser.id,
+        strings,
+      );
+      await this.pointAttributeService.create<User>(
+        transaction,
+        User2Point,
+        savedUser.id,
+        points,
+      );
+      await this.descriptionAttributeService.create<User>(
+        transaction,
+        User2Description,
+        savedUser.id,
+        descriptions,
+      );
+      await this.counterAttributeService.create<User>(
+        transaction,
+        User2Counter,
+        savedUser.id,
+        counters,
+      );
 
       return transaction.findOne(User, {
         where: { id: savedUser.id },
@@ -139,19 +163,45 @@ export class MyselfController {
       where: { id: userId },
     });
 
-    if (!existingUser) throw new PermissionException('User', PermissionMethod.AUTH, userId);
+    if (!existingUser)
+      throw new PermissionException('User', PermissionMethod.AUTH, userId);
 
-    const { strings, points, descriptions, counters, password, ...userData } = data;
+    const { strings, points, descriptions, counters, password, ...userData } =
+      data;
 
-    const user = await this.dataSource.transaction(async transaction => {
-      const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
-      const updateData = hashedPassword ? { ...userData, password: hashedPassword } : userData;
+    const user = await this.dataSource.transaction(async (transaction) => {
+      const hashedPassword = password
+        ? await bcrypt.hash(password, 10)
+        : undefined;
+      const updateData = hashedPassword
+        ? { ...userData, password: hashedPassword }
+        : userData;
       await transaction.update(User, userId, updateData);
 
-      await this.stringAttributeService.update<User>(transaction, User2String, userId, strings);
-      await this.pointAttributeService.update<User>(transaction, User2Point, userId, points);
-      await this.descriptionAttributeService.update<User>(transaction, User2Description, userId, descriptions);
-      await this.counterAttributeService.update<User>(transaction, User2Counter, userId, counters);
+      await this.stringAttributeService.update<User>(
+        transaction,
+        User2String,
+        userId,
+        strings,
+      );
+      await this.pointAttributeService.update<User>(
+        transaction,
+        User2Point,
+        userId,
+        points,
+      );
+      await this.descriptionAttributeService.update<User>(
+        transaction,
+        User2Description,
+        userId,
+        descriptions,
+      );
+      await this.counterAttributeService.update<User>(
+        transaction,
+        User2Counter,
+        userId,
+        counters,
+      );
 
       return transaction.findOne(User, {
         where: { id: userId },
@@ -161,5 +211,4 @@ export class MyselfController {
 
     return this.toView(user);
   }
-
 }

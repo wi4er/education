@@ -40,8 +40,6 @@ import { CommonModule } from '../common/common.module';
     SignInController,
     MyselfController,
   ],
-  providers: [
-    AuthCookieService,
-  ],
+  providers: [AuthCookieService],
 })
 export class PersonalModule {}

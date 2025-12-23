@@ -12,7 +12,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('PointController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -70,9 +69,15 @@ describe('PointController', () => {
   describe('GET /point with pagination', () => {
     it('should return limited points when limit is provided', async () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-3', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?limit=2')
@@ -83,9 +88,15 @@ describe('PointController', () => {
 
     it('should skip points when offset is provided', async () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-3', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?offset=1')
@@ -96,10 +107,18 @@ describe('PointController', () => {
 
     it('should return paginated points when both limit and offset are provided', async () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-3', directoryId: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-4', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-2', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-3', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-4', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?limit=2&offset=1')
@@ -110,7 +129,9 @@ describe('PointController', () => {
 
     it('should return empty array when offset exceeds total points', async () => {
       await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource.getRepository(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await dataSource
+        .getRepository(Point)
+        .save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?offset=10')
@@ -126,7 +147,9 @@ describe('PointController', () => {
         .get('/point/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Point with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Point with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Point',
         id: 'non-existent-id',
@@ -208,7 +231,9 @@ describe('PointController', () => {
         .send({ directoryId: 'dir-1' })
         .expect(404);
 
-      expect(response.body.message).toBe('Point with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Point with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Point',
         id: 'non-existent-id',
@@ -239,7 +264,9 @@ describe('PointController', () => {
         .delete('/point/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Point with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Point with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Point',
         id: 'non-existent-id',
@@ -253,13 +280,10 @@ describe('PointController', () => {
       const repo = dataSource.getRepository(Point);
       await repo.save(repo.create({ id: 'point-1', directoryId: 'dir-1' }));
 
-      await request(app.getHttpServer())
-        .delete('/point/point-1')
-        .expect(200);
+      await request(app.getHttpServer()).delete('/point/point-1').expect(200);
 
       const found = await repo.findOne({ where: { id: 'point-1' } });
       expect(found).toBeNull();
     });
   });
-
 });

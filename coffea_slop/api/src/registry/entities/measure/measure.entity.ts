@@ -16,8 +16,8 @@ import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 @Entity('registry_measure')
 export class Measure
   extends BaseEntity
-  implements WithStrings<Measure>, WithPoints<Measure>, WithStatuses<Measure> {
-
+  implements WithStrings<Measure>, WithPoints<Measure>, WithStatuses<Measure>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -48,5 +48,4 @@ export class Measure
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

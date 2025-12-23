@@ -1,5 +1,4 @@
 export enum AccessEntity {
-
   ATTRIBUTE = 'ATTRIBUTE',
   LANGUAGE = 'LANGUAGE',
   STATUS = 'STATUS',
@@ -14,5 +13,4 @@ export enum AccessEntity {
   SECTION = 'SECTION',
   FORM = 'FORM',
   RESULT = 'RESULT',
-
 }

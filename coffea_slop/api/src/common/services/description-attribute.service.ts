@@ -5,15 +5,14 @@ import { CommonDescriptionInput } from '../inputs/common-description.input';
 
 @Injectable()
 export class DescriptionAttributeService {
-
   async create<T>(
     transaction: EntityManager,
     descriptionClass: EntityTarget<CommonDescriptionEntity<T>>,
     parentId: string,
     descriptions: CommonDescriptionInput[] = [],
   ): Promise<Array<CommonDescriptionEntity<T>>> {
-    const descriptionEntities = descriptions.map(
-      desc => transaction.create(descriptionClass, {
+    const descriptionEntities = descriptions.map((desc) =>
+      transaction.create(descriptionClass, {
         parentId,
         attributeId: desc.attr,
         languageId: desc.lang,
@@ -30,7 +29,9 @@ export class DescriptionAttributeService {
     parentId: string,
     descriptions: CommonDescriptionInput[] = [],
   ): Promise<Array<CommonDescriptionEntity<T>>> {
-    const existing = await transaction.find(descriptionClass, { where: { parentId } as any });
+    const existing = await transaction.find(descriptionClass, {
+      where: { parentId } as any,
+    });
 
     const toDelete: number[] = [];
     const toUpdate: Array<{ id: number; value: string }> = [];
@@ -56,7 +57,10 @@ export class DescriptionAttributeService {
       for (let i = 0; i < existingItems.length; i++) {
         if (i < inputItems.length) {
           if (existingItems[i].value !== inputItems[i].value) {
-            toUpdate.push({ id: existingItems[i].id, value: inputItems[i].value });
+            toUpdate.push({
+              id: existingItems[i].id,
+              value: inputItems[i].value,
+            });
           }
         } else {
           toDelete.push(existingItems[i].id);
@@ -77,12 +81,14 @@ export class DescriptionAttributeService {
     }
 
     for (const upd of toUpdate) {
-      await transaction.update(descriptionClass, upd.id, { value: upd.value } as any);
+      await transaction.update(descriptionClass, upd.id, {
+        value: upd.value,
+      } as any);
     }
 
     if (toInsert.length > 0) {
-      const entities = toInsert.map(
-        desc => transaction.create(descriptionClass, {
+      const entities = toInsert.map((desc) =>
+        transaction.create(descriptionClass, {
           parentId,
           attributeId: desc.attr,
           languageId: desc.lang,
@@ -94,5 +100,4 @@ export class DescriptionAttributeService {
 
     return transaction.find(descriptionClass, { where: { parentId } as any });
   }
-
 }

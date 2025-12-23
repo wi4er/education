@@ -5,15 +5,14 @@ import { CommonStringInput } from '../inputs/common-string.input';
 
 @Injectable()
 export class StringAttributeService {
-
   async create<T>(
     transaction: EntityManager,
     stringClass: EntityTarget<CommonStringEntity<T>>,
     parentId: string,
     strings: CommonStringInput[] = [],
   ): Promise<Array<CommonStringEntity<T>>> {
-    const stringEntities = strings.map(
-      str => transaction.create(stringClass, {
+    const stringEntities = strings.map((str) =>
+      transaction.create(stringClass, {
         parentId,
         attributeId: str.attr,
         languageId: str.lang,
@@ -30,7 +29,9 @@ export class StringAttributeService {
     parentId: string,
     strings: CommonStringInput[] = [],
   ): Promise<Array<CommonStringEntity<T>>> {
-    const existing = await transaction.find(stringClass, { where: { parentId } as any });
+    const existing = await transaction.find(stringClass, {
+      where: { parentId } as any,
+    });
 
     const toDelete: number[] = [];
     const toUpdate: Array<{ id: number; value?: string }> = [];
@@ -56,7 +57,10 @@ export class StringAttributeService {
       for (let i = 0; i < existingItems.length; i++) {
         if (i < inputItems.length) {
           if (existingItems[i].value !== (inputItems[i].value ?? '')) {
-            toUpdate.push({ id: existingItems[i].id, value: inputItems[i].value });
+            toUpdate.push({
+              id: existingItems[i].id,
+              value: inputItems[i].value,
+            });
           }
         } else {
           toDelete.push(existingItems[i].id);
@@ -77,12 +81,14 @@ export class StringAttributeService {
     }
 
     for (const upd of toUpdate) {
-      await transaction.update(stringClass, upd.id, { value: upd.value } as any);
+      await transaction.update(stringClass, upd.id, {
+        value: upd.value,
+      } as any);
     }
 
     if (toInsert.length > 0) {
-      const entities = toInsert.map(
-        str => transaction.create(stringClass, {
+      const entities = toInsert.map((str) =>
+        transaction.create(stringClass, {
           parentId,
           attributeId: str.attr,
           languageId: str.lang,
@@ -94,5 +100,4 @@ export class StringAttributeService {
 
     return transaction.find(stringClass, { where: { parentId } as any });
   }
-
 }

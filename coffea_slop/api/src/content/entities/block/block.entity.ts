@@ -21,13 +21,15 @@ import { WithDescriptions } from '../../../common/entities/with-descriptions.ent
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('content_block')
-export class Block extends BaseEntity
-  implements WithStrings<Block>,
+export class Block
+  extends BaseEntity
+  implements
+    WithStrings<Block>,
     WithPoints<Block>,
     WithPermissions<Block>,
     WithDescriptions<Block>,
-    WithStatuses<Block> {
-
+    WithStatuses<Block>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -41,10 +43,7 @@ export class Block extends BaseEntity
   )
   strings: Block2String[];
 
-  @OneToMany(
-    () => Block2Point,
-    (blockPoint: Block2Point) => blockPoint.parent,
-  )
+  @OneToMany(() => Block2Point, (blockPoint: Block2Point) => blockPoint.parent)
   points: Block2Point[];
 
   @OneToMany(
@@ -59,16 +58,10 @@ export class Block extends BaseEntity
   )
   descriptions: Block2Description[];
 
-  @OneToMany(
-    () => Element,
-    (element: Element) => element.parent,
-  )
+  @OneToMany(() => Element, (element: Element) => element.parent)
   elements: Element[];
 
-  @OneToMany(
-    () => Section,
-    (section: Section) => section.parent,
-  )
+  @OneToMany(() => Section, (section: Section) => section.parent)
   sections: Section[];
 
   @OneToMany(
@@ -88,5 +81,4 @@ export class Block extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

@@ -13,7 +13,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('MeasureController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -119,7 +118,9 @@ describe('MeasureController', () => {
         .get('/measure/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Measure with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Measure with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Measure',
         id: 'non-existent-id',
@@ -189,7 +190,9 @@ describe('MeasureController', () => {
         .send({})
         .expect(404);
 
-      expect(response.body.message).toBe('Measure with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Measure with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Measure',
         id: 'non-existent-id',
@@ -215,7 +218,9 @@ describe('MeasureController', () => {
         .delete('/measure/non-existent-id')
         .expect(404);
 
-      expect(response.body.message).toBe('Measure with id non-existent-id not found');
+      expect(response.body.message).toBe(
+        'Measure with id non-existent-id not found',
+      );
       expect(response.body.details).toEqual({
         entity: 'Measure',
         id: 'non-existent-id',
@@ -234,5 +239,4 @@ describe('MeasureController', () => {
       expect(found).toBeNull();
     });
   });
-
 });

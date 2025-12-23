@@ -9,7 +9,6 @@ import { NoDataException } from './no-data.exception';
 
 @Catch(NoDataException)
 export class NoDataFilter implements ExceptionFilter {
-
   catch(exception: NoDataException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -24,5 +23,4 @@ export class NoDataFilter implements ExceptionFilter {
       },
     });
   }
-
 }

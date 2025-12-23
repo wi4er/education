@@ -30,13 +30,7 @@ import { CommonModule } from '../common/common.module';
     ]),
     CommonModule,
   ],
-  controllers: [
-    AttributeController,
-    LanguageController,
-    StatusController,
-  ],
-  providers: [
-    AsPointService,
-  ],
+  controllers: [AttributeController, LanguageController, StatusController],
+  providers: [AsPointService],
 })
 export class SettingsModule {}

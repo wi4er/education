@@ -19,12 +19,10 @@ import { AccessInput } from '../inputs/access.input';
 
 @Controller('access')
 export class AccessController {
-
   constructor(
     @InjectRepository(Access)
     private readonly accessRepository: Repository<Access>,
-  ) {
-  }
+  ) {}
 
   toView(access: Access): AccessView {
     return {
@@ -40,7 +38,7 @@ export class AccessController {
   async findAll(): Promise<AccessView[]> {
     const accesses = await this.accessRepository.find();
 
-    return accesses.map(a => this.toView(a));
+    return accesses.map((a) => this.toView(a));
   }
 
   @Get(':id')
@@ -95,5 +93,4 @@ export class AccessController {
   ): Promise<void> {
     await this.accessRepository.delete(id);
   }
-
 }

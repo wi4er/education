@@ -19,12 +19,10 @@ import { ResultInput } from '../inputs/result.input';
 
 @Controller('result')
 export class ResultController {
-
   constructor(
     @InjectRepository(Result)
     private readonly resultRepository: Repository<Result>,
-  ) {
-  }
+  ) {}
 
   toView(result: Result): ResultView {
     return {
@@ -39,7 +37,7 @@ export class ResultController {
   @CheckMethodAccess(AccessEntity.RESULT, AccessMethod.GET)
   async findAll(): Promise<ResultView[]> {
     const results = await this.resultRepository.find();
-    return results.map(result => this.toView(result));
+    return results.map((result) => this.toView(result));
   }
 
   @Get(':id')
@@ -91,5 +89,4 @@ export class ResultController {
   ): Promise<void> {
     await this.resultRepository.delete(id);
   }
-
 }

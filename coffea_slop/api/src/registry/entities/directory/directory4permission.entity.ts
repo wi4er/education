@@ -14,34 +14,27 @@ import { CommonPermissionEntity } from '../../../common/entities/common-permissi
 @Entity('registry_directory4permission')
 export class Directory4Permission
   extends BaseEntity
-  implements CommonPermissionEntity<Directory> {
-
+  implements CommonPermissionEntity<Directory>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Directory,
-    (directory: Directory) => directory.permissions,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Directory, (directory: Directory) => directory.permissions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Directory;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Group,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Group, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 
@@ -50,5 +43,4 @@ export class Directory4Permission
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;
-
 }

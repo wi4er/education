@@ -1,5 +1,10 @@
 import { PermissionMethod } from './permission.method';
-import { CanActivate, ExecutionContext, Injectable, SetMetadata } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  SetMetadata,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, ObjectType } from 'typeorm';
@@ -9,14 +14,13 @@ import { CommonPermissionEntity } from '../entities/common-permission.entity';
 export const CHECK_PARENT_PERMISSION = 'CHECK_PARENT_PERMISSION';
 
 export interface CheckParentPermissionOptions<T> {
-
-  entity: new() => { parentId: CommonPermissionEntity<T> };
+  entity: new () => { parentId: CommonPermissionEntity<T> };
   idParam?: string;
-  method: PermissionMethod
+  method: PermissionMethod;
 }
 
 export function CheckParentPermission(
-  entity: new() => { parent: CommonPermissionEntity<any> },
+  entity: new () => { parent: CommonPermissionEntity<any> },
   method: PermissionMethod,
   idParam: string = 'id',
 ) {
@@ -25,17 +29,13 @@ export function CheckParentPermission(
 
 @Injectable()
 export class CheckParentPermissionGuard implements CanActivate {
-
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
-  ) {
-  }
+  ) {}
 
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const method = request.method;
 
@@ -51,12 +51,10 @@ export class CheckParentPermissionGuard implements CanActivate {
 
     if (!id) return true;
 
-    const found = await this.manager.findOne(
-      entity,
-      { where: { parentId: id } },
-    );
+    const found = await this.manager.findOne(entity, {
+      where: { parentId: id },
+    });
 
     return true;
   }
-
 }

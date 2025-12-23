@@ -26,7 +26,6 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('status')
 export class StatusController {
-
   constructor(
     @InjectRepository(Status)
     private readonly statusRepository: Repository<Status>,
@@ -34,8 +33,7 @@ export class StatusController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(status: Status): StatusView {
     return {
@@ -45,17 +43,19 @@ export class StatusController {
       createdAt: status.createdAt,
       updatedAt: status.updatedAt,
       attributes: {
-        strings: status.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: status.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
+        strings:
+          status.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          status.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
       },
-      status: status.statuses?.map(s => s.statusId) ?? [],
+      status: status.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -73,7 +73,7 @@ export class StatusController {
       skip: offset,
     });
 
-    return statuses.map(status => this.toView(status));
+    return statuses.map((status) => this.toView(status));
   }
 
   @Get(':id')
@@ -95,17 +95,32 @@ export class StatusController {
   @CheckMethodAccess(AccessEntity.STATUS, AccessMethod.POST)
   async create(
     @Body()
-    data: StatusInput
+    data: StatusInput,
   ): Promise<StatusView> {
     const { strings, points, status: statusIds, ...statusData } = data;
 
-    const status = await this.dataSource.transaction(async transaction => {
+    const status = await this.dataSource.transaction(async (transaction) => {
       const sts = transaction.create(Status, statusData);
       const savedStatus = await transaction.save(sts);
 
-      await this.stringAttributeService.create<Status>(transaction, Status2String, savedStatus.id, strings);
-      await this.pointAttributeService.create<Status>(transaction, Status2Point, savedStatus.id, points);
-      await this.statusService.create<Status>(transaction, Status4Status, savedStatus.id, statusIds);
+      await this.stringAttributeService.create<Status>(
+        transaction,
+        Status2String,
+        savedStatus.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Status>(
+        transaction,
+        Status2Point,
+        savedStatus.id,
+        points,
+      );
+      await this.statusService.create<Status>(
+        transaction,
+        Status4Status,
+        savedStatus.id,
+        statusIds,
+      );
 
       return transaction.findOne(Status, {
         where: { id: savedStatus.id },
@@ -127,12 +142,27 @@ export class StatusController {
   ): Promise<StatusView> {
     const { strings, points, status: statusIds, ...statusData } = data;
 
-    const status = await this.dataSource.transaction(async transaction => {
+    const status = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Status, id, statusData);
 
-      await this.stringAttributeService.update<Status>(transaction, Status2String, id, strings);
-      await this.pointAttributeService.update<Status>(transaction, Status2Point, id, points);
-      await this.statusService.update<Status>(transaction, Status4Status, id, statusIds);
+      await this.stringAttributeService.update<Status>(
+        transaction,
+        Status2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Status>(
+        transaction,
+        Status2Point,
+        id,
+        points,
+      );
+      await this.statusService.update<Status>(
+        transaction,
+        Status4Status,
+        id,
+        statusIds,
+      );
 
       return transaction.findOne(Status, {
         where: { id },
@@ -152,5 +182,4 @@ export class StatusController {
   ): Promise<void> {
     await this.statusRepository.delete(id);
   }
-
 }

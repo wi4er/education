@@ -7,12 +7,14 @@ import { WithDescriptionsInput } from '../../common/inputs/with-descriptions.inp
 import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface GroupInput
-  extends WithStringsInput, WithPointsInput, WithDescriptionsInput, WithStatusesInput {
-
+  extends
+    WithStringsInput,
+    WithPointsInput,
+    WithDescriptionsInput,
+    WithStatusesInput {
   id?: string;
 
   strings?: CommonStringInput[];
   points?: CommonPointInput[];
   descriptions?: CommonDescriptionInput[];
-
 }

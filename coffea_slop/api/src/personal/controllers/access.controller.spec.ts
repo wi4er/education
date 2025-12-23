@@ -13,7 +13,6 @@ import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
 
 describe('AccessController', () => {
-
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -51,11 +50,13 @@ describe('AccessController', () => {
       await groupRepo.save(groupRepo.create({ id: 'admins' }));
 
       const repo = dataSource.getRepository(Access);
-      await repo.save(repo.create({
-        groupId: 'admins',
-        entity: AccessEntity.USER,
-        method: AccessMethod.GET,
-      }));
+      await repo.save(
+        repo.create({
+          groupId: 'admins',
+          entity: AccessEntity.USER,
+          method: AccessMethod.GET,
+        }),
+      );
 
       const response = await request(app.getHttpServer())
         .get('/access')
@@ -86,11 +87,13 @@ describe('AccessController', () => {
       await groupRepo.save(groupRepo.create({ id: 'admins' }));
 
       const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(repo.create({
-        groupId: 'admins',
-        entity: AccessEntity.USER,
-        method: AccessMethod.GET,
-      }));
+      const saved = await repo.save(
+        repo.create({
+          groupId: 'admins',
+          entity: AccessEntity.USER,
+          method: AccessMethod.GET,
+        }),
+      );
 
       const response = await request(app.getHttpServer())
         .get(`/access/${saved.id}`)
@@ -151,11 +154,13 @@ describe('AccessController', () => {
       await groupRepo.save(groupRepo.create({ id: 'editors' }));
 
       const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(repo.create({
-        groupId: 'admins',
-        entity: AccessEntity.USER,
-        method: AccessMethod.GET,
-      }));
+      const saved = await repo.save(
+        repo.create({
+          groupId: 'admins',
+          entity: AccessEntity.USER,
+          method: AccessMethod.GET,
+        }),
+      );
 
       const response = await request(app.getHttpServer())
         .put(`/access/${saved.id}`)
@@ -191,11 +196,13 @@ describe('AccessController', () => {
       await groupRepo.save(groupRepo.create({ id: 'admins' }));
 
       const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(repo.create({
-        groupId: 'admins',
-        entity: AccessEntity.USER,
-        method: AccessMethod.GET,
-      }));
+      const saved = await repo.save(
+        repo.create({
+          groupId: 'admins',
+          entity: AccessEntity.USER,
+          method: AccessMethod.GET,
+        }),
+      );
 
       await request(app.getHttpServer())
         .delete(`/access/${saved.id}`)
@@ -205,5 +212,4 @@ describe('AccessController', () => {
       expect(found).toBeNull();
     });
   });
-
 });

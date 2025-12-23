@@ -14,9 +14,10 @@ import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('settings_language')
-export class Language extends BaseEntity
-  implements WithStrings<Language>, WithPoints<Language>, WithStatuses<Language> {
-
+export class Language
+  extends BaseEntity
+  implements WithStrings<Language>, WithPoints<Language>, WithStatuses<Language>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -24,16 +25,10 @@ export class Language extends BaseEntity
   })
   id: string;
 
-  @OneToMany(
-    () => Language2String,
-    (langString) => langString.parent,
-  )
+  @OneToMany(() => Language2String, (langString) => langString.parent)
   strings: Language2String[];
 
-  @OneToMany(
-    () => Language2Point,
-    (langPoint) => langPoint.parent,
-  )
+  @OneToMany(() => Language2Point, (langPoint) => langPoint.parent)
   points: Language2Point[];
 
   @OneToMany(
@@ -47,5 +42,4 @@ export class Language extends BaseEntity
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

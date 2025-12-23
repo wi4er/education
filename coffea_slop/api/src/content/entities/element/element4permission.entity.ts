@@ -14,34 +14,27 @@ import { CommonPermissionEntity } from '../../../common/entities/common-permissi
 @Entity('content_element4permission')
 export class Element4Permission
   extends BaseEntity
-  implements CommonPermissionEntity<Element> {
-
+  implements CommonPermissionEntity<Element>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Element,
-    (element: Element) => element.permissions,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Element, (element: Element) => element.permissions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Element;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Group,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Group, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 
@@ -50,5 +43,4 @@ export class Element4Permission
 
   @Column({ type: 'varchar', length: 32 })
   method: PermissionMethod;
-
 }

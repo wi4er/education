@@ -36,7 +36,6 @@ import { log } from 'node:util';
 
 @Controller('block')
 export class BlockController {
-
   constructor(
     @InjectRepository(Block)
     private readonly blockRepository: Repository<Block>,
@@ -47,8 +46,7 @@ export class BlockController {
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
     private readonly statusService: StatusService,
-  ) {
-  }
+  ) {}
 
   toView(block: Block): BlockView {
     return {
@@ -56,32 +54,37 @@ export class BlockController {
       createdAt: block.createdAt,
       updatedAt: block.updatedAt,
       attributes: {
-        strings: block.strings?.map(str => ({
-          lang: str.languageId,
-          attr: str.attributeId,
-          value: str.value,
-        })) ?? [],
-        points: block.points?.map(pnt => ({
-          attr: pnt.attributeId,
-          pnt: pnt.pointId,
-        })) ?? [],
-        descriptions: block.descriptions?.map(desc => ({
-          lang: desc.languageId,
-          attr: desc.attributeId,
-          value: desc.value,
-        })) ?? [],
-        counters: block.counters?.map(cnt => ({
-          attr: cnt.attributeId,
-          pnt: cnt.pointId,
-          msr: cnt.measureId,
-          count: cnt.count,
-        })) ?? [],
+        strings:
+          block.strings?.map((str) => ({
+            lang: str.languageId,
+            attr: str.attributeId,
+            value: str.value,
+          })) ?? [],
+        points:
+          block.points?.map((pnt) => ({
+            attr: pnt.attributeId,
+            pnt: pnt.pointId,
+          })) ?? [],
+        descriptions:
+          block.descriptions?.map((desc) => ({
+            lang: desc.languageId,
+            attr: desc.attributeId,
+            value: desc.value,
+          })) ?? [],
+        counters:
+          block.counters?.map((cnt) => ({
+            attr: cnt.attributeId,
+            pnt: cnt.pointId,
+            msr: cnt.measureId,
+            count: cnt.count,
+          })) ?? [],
       },
-      permissions: block.permissions?.map(perm => ({
-        group: perm.groupId,
-        method: perm.method,
-      })) ?? [],
-      status: block.statuses?.map(s => s.statusId) ?? [],
+      permissions:
+        block.permissions?.map((perm) => ({
+          group: perm.groupId,
+          method: perm.method,
+        })) ?? [],
+      status: block.statuses?.map((s) => s.statusId) ?? [],
     };
   }
 
@@ -102,11 +105,18 @@ export class BlockController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+      relations: [
+        'strings',
+        'points',
+        'permissions',
+        'descriptions',
+        'counters',
+        'statuses',
+      ],
       take: limit,
       skip: offset,
     });
-    return blocks.map(block => this.toView(block));
+    return blocks.map((block) => this.toView(block));
   }
 
   @Get(':id')
@@ -119,7 +129,14 @@ export class BlockController {
   ): Promise<BlockView> {
     const block = await this.blockRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+      relations: [
+        'strings',
+        'points',
+        'permissions',
+        'descriptions',
+        'counters',
+        'statuses',
+      ],
     });
     return this.toView(block);
   }
@@ -130,22 +147,67 @@ export class BlockController {
     @Body()
     data: BlockInput,
   ): Promise<BlockView> {
-    const { strings, points, permissions, descriptions, counters, status, ...blockData } = data;
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      status,
+      ...blockData
+    } = data;
 
-    const block = await this.dataSource.transaction(async transaction => {
+    const block = await this.dataSource.transaction(async (transaction) => {
       const blk = transaction.create(Block, blockData);
       const savedBlock = await transaction.save(blk);
 
-      await this.stringAttributeService.create<Block>(transaction, Block2String, savedBlock.id, strings);
-      await this.pointAttributeService.create<Block>(transaction, Block2Point, savedBlock.id, points);
-      await this.permissionService.create<Block>(transaction, Block4Permission, permissions, savedBlock.id);
-      await this.descriptionAttributeService.create<Block>(transaction, Block2Description, savedBlock.id, descriptions);
-      await this.counterAttributeService.create<Block>(transaction, Block2Counter, savedBlock.id, counters);
-      await this.statusService.create<Block>(transaction, Block4Status, savedBlock.id, status);
+      await this.stringAttributeService.create<Block>(
+        transaction,
+        Block2String,
+        savedBlock.id,
+        strings,
+      );
+      await this.pointAttributeService.create<Block>(
+        transaction,
+        Block2Point,
+        savedBlock.id,
+        points,
+      );
+      await this.permissionService.create<Block>(
+        transaction,
+        Block4Permission,
+        permissions,
+        savedBlock.id,
+      );
+      await this.descriptionAttributeService.create<Block>(
+        transaction,
+        Block2Description,
+        savedBlock.id,
+        descriptions,
+      );
+      await this.counterAttributeService.create<Block>(
+        transaction,
+        Block2Counter,
+        savedBlock.id,
+        counters,
+      );
+      await this.statusService.create<Block>(
+        transaction,
+        Block4Status,
+        savedBlock.id,
+        status,
+      );
 
       return transaction.findOne(Block, {
         where: { id: savedBlock.id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+        relations: [
+          'strings',
+          'points',
+          'permissions',
+          'descriptions',
+          'counters',
+          'statuses',
+        ],
       });
     });
 
@@ -162,21 +224,66 @@ export class BlockController {
     @Body()
     data: BlockInput,
   ): Promise<BlockView> {
-    const { strings, points, permissions, descriptions, counters, status, ...blockData } = data;
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      status,
+      ...blockData
+    } = data;
 
-    const block = await this.dataSource.transaction(async transaction => {
+    const block = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Block, id, blockData);
 
-      await this.stringAttributeService.update<Block>(transaction, Block2String, id, strings);
-      await this.pointAttributeService.update<Block>(transaction, Block2Point, id, points);
-      await this.permissionService.update<Block>(transaction, Block4Permission, id, permissions);
-      await this.descriptionAttributeService.update<Block>(transaction, Block2Description, id, descriptions);
-      await this.counterAttributeService.update<Block>(transaction, Block2Counter, id, counters);
-      await this.statusService.update<Block>(transaction, Block4Status, id, status);
+      await this.stringAttributeService.update<Block>(
+        transaction,
+        Block2String,
+        id,
+        strings,
+      );
+      await this.pointAttributeService.update<Block>(
+        transaction,
+        Block2Point,
+        id,
+        points,
+      );
+      await this.permissionService.update<Block>(
+        transaction,
+        Block4Permission,
+        id,
+        permissions,
+      );
+      await this.descriptionAttributeService.update<Block>(
+        transaction,
+        Block2Description,
+        id,
+        descriptions,
+      );
+      await this.counterAttributeService.update<Block>(
+        transaction,
+        Block2Counter,
+        id,
+        counters,
+      );
+      await this.statusService.update<Block>(
+        transaction,
+        Block4Status,
+        id,
+        status,
+      );
 
       return transaction.findOne(Block, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'statuses'],
+        relations: [
+          'strings',
+          'points',
+          'permissions',
+          'descriptions',
+          'counters',
+          'statuses',
+        ],
       });
     });
 
@@ -193,5 +300,4 @@ export class BlockController {
   ): Promise<void> {
     await this.blockRepository.delete(id);
   }
-
 }

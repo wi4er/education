@@ -4,7 +4,6 @@ import { CommonStatusEntity } from '../entities/common-status.entity';
 
 @Injectable()
 export class StatusService {
-
   async create<T>(
     transaction: EntityManager,
     statusClass: EntityTarget<CommonStatusEntity<T>>,
@@ -15,8 +14,8 @@ export class StatusService {
       return [];
     }
 
-    const entities = statusIds.map(
-      statusId => transaction.create(statusClass, {
+    const entities = statusIds.map((statusId) =>
+      transaction.create(statusClass, {
         parentId,
         statusId,
       }),
@@ -31,12 +30,14 @@ export class StatusService {
     parentId: string,
     statusIds: string[] = [],
   ): Promise<Array<CommonStatusEntity<T>>> {
-    const existing = await transaction.find(statusClass, { where: { parentId } as any });
+    const existing = await transaction.find(statusClass, {
+      where: { parentId } as any,
+    });
 
     const toDelete: number[] = [];
     const toInsert: string[] = [];
 
-    const existingSet = new Set(existing.map(e => e.statusId));
+    const existingSet = new Set(existing.map((e) => e.statusId));
     const inputSet = new Set(statusIds);
 
     for (const statusId of statusIds) {
@@ -56,8 +57,8 @@ export class StatusService {
     }
 
     if (toInsert.length > 0) {
-      const entities = toInsert.map(
-        statusId => transaction.create(statusClass, {
+      const entities = toInsert.map((statusId) =>
+        transaction.create(statusClass, {
           parentId,
           statusId,
         }),
@@ -67,5 +68,4 @@ export class StatusService {
 
     return transaction.find(statusClass, { where: { parentId } as any });
   }
-
 }

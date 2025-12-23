@@ -6,11 +6,9 @@ import { WithStatusesInput } from '../../common/inputs/with-statuses.input';
 
 export interface PointInput
   extends WithStringsInput, WithPointsInput, WithStatusesInput {
-
   id?: string;
   directoryId: string;
 
   strings?: CommonStringInput[];
   points?: CommonPointInput[];
-
 }

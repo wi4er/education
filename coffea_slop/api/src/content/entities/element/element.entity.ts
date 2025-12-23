@@ -26,12 +26,13 @@ import { Block } from '../block/block.entity';
 @Entity('content_element')
 export class Element
   extends BaseEntity
-  implements WithStrings<Element>,
+  implements
+    WithStrings<Element>,
     WithPoints<Element>,
     WithPermissions<Element>,
     WithDescriptions<Element>,
-    WithStatuses<Element> {
-
+    WithStatuses<Element>
+{
   @PrimaryColumn({
     type: 'varchar',
     length: 32,
@@ -63,15 +64,11 @@ export class Element
   )
   descriptions: Element2Description[];
 
-  @ManyToOne(
-    () => Block,
-    (block: Block) => block.elements,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Block, (block: Block) => block.elements, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
@@ -101,5 +98,4 @@ export class Element
 
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

@@ -14,52 +14,41 @@ import { CommonPointEntity } from '../../../common/entities/common-point.entity'
 @Entity('registry_measure2point')
 export class Measure2Point
   extends BaseEntity
-  implements CommonPointEntity<Measure> {
-
+  implements CommonPointEntity<Measure>
+{
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => Measure,
-    (measure: Measure) => measure.points,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Measure, (measure: Measure) => measure.points, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'parentId' })
   parent: Measure;
 
   @Column({ type: 'varchar', length: 32 })
   parentId: string;
 
-  @ManyToOne(
-    () => Attribute,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Attribute, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
   @Column({ type: 'varchar', length: 32 })
   attributeId: string;
 
-  @ManyToOne(
-    () => Point,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => Point, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'pointId' })
   point: Point;
 
   @Column({ type: 'varchar', length: 32 })
   pointId: string;
-
 }

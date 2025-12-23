@@ -4,9 +4,7 @@ import { WithStringsInput } from '../../common/inputs/with-strings.input';
 import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { AttributeType } from '../entities/attribute/attribute-type.enum';
 
-export interface AttributeInput
-  extends WithStringsInput, WithPointsInput {
-
+export interface AttributeInput extends WithStringsInput, WithPointsInput {
   id?: string;
   type?: AttributeType;
   asPoint?: string;
@@ -14,5 +12,4 @@ export interface AttributeInput
 
   strings?: CommonStringInput[];
   points?: CommonPointInput[];
-
 }
