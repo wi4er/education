@@ -37,15 +37,24 @@ docker compose down      # Stop all services
 DATABASE_NAME=coffea
 DATABASE_PASSWORD=your_password
 JWT_SECRET=your_secret
+ADMIN_GROUP=admin
 ```
 
-**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts.
+**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts. PostgreSQL data persists in `data/postgres/`, file storage in `data/storage/`.
 
 **Default admin credentials:** login `admin`, password `qwerty`
 
 ## Commands by App
 
 Commands can run inside Docker containers or locally. Docker containers auto-start in watch mode.
+
+**Running commands in containers:**
+```bash
+docker compose exec api npm run test                 # Run API tests inside container
+docker compose exec api npm run lint                 # Run API lint inside container
+docker compose logs api -f                           # Follow API container logs
+docker compose exec postgres psql -U admin -d coffea # Connect to PostgreSQL
+```
 
 ### API (`cd api`)
 ```bash
@@ -69,6 +78,7 @@ npm start        # Development server (localhost:3010 via Docker, or 3000 locall
 npm run build    # Production build (served at /admin/)
 npm run test     # Jest tests in watch mode
 npm run test -- --watchAll=false                     # Run tests once
+npm run test -- --testPathPattern="<pattern>"        # Single test file
 ```
 
 ## Architecture
@@ -77,9 +87,14 @@ npm run test -- --watchAll=false                     # Run tests once
 
 NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
-**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`
+**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`, `common/` (shared services), `exception/` (error handling)
 
-**Main Entities:** `Attribute`, `Language`, `Status`, `Directory`, `Point`, `Measure`, `User`, `Group`, `Block`, `Element`, `Section`, `Form`, `Result`
+**Main Entities:**
+- **settings**: `Attribute`, `Language`, `Status` - base configuration
+- **registry**: `Directory`, `Point`, `Measure` - hierarchical catalogs
+- **personal**: `User`, `Group`, `Access` - auth and permissions
+- **content**: `Block`, `Element`, `Section` - CMS content
+- **feedback**: `Form`, `Result` - user feedback forms
 
 **Subordinate Entities:** Named `{Parent}2{Type}` (value attributes) or `{Parent}4{Type}` (relations):
 - `*2string` - string values with language support
@@ -98,7 +113,7 @@ NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
 ### Frontend (Web)
 
-Next.js with App Router (`src/app/`):
+Next.js 16 with App Router (`src/app/`) and React 19:
 
 - `src/components/` - React components with folder structure: `index.ts`, `ComponentName.tsx`, `ComponentName.module.css`, optional `svg/`
 - `src/contexts/` - React context providers (`UserProvider`)
@@ -106,7 +121,7 @@ Next.js with App Router (`src/app/`):
 - `src/widgets/` - Reusable UI organized by category (`buttons/`, `heading/`, `input/`)
 - `src/fonts/` - Font files and shared `text-styles.module.css`
 
-**Dependencies:** Uses Swiper for carousels/sliders.
+**Dependencies:** Uses Swiper for carousels/sliders (`import { Swiper, SwiperSlide } from 'swiper/react'`), classnames for combining CSS classes.
 
 **Path alias:** `@/*` maps to `./src/*`
 
@@ -118,10 +133,10 @@ Next.js with App Router (`src/app/`):
 
 React with Create React App, Material-UI, React Router (basename `/admin/`):
 
-- `src/component/` - Feature components
-- `src/context/` - `ApiProvider` (backend communication), `UserProvider` (auth state)
+- `src/component/` - Feature components organized by domain (`common/`, `content/`, `feedback/`, `personal/`, `registry/`, `settings/`, `shared/`)
+- `src/context/` - `ApiProvider` (modular hooks: `useGet`, `useGetItem`, `usePost`, `usePut`, `useDelete`; combined as `useApi`), `UserProvider` (auth state with `useUser`, `useLogIn`, `useLogOut`)
 - `src/view/` - TypeScript view interfaces (`*View` naming convention)
-- `src/service/` - Helper services for attribute manipulation
+- `src/service/` - Helper services for dynamic column generation and value extraction (`getStringColumns`, `getPointColumns`, `getDescriptionColumns`, `getStatusColumns`, `getStringValue`, `getPointValue`)
 - `src/widget/` - Reusable widgets
 
 ## Code Patterns
@@ -131,6 +146,7 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 - Arrow functions: no brackets for single untyped parameter (`s =>` not `(s) =>`)
 - Controllers use `*View` interfaces for responses, `*Input` for request bodies
 - POST/PUT methods handle subordinates in a transaction via shared services
+- Tests co-located with source as `*.spec.ts`, use `test-db.module.ts` for mocked DataSource
 
 **Web:**
 - Named exports: `export { Header } from './Header'`
@@ -139,6 +155,7 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 - `'use client'` directive required for client components with hooks
 
 **Admin:**
-- Default exports in `index.tsx` files
+- Named exports with barrel files: `index.ts` exports from `ComponentName.tsx`
 - API calls via `useContext(apiContext)` with methods: `getList`, `getItem`, `postItem`, `putItem`, `deleteItem`
 - Material-UI components from `@mui/material` and `@mui/icons-material`
+- Form components use controlled inputs; List components follow fetch-in-useEffect pattern

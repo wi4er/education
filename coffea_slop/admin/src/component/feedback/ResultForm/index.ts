@@ -1,0 +1,1 @@
+export { ResultForm } from './ResultForm';

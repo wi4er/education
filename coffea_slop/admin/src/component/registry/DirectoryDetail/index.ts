@@ -1,0 +1,1 @@
+export { DirectoryDetail } from './DirectoryDetail';

@@ -1,0 +1,72 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+
+.modal {
+    background-color: #fff;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @media (min-width: 800px) {
+        max-width: 600px;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+
+    @media (min-width: 800px) {
+        padding: 24px 30px;
+    }
+}
+
+.title {
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+        opacity: 0.6;
+    }
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.content {
+    padding: 20px;
+    overflow-y: auto;
+
+    @media (min-width: 800px) {
+        padding: 24px 30px;
+    }
+}
