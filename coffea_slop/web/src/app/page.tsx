@@ -35,6 +35,12 @@ const specialDesserts: OfferEntity[] = [
 export default async function Home() {
   return (
     <div className={css.page}>
+
+
+      <h1 style={{fontSize: '10rem', paddingTop: '4rem'}}>
+        ПРИВЕТ КРИСТИНА
+      </h1>
+
       <MainBanner />
 
       <SectionList categories={categories} />
