@@ -22,7 +22,7 @@ export class User4Group extends BaseEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   userId: string;
 
   @ManyToOne(() => Group, (group: Group) => group.users, {
@@ -33,6 +33,6 @@ export class User4Group extends BaseEntity {
   @JoinColumn({ name: 'groupId' })
   group: Group;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   groupId: string;
 }

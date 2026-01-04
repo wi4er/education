@@ -23,12 +23,12 @@ export class Access extends BaseEntity {
   @JoinColumn({ name: 'groupId' })
   group: Group;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   groupId: string;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   entity: AccessEntity;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   method: AccessMethod;
 }

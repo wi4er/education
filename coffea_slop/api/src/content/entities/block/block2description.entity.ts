@@ -27,7 +27,7 @@ export class Block2Description
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Language, {
@@ -38,7 +38,7 @@ export class Block2Description
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   languageId: string | null;
 
   @ManyToOne(() => Attribute, {
@@ -49,7 +49,7 @@ export class Block2Description
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
   @Column({ type: 'text' })

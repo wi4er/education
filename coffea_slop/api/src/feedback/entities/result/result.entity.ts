@@ -14,7 +14,7 @@ import { Form } from '../form/form.entity';
 export class Result extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;
@@ -27,7 +27,7 @@ export class Result extends BaseEntity {
   @JoinColumn({ name: 'formId' })
   form: Form;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   formId: string;
 
   @CreateDateColumn()

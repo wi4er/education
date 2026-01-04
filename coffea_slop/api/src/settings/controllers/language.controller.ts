@@ -26,6 +26,9 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('language')
 export class LanguageController {
+
+  private readonly relations = ['strings', 'points', 'statuses'];
+
   constructor(
     @InjectRepository(Language)
     private readonly languageRepository: Repository<Language>,
@@ -66,7 +69,7 @@ export class LanguageController {
     offset?: number,
   ): Promise<LanguageView[]> {
     const languages = await this.languageRepository.find({
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
       take: limit,
       skip: offset,
     });
@@ -82,7 +85,7 @@ export class LanguageController {
   ): Promise<LanguageView> {
     const language = await this.languageRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
     });
     return this.toView(language);
   }
@@ -99,28 +102,13 @@ export class LanguageController {
       const lng = transaction.create(Language, languageData);
       const savedLanguage = await transaction.save(lng);
 
-      await this.stringAttributeService.create<Language>(
-        transaction,
-        Language2String,
-        savedLanguage.id,
-        strings,
-      );
-      await this.pointAttributeService.create<Language>(
-        transaction,
-        Language2Point,
-        savedLanguage.id,
-        points,
-      );
-      await this.statusService.create<Language>(
-        transaction,
-        Language4Status,
-        savedLanguage.id,
-        status,
-      );
+      await this.stringAttributeService.create<Language>(transaction, Language2String, savedLanguage.id, strings);
+      await this.pointAttributeService.create<Language>(transaction, Language2Point, savedLanguage.id, points);
+      await this.statusService.create<Language>(transaction, Language4Status, savedLanguage.id, status);
 
       return transaction.findOne(Language, {
         where: { id: savedLanguage.id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 
@@ -141,28 +129,13 @@ export class LanguageController {
     const language = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Language, id, languageData);
 
-      await this.stringAttributeService.update<Language>(
-        transaction,
-        Language2String,
-        id,
-        strings,
-      );
-      await this.pointAttributeService.update<Language>(
-        transaction,
-        Language2Point,
-        id,
-        points,
-      );
-      await this.statusService.update<Language>(
-        transaction,
-        Language4Status,
-        id,
-        status,
-      );
+      await this.stringAttributeService.update<Language>(transaction, Language2String, id, strings);
+      await this.pointAttributeService.update<Language>(transaction, Language2Point, id, points);
+      await this.statusService.update<Language>(transaction, Language4Status, id, status);
 
       return transaction.findOne(Language, {
         where: { id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 

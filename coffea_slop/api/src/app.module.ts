@@ -8,6 +8,7 @@ import { PersonalModule } from './personal/personal.module';
 import { ContentModule } from './content/content.module';
 import { ExceptionModule } from './exception/exception.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     ContentModule,
     ExceptionModule,
     FeedbackModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -21,6 +21,7 @@ describe('FormController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let jwtService: JwtService;
+  let repo;
 
   beforeAll(() => {
     process.env.JWT_SECRET = JWT_SECRET;
@@ -45,13 +46,13 @@ describe('FormController', () => {
     jwtService = module.get<JwtService>(JwtService);
     await app.init();
 
+    repo = dataSource.getRepository.bind(dataSource);
+
     // Create admin group for permission service
-    await dataSource.getRepository(Group).save({ id: 'admin' });
+    await repo(Group).save({ id: 'admin' });
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /form', () => {
     it('should return an empty array when no forms exist', async () => {
@@ -63,11 +64,11 @@ describe('FormController', () => {
     });
 
     it('should return an array of forms with relations', async () => {
-      const repo = dataSource.getRepository(Form);
-      await repo.save(repo.create({ id: 'form-1' }));
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form')
@@ -85,15 +86,17 @@ describe('FormController', () => {
     });
 
     it('should filter out forms without READ permission', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form).save({ id: 'form-3' });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-3', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form).save({ id: 'form-3' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-3',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form')
@@ -104,17 +107,18 @@ describe('FormController', () => {
     });
 
     it('should return forms with group permission when user has matching group in token', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form4Permission).save({
+      await repo(Group).save({ id: 'admins' });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form4Permission).save({
         parentId: 'form-1',
         groupId: 'admins',
         method: PermissionMethod.READ,
       });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-2', method: PermissionMethod.READ });
+      await repo(Form4Permission).save({
+        parentId: 'form-2',
+        method: PermissionMethod.READ,
+      });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
 
@@ -128,17 +132,18 @@ describe('FormController', () => {
     });
 
     it('should not return forms with group permission when user lacks that group', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form4Permission).save({
+      await repo(Group).save({ id: 'admins' });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form4Permission).save({
         parentId: 'form-1',
         groupId: 'admins',
         method: PermissionMethod.READ,
       });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-2', method: PermissionMethod.READ });
+      await repo(Form4Permission).save({
+        parentId: 'form-2',
+        method: PermissionMethod.READ,
+      });
 
       const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
 
@@ -154,18 +159,21 @@ describe('FormController', () => {
 
   describe('GET /form with pagination', () => {
     it('should return limited forms when limit is provided', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form).save({ id: 'form-3' });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-2', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-3', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form).save({ id: 'form-3' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-2',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-3',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form?limit=2')
@@ -175,18 +183,21 @@ describe('FormController', () => {
     });
 
     it('should skip forms when offset is provided', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form).save({ id: 'form-3' });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-2', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-3', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form).save({ id: 'form-3' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-2',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-3',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form?offset=1')
@@ -196,22 +207,26 @@ describe('FormController', () => {
     });
 
     it('should return paginated forms when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form).save({ id: 'form-2' });
-      await dataSource.getRepository(Form).save({ id: 'form-3' });
-      await dataSource.getRepository(Form).save({ id: 'form-4' });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-2', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-3', method: PermissionMethod.READ });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-4', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Form).save({ id: 'form-3' });
+      await repo(Form).save({ id: 'form-4' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-2',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-3',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-4',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form?limit=2&offset=1')
@@ -221,10 +236,11 @@ describe('FormController', () => {
     });
 
     it('should return empty array when offset exceeds total forms', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form?offset=10')
@@ -250,11 +266,11 @@ describe('FormController', () => {
     });
 
     it('should return a single form with relations', async () => {
-      const repo = dataSource.getRepository(Form);
-      await repo.save(repo.create({ id: 'form-1' }));
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.READ });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.READ,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/form/form-1')
@@ -271,7 +287,7 @@ describe('FormController', () => {
     });
 
     it('should return 403 when no READ permission exists', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .get('/form/form-1')
@@ -298,14 +314,12 @@ describe('FormController', () => {
         counters: [],
       });
 
-      const repo = dataSource.getRepository(Form);
-      const found = await repo.findOne({ where: { id: 'new-form' } });
+      const found = await repo(Form).findOne({ where: { id: 'new-form' } });
       expect(found).not.toBeNull();
     });
 
     it('should create form with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/form')
@@ -325,8 +339,7 @@ describe('FormController', () => {
     });
 
     it('should create form with descriptions', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'content' }));
+      await repo(Attribute).save({ id: 'content' });
 
       const response = await request(app.getHttpServer())
         .post('/form')
@@ -346,8 +359,7 @@ describe('FormController', () => {
     });
 
     it('should create form with permissions', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
+      await repo(Group).save({ id: 'admins' });
 
       const response = await request(app.getHttpServer())
         .post('/form')
@@ -389,11 +401,11 @@ describe('FormController', () => {
     });
 
     it('should update and return the form', async () => {
-      const repo = dataSource.getRepository(Form);
-      await repo.save(repo.create({ id: 'form-1' }));
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.WRITE });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.WRITE,
+      });
 
       const response = await request(app.getHttpServer())
         .put('/form/form-1')
@@ -404,7 +416,7 @@ describe('FormController', () => {
     });
 
     it('should return 403 when no WRITE permission exists', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .put('/form/form-1')
@@ -417,17 +429,18 @@ describe('FormController', () => {
     });
 
     it('should add new permissions without removing existing ones', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form4Permission).save({
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
         parentId: 'form-1',
         groupId: 'admins',
         method: PermissionMethod.READ,
       });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.WRITE });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.WRITE,
+      });
 
       const response = await request(app.getHttpServer())
         .put('/form/form-1')
@@ -455,22 +468,23 @@ describe('FormController', () => {
     });
 
     it('should remove permissions that are no longer in the list', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Group).save({ id: 'editors' });
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      await dataSource.getRepository(Form4Permission).save({
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
         parentId: 'form-1',
         groupId: 'admins',
         method: PermissionMethod.READ,
       });
-      await dataSource.getRepository(Form4Permission).save({
+      await repo(Form4Permission).save({
         parentId: 'form-1',
         groupId: 'editors',
         method: PermissionMethod.READ,
       });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.WRITE });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.WRITE,
+      });
 
       const response = await request(app.getHttpServer())
         .put('/form/form-1')
@@ -493,18 +507,17 @@ describe('FormController', () => {
     });
 
     it('should keep existing permissions unchanged when same permissions are sent', async () => {
-      await dataSource.getRepository(Group).save({ id: 'admins' });
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
-      const existingPerm = await dataSource
-        .getRepository(Form4Permission)
-        .save({
-          parentId: 'form-1',
-          groupId: 'admins',
-          method: PermissionMethod.READ,
-        });
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.WRITE });
+      await repo(Group).save({ id: 'admins' });
+      await repo(Form).save({ id: 'form-1' });
+      const existingPerm = await repo(Form4Permission).save({
+        parentId: 'form-1',
+        groupId: 'admins',
+        method: PermissionMethod.READ,
+      });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.WRITE,
+      });
 
       const response = await request(app.getHttpServer())
         .put('/form/form-1')
@@ -525,15 +538,13 @@ describe('FormController', () => {
         method: 'ALL',
       });
 
-      const permAfter = await dataSource
-        .getRepository(Form4Permission)
-        .findOne({
-          where: {
-            parentId: 'form-1',
-            groupId: 'admins',
-            method: PermissionMethod.READ,
-          },
-        });
+      const permAfter = await repo(Form4Permission).findOne({
+        where: {
+          parentId: 'form-1',
+          groupId: 'admins',
+          method: PermissionMethod.READ,
+        },
+      });
       expect(permAfter.id).toBe(existingPerm.id);
     });
   });
@@ -554,20 +565,20 @@ describe('FormController', () => {
     });
 
     it('should delete the form', async () => {
-      const repo = dataSource.getRepository(Form);
-      await repo.save(repo.create({ id: 'form-1' }));
-      await dataSource
-        .getRepository(Form4Permission)
-        .save({ parentId: 'form-1', method: PermissionMethod.DELETE });
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form4Permission).save({
+        parentId: 'form-1',
+        method: PermissionMethod.DELETE,
+      });
 
       await request(app.getHttpServer()).delete('/form/form-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'form-1' } });
+      const found = await repo(Form).findOne({ where: { id: 'form-1' } });
       expect(found).toBeNull();
     });
 
     it('should return 403 when no DELETE permission exists', async () => {
-      await dataSource.getRepository(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .delete('/form/form-1')

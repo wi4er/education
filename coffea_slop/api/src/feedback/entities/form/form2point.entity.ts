@@ -24,7 +24,7 @@ export class Form2Point extends BaseEntity implements CommonPointEntity<Form> {
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Attribute, {
@@ -35,7 +35,7 @@ export class Form2Point extends BaseEntity implements CommonPointEntity<Form> {
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
   @ManyToOne(() => Point, {
@@ -46,6 +46,6 @@ export class Form2Point extends BaseEntity implements CommonPointEntity<Form> {
   @JoinColumn({ name: 'pointId' })
   point: Point;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   pointId: string;
 }

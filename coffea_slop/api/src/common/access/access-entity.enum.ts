@@ -13,4 +13,6 @@ export enum AccessEntity {
   SECTION = 'SECTION',
   FORM = 'FORM',
   RESULT = 'RESULT',
+  COLLECTION = 'COLLECTION',
+  FILE = 'FILE',
 }

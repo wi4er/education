@@ -26,6 +26,9 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('status')
 export class StatusController {
+
+  private readonly relations = ['strings', 'points', 'statuses'];
+
   constructor(
     @InjectRepository(Status)
     private readonly statusRepository: Repository<Status>,
@@ -68,7 +71,7 @@ export class StatusController {
     offset?: number,
   ): Promise<StatusView[]> {
     const statuses = await this.statusRepository.find({
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
       take: limit,
       skip: offset,
     });
@@ -85,7 +88,7 @@ export class StatusController {
   ): Promise<StatusView> {
     const status = await this.statusRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
     });
 
     return this.toView(status);
@@ -103,28 +106,13 @@ export class StatusController {
       const sts = transaction.create(Status, statusData);
       const savedStatus = await transaction.save(sts);
 
-      await this.stringAttributeService.create<Status>(
-        transaction,
-        Status2String,
-        savedStatus.id,
-        strings,
-      );
-      await this.pointAttributeService.create<Status>(
-        transaction,
-        Status2Point,
-        savedStatus.id,
-        points,
-      );
-      await this.statusService.create<Status>(
-        transaction,
-        Status4Status,
-        savedStatus.id,
-        statusIds,
-      );
+      await this.stringAttributeService.create<Status>(transaction, Status2String, savedStatus.id, strings);
+      await this.pointAttributeService.create<Status>(transaction, Status2Point, savedStatus.id, points);
+      await this.statusService.create<Status>(transaction, Status4Status, savedStatus.id, statusIds);
 
       return transaction.findOne(Status, {
         where: { id: savedStatus.id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 
@@ -145,28 +133,13 @@ export class StatusController {
     const status = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Status, id, statusData);
 
-      await this.stringAttributeService.update<Status>(
-        transaction,
-        Status2String,
-        id,
-        strings,
-      );
-      await this.pointAttributeService.update<Status>(
-        transaction,
-        Status2Point,
-        id,
-        points,
-      );
-      await this.statusService.update<Status>(
-        transaction,
-        Status4Status,
-        id,
-        statusIds,
-      );
+      await this.stringAttributeService.update<Status>(transaction, Status2String, id, strings);
+      await this.pointAttributeService.update<Status>(transaction, Status2Point, id, points);
+      await this.statusService.update<Status>(transaction, Status4Status, id, statusIds);
 
       return transaction.findOne(Status, {
         where: { id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 

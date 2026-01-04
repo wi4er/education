@@ -47,12 +47,14 @@ services:
     volumes:
       - "./api:/app"
       - "./data/storage:/storage"
+      - "./data/upload:/upload"
     environment:
       DB_HOST: postgres
       DB_USERNAME: admin
       DB_NAME: ${DATABASE_NAME}
       DB_PASSWORD: ${DATABASE_PASSWORD}
       ADMIN_GROUP: ${ADMIN_GROUP:-admin}
+      UPLOAD_DIR: /upload
       JWT_SECRET: ${JWT_SECRET}
 
   web:

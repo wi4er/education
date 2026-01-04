@@ -22,7 +22,7 @@ export class Form4Status extends BaseEntity {
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Status, {
@@ -33,6 +33,6 @@ export class Form4Status extends BaseEntity {
   @JoinColumn({ name: 'statusId' })
   status: Status;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   statusId: string;
 }

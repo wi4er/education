@@ -21,7 +21,7 @@ export class Status
 {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;

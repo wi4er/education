@@ -11,6 +11,7 @@ import Snackbar from '@mui/material/Snackbar';
 import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
 import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
 import { DescriptionEdit, DescriptionsByAttr, descriptionsToGrouped, groupedToDescriptions } from '../../shared/DescriptionEdit';
+import { FileEdit, FilesByAttr, filesToGrouped, groupedToFiles } from '../../shared/FileEdit';
 import { StatusEdit } from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -33,6 +34,7 @@ export function SectionForm(
   const [strings, setStrings] = useState<StringsByAttr>({});
   const [points, setPoints] = useState<PointsByAttr>({});
   const [descriptions, setDescriptions] = useState<DescriptionsByAttr>({});
+  const [files, setFiles] = useState<FilesByAttr>({});
   const [error, setError] = useState('');
   const [tab, setTab] = useState(0);
   const { postItem, putItem, getItem } = React.useContext(apiContext);
@@ -47,6 +49,7 @@ export function SectionForm(
           setStrings(stringsToGrouped(data.attributes?.strings || []));
           setPoints(pointsToGrouped(data.attributes?.points || []));
           setDescriptions(descriptionsToGrouped(data.attributes?.descriptions || []));
+          setFiles(filesToGrouped(data.attributes?.files || []));
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
@@ -63,6 +66,7 @@ export function SectionForm(
       strings: groupedToStrings(strings),
       points: groupedToPoints(points),
       descriptions: groupedToDescriptions(descriptions),
+      files: groupedToFiles(files),
     };
 
     if (edit) {
@@ -115,6 +119,7 @@ export function SectionForm(
               <Tab label="Strings"/>
               <Tab label="Descriptions"/>
               <Tab label="Points"/>
+              <Tab label="Files"/>
             </Tabs>
           </Box>
 
@@ -134,6 +139,10 @@ export function SectionForm(
 
           {tab === 3 && (
             <PointEdit points={points} onChange={setPoints}/>
+          )}
+
+          {tab === 4 && (
+            <FileEdit files={files} onChange={setFiles}/>
           )}
         </form>
       </DialogContent>

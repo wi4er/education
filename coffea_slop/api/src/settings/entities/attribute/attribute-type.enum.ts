@@ -3,4 +3,5 @@ export enum AttributeType {
   POINT = 'POINT',
   COUNTER = 'COUNTER',
   DESCRIPTION = 'DESCRIPTION',
+  FILE = 'FILE',
 }

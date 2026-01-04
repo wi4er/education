@@ -8,4 +8,5 @@ export interface SectionView extends WithPermissionsView, WithStatusesView {
   updatedAt: Date;
 
   attributes: FullAttributesView;
+  images: string[];
 }

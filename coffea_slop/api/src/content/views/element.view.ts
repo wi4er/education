@@ -9,5 +9,6 @@ export interface ElementView extends WithPermissionsView, WithStatusesView {
 
   attributes: FullAttributesView;
 
+  images: string[];
   sections: string[];
 }

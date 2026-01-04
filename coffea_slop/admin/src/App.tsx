@@ -15,6 +15,8 @@ import { DirectoryList } from './component/registry/DirectoryList';
 import { DirectoryDetail } from './component/registry/DirectoryDetail';
 import { FormList } from './component/feedback/FormList';
 import { FormDetail } from './component/feedback/FormDetail';
+import { CollectionList } from './component/storage/CollectionList';
+import { CollectionDetail } from './component/storage/CollectionDetail';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
               <Route path={'/directories/:id'} element={<DirectoryDetail />} />
               <Route path={'/forms'} element={<FormList />} />
               <Route path={'/forms/:id'} element={<FormDetail />} />
+              <Route path={'/collections'} element={<CollectionList />} />
+              <Route path={'/collections/:id'} element={<CollectionDetail />} />
             </Routes>
           </CommonLayout>
         </BrowserRouter>

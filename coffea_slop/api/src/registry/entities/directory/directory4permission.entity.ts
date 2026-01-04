@@ -27,7 +27,7 @@ export class Directory4Permission
   @JoinColumn({ name: 'parentId' })
   parent: Directory;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Group, {
@@ -38,9 +38,9 @@ export class Directory4Permission
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   groupId?: string;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   method: PermissionMethod;
 }

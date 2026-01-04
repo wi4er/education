@@ -6,9 +6,6 @@ import * as request from 'supertest';
 import { GroupController } from './group.controller';
 import { Group } from '../entities/group/group.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
@@ -16,6 +13,7 @@ import { CommonModule } from '../../common/common.module';
 describe('GroupController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,11 +30,11 @@ describe('GroupController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /group', () => {
     it('should return an empty array when no groups exist', async () => {
@@ -48,8 +46,7 @@ describe('GroupController', () => {
     });
 
     it('should return an array of groups with relations', async () => {
-      const repo = dataSource.getRepository(Group);
-      await repo.save(repo.create({ id: 'group-1' }));
+      await repo(Group).save({ id: 'group-1' });
 
       const response = await request(app.getHttpServer())
         .get('/group')
@@ -67,9 +64,9 @@ describe('GroupController', () => {
 
   describe('GET /group with pagination', () => {
     it('should return limited groups when limit is provided', async () => {
-      await dataSource.getRepository(Group).save({ id: 'group-1' });
-      await dataSource.getRepository(Group).save({ id: 'group-2' });
-      await dataSource.getRepository(Group).save({ id: 'group-3' });
+      await repo(Group).save({ id: 'group-1' });
+      await repo(Group).save({ id: 'group-2' });
+      await repo(Group).save({ id: 'group-3' });
 
       const response = await request(app.getHttpServer())
         .get('/group?limit=2')
@@ -79,9 +76,9 @@ describe('GroupController', () => {
     });
 
     it('should skip groups when offset is provided', async () => {
-      await dataSource.getRepository(Group).save({ id: 'group-1' });
-      await dataSource.getRepository(Group).save({ id: 'group-2' });
-      await dataSource.getRepository(Group).save({ id: 'group-3' });
+      await repo(Group).save({ id: 'group-1' });
+      await repo(Group).save({ id: 'group-2' });
+      await repo(Group).save({ id: 'group-3' });
 
       const response = await request(app.getHttpServer())
         .get('/group?offset=1')
@@ -91,10 +88,10 @@ describe('GroupController', () => {
     });
 
     it('should return paginated groups when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Group).save({ id: 'group-1' });
-      await dataSource.getRepository(Group).save({ id: 'group-2' });
-      await dataSource.getRepository(Group).save({ id: 'group-3' });
-      await dataSource.getRepository(Group).save({ id: 'group-4' });
+      await repo(Group).save({ id: 'group-1' });
+      await repo(Group).save({ id: 'group-2' });
+      await repo(Group).save({ id: 'group-3' });
+      await repo(Group).save({ id: 'group-4' });
 
       const response = await request(app.getHttpServer())
         .get('/group?limit=2&offset=1')
@@ -104,7 +101,7 @@ describe('GroupController', () => {
     });
 
     it('should return empty array when offset exceeds total groups', async () => {
-      await dataSource.getRepository(Group).save({ id: 'group-1' });
+      await repo(Group).save({ id: 'group-1' });
 
       const response = await request(app.getHttpServer())
         .get('/group?offset=10')
@@ -130,8 +127,7 @@ describe('GroupController', () => {
     });
 
     it('should return a single group with relations', async () => {
-      const repo = dataSource.getRepository(Group);
-      await repo.save(repo.create({ id: 'group-1' }));
+      await repo(Group).save({ id: 'group-1' });
 
       const response = await request(app.getHttpServer())
         .get('/group/group-1')
@@ -160,14 +156,12 @@ describe('GroupController', () => {
         descriptions: [],
       });
 
-      const repo = dataSource.getRepository(Group);
-      const found = await repo.findOne({ where: { id: 'new-group' } });
+      const found = await repo(Group).findOne({ where: { id: 'new-group' } });
       expect(found).not.toBeNull();
     });
 
     it('should create group with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/group')
@@ -187,8 +181,7 @@ describe('GroupController', () => {
     });
 
     it('should create group with descriptions', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'description' }));
+      await repo(Attribute).save({ id: 'description' });
 
       const response = await request(app.getHttpServer())
         .post('/group')
@@ -227,8 +220,7 @@ describe('GroupController', () => {
     });
 
     it('should update and return the group', async () => {
-      const repo = dataSource.getRepository(Group);
-      await repo.save(repo.create({ id: 'group-1' }));
+      await repo(Group).save({ id: 'group-1' });
 
       const response = await request(app.getHttpServer())
         .put('/group/group-1')
@@ -255,12 +247,11 @@ describe('GroupController', () => {
     });
 
     it('should delete the group', async () => {
-      const repo = dataSource.getRepository(Group);
-      await repo.save(repo.create({ id: 'group-1' }));
+      await repo(Group).save({ id: 'group-1' });
 
       await request(app.getHttpServer()).delete('/group/group-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'group-1' } });
+      const found = await repo(Group).findOne({ where: { id: 'group-1' } });
       expect(found).toBeNull();
     });
   });

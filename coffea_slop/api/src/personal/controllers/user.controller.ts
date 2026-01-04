@@ -20,17 +20,32 @@ import { User2String } from '../entities/user/user2string.entity';
 import { User2Point } from '../entities/user/user2point.entity';
 import { User2Description } from '../entities/user/user2description.entity';
 import { User2Counter } from '../entities/user/user2counter.entity';
+import { User2File } from '../entities/user/user2file.entity';
 import { User4Status } from '../entities/user/user4status.entity';
+import { User4Image } from '../entities/user/user4image.entity';
 import { UserView } from '../views/user.view';
 import { UserInput } from '../inputs/user.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
 import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
 import { StatusService } from '../../common/services/status.service';
+import { ImageService } from '../../common/services/image.service';
 
 @Controller('user')
 export class UserController {
+
+  private readonly relations = [
+    'strings',
+    'points',
+    'descriptions',
+    'counters',
+    'files',
+    'images',
+    'statuses',
+  ];
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -39,6 +54,8 @@ export class UserController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly fileAttributeService: FileAttributeService,
+    private readonly imageService: ImageService,
     private readonly statusService: StatusService,
   ) {}
 
@@ -75,7 +92,13 @@ export class UserController {
             msr: cnt.measureId,
             count: cnt.count,
           })) ?? [],
+        files:
+          user.files?.map((f) => ({
+            attr: f.attributeId,
+            file: f.fileId,
+          })) ?? [],
       },
+      images: user.images?.map((img) => img.fileId) ?? [],
       status: user.statuses?.map((s) => s.statusId) ?? [],
     };
   }
@@ -89,7 +112,7 @@ export class UserController {
     offset?: number,
   ): Promise<UserView[]> {
     const users = await this.userRepository.find({
-      relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
+      relations: this.relations,
       take: limit,
       skip: offset,
     });
@@ -106,7 +129,7 @@ export class UserController {
   ): Promise<UserView> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'descriptions', 'counters', 'statuses'],
+      relations: this.relations,
     });
 
     return this.toView(user);
@@ -123,6 +146,8 @@ export class UserController {
       points,
       descriptions,
       counters,
+      files,
+      images,
       status,
       password,
       ...userData
@@ -132,52 +157,23 @@ export class UserController {
       const hashedPassword = password
         ? await bcrypt.hash(password, 10)
         : undefined;
-      const u = transaction.create(User, {
+      const created = transaction.create(User, {
         ...userData,
         password: hashedPassword,
       });
-      const savedUser = await transaction.save(u);
+      const saved = await transaction.save(created);
 
-      await this.stringAttributeService.create<User>(
-        transaction,
-        User2String,
-        savedUser.id,
-        strings,
-      );
-      await this.pointAttributeService.create<User>(
-        transaction,
-        User2Point,
-        savedUser.id,
-        points,
-      );
-      await this.descriptionAttributeService.create<User>(
-        transaction,
-        User2Description,
-        savedUser.id,
-        descriptions,
-      );
-      await this.counterAttributeService.create<User>(
-        transaction,
-        User2Counter,
-        savedUser.id,
-        counters,
-      );
-      await this.statusService.create<User>(
-        transaction,
-        User4Status,
-        savedUser.id,
-        status,
-      );
+      await this.stringAttributeService.create<User>(transaction, User2String, saved.id, strings);
+      await this.pointAttributeService.create<User>(transaction, User2Point, saved.id, points);
+      await this.descriptionAttributeService.create<User>(transaction, User2Description, saved.id, descriptions);
+      await this.counterAttributeService.create<User>(transaction, User2Counter, saved.id, counters);
+      await this.fileAttributeService.create<User>(transaction, User2File, saved.id, files);
+      await this.imageService.create<User>(transaction, User4Image, saved.id, images);
+      await this.statusService.create<User>(transaction, User4Status, saved.id, status);
 
       return transaction.findOne(User, {
-        where: { id: savedUser.id },
-        relations: [
-          'strings',
-          'points',
-          'descriptions',
-          'counters',
-          'statuses',
-        ],
+        where: { id: saved.id },
+        relations: this.relations,
       });
     });
 
@@ -198,6 +194,8 @@ export class UserController {
       points,
       descriptions,
       counters,
+      files,
+      images,
       status,
       password,
       ...userData
@@ -212,46 +210,17 @@ export class UserController {
         : userData;
       await transaction.update(User, id, updateData);
 
-      await this.stringAttributeService.update<User>(
-        transaction,
-        User2String,
-        id,
-        strings,
-      );
-      await this.pointAttributeService.update<User>(
-        transaction,
-        User2Point,
-        id,
-        points,
-      );
-      await this.descriptionAttributeService.update<User>(
-        transaction,
-        User2Description,
-        id,
-        descriptions,
-      );
-      await this.counterAttributeService.update<User>(
-        transaction,
-        User2Counter,
-        id,
-        counters,
-      );
-      await this.statusService.update<User>(
-        transaction,
-        User4Status,
-        id,
-        status,
-      );
+      await this.stringAttributeService.update<User>(transaction, User2String, id, strings);
+      await this.pointAttributeService.update<User>(transaction, User2Point, id, points);
+      await this.descriptionAttributeService.update<User>(transaction, User2Description, id, descriptions);
+      await this.counterAttributeService.update<User>(transaction, User2Counter, id, counters);
+      await this.fileAttributeService.update<User>(transaction, User2File, id, files);
+      await this.imageService.update<User>(transaction, User4Image, id, images);
+      await this.statusService.update<User>(transaction, User4Status, id, status);
 
       return transaction.findOne(User, {
         where: { id },
-        relations: [
-          'strings',
-          'points',
-          'descriptions',
-          'counters',
-          'statuses',
-        ],
+        relations: this.relations,
       });
     });
 

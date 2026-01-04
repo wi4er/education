@@ -14,6 +14,7 @@ import { CommonModule } from '../../common/common.module';
 describe('PointController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,11 +31,11 @@ describe('PointController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /point', () => {
     it('should return an empty array when no points exist', async () => {
@@ -46,11 +47,8 @@ describe('PointController', () => {
     });
 
     it('should return an array of points with relations', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
-
-      const repo = dataSource.getRepository(Point);
-      await repo.save(repo.create({ id: 'point-1', directoryId: 'dir-1' }));
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point')
@@ -68,16 +66,10 @@ describe('PointController', () => {
 
   describe('GET /point with pagination', () => {
     it('should return limited points when limit is provided', async () => {
-      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-3', directoryId: 'dir-1' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?limit=2')
@@ -87,16 +79,10 @@ describe('PointController', () => {
     });
 
     it('should skip points when offset is provided', async () => {
-      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-3', directoryId: 'dir-1' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?offset=1')
@@ -106,19 +92,11 @@ describe('PointController', () => {
     });
 
     it('should return paginated points when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-1', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-2', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-3', directoryId: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-4', directoryId: 'dir-1' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-4', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?limit=2&offset=1')
@@ -128,10 +106,8 @@ describe('PointController', () => {
     });
 
     it('should return empty array when offset exceeds total points', async () => {
-      await dataSource.getRepository(Directory).save({ id: 'dir-1' });
-      await dataSource
-        .getRepository(Point)
-        .save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point?offset=10')
@@ -157,11 +133,8 @@ describe('PointController', () => {
     });
 
     it('should return a single point with relations', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
-
-      const repo = dataSource.getRepository(Point);
-      await repo.save(repo.create({ id: 'point-1', directoryId: 'dir-1' }));
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .get('/point/point-1')
@@ -178,8 +151,7 @@ describe('PointController', () => {
 
   describe('POST /point', () => {
     it('should create and return a new point', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
+      await repo(Directory).save({ id: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .post('/point')
@@ -193,17 +165,13 @@ describe('PointController', () => {
         points: [],
       });
 
-      const repo = dataSource.getRepository(Point);
-      const found = await repo.findOne({ where: { id: 'new-point' } });
+      const found = await repo(Point).findOne({ where: { id: 'new-point' } });
       expect(found).not.toBeNull();
     });
 
     it('should create point with strings', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
-
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/point')
@@ -241,12 +209,9 @@ describe('PointController', () => {
     });
 
     it('should update and return the point', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
-      await dirRepo.save(dirRepo.create({ id: 'dir-2' }));
-
-      const repo = dataSource.getRepository(Point);
-      await repo.save(repo.create({ id: 'point-1', directoryId: 'dir-1' }));
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory).save({ id: 'dir-2' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
         .put('/point/point-1')
@@ -274,15 +239,12 @@ describe('PointController', () => {
     });
 
     it('should delete the point', async () => {
-      const dirRepo = dataSource.getRepository(Directory);
-      await dirRepo.save(dirRepo.create({ id: 'dir-1' }));
-
-      const repo = dataSource.getRepository(Point);
-      await repo.save(repo.create({ id: 'point-1', directoryId: 'dir-1' }));
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       await request(app.getHttpServer()).delete('/point/point-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'point-1' } });
+      const found = await repo(Point).findOne({ where: { id: 'point-1' } });
       expect(found).toBeNull();
     });
   });

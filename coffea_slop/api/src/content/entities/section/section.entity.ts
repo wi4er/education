@@ -15,12 +15,15 @@ import { Section4Permission } from './section4permission.entity';
 import { Section4Status } from './section4status.entity';
 import { Section2Description } from './section2description.entity';
 import { Section2Counter } from './section2counter.entity';
+import { Section2File } from './section2file.entity';
+import { Section4Image } from './section4image.entity';
 import { Element4Section } from '../element/element4section.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { WithFiles } from '../../../common/entities/with-files.entity';
 import { Block } from '../block/block.entity';
 
 @Entity('content_section')
@@ -31,11 +34,12 @@ export class Section
     WithPoints<Section>,
     WithPermissions<Section>,
     WithDescriptions<Section>,
-    WithStatuses<Section>
+    WithStatuses<Section>,
+    WithFiles<Section>
 {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;
@@ -76,6 +80,18 @@ export class Section
   )
   counters: Section2Counter[];
 
+  @OneToMany(
+    () => Section2File,
+    (sectFile: Section2File) => sectFile.parent,
+  )
+  files: Section2File[];
+
+  @OneToMany(
+    () => Section4Image,
+    (sectImage: Section4Image) => sectImage.parent,
+  )
+  images: Section4Image[];
+
   @ManyToOne(() => Block, (block: Block) => block.sections, {
     nullable: true,
     onDelete: 'CASCADE',
@@ -84,7 +100,7 @@ export class Section
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   parentId: string;
 
   @OneToMany(

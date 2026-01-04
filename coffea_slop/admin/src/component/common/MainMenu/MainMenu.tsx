@@ -17,11 +17,14 @@ import { apiContext } from '../../../context/ApiProvider';
 import { BlockView } from '../../content/view';
 import { DirectoryView } from '../../registry/view';
 import { FormView } from '../../feedback/view';
+import { CollectionView } from '../../storage/view';
 import { getStringValue } from '../../../service/string.service';
 import CategoryIcon from '@mui/icons-material/Category';
 import PlaceIcon from '@mui/icons-material/Place';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import CollectionsIcon from '@mui/icons-material/Collections';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 export function MainMenu(
   {
@@ -35,6 +38,7 @@ export function MainMenu(
   const [blocks, setBlocks] = useState<BlockView[]>([]);
   const [directories, setDirectories] = useState<DirectoryView[]>([]);
   const [forms, setForms] = useState<FormView[]>([]);
+  const [collections, setCollections] = useState<CollectionView[]>([]);
 
   useEffect(() => {
     getList<BlockView>('block')
@@ -46,6 +50,9 @@ export function MainMenu(
     getList<FormView>('form')
       .then(data => setForms(data))
       .catch(() => setForms([]));
+    getList<CollectionView>('collection')
+      .then(data => setCollections(data))
+      .catch(() => setCollections([]));
   }, []);
 
   return (
@@ -154,6 +161,37 @@ export function MainMenu(
                 <AssignmentIcon fontSize="small"/>
               </ListItemIcon>
               <ListItemText primary={getStringValue(form, 'NAME') || form.id}/>
+            </ListItemButton>
+          </ListItem>
+        ))}
+
+        <ListSubheader>Storage</ListSubheader>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => {
+            onClose();
+            navigate('/collections');
+          }}>
+            <ListItemIcon>
+              <CollectionsIcon/>
+            </ListItemIcon>
+            <ListItemText primary="Collections"/>
+          </ListItemButton>
+        </ListItem>
+
+        {collections.map(collection => (
+          <ListItem key={collection.id} disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => {
+                onClose();
+                navigate(`/collections/${collection.id}`);
+              }}
+            >
+              <ListItemIcon>
+                <InsertDriveFileIcon fontSize="small"/>
+              </ListItemIcon>
+              <ListItemText primary={getStringValue(collection, 'NAME') || collection.id}/>
             </ListItemButton>
           </ListItem>
         ))}

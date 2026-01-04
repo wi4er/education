@@ -1,0 +1,133 @@
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import React, { useEffect, useState } from 'react';
+import { apiContext } from '../../../context/ApiProvider';
+import Dialog from '@mui/material/Dialog';
+import { CollectionView } from '../view';
+import Snackbar from '@mui/material/Snackbar';
+import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
+import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
+import { StatusEdit } from '../../shared/StatusEdit';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+
+export function CollectionForm(
+  {
+    onClose,
+    edit,
+  }: {
+    onClose: () => void;
+    edit: string | null;
+  },
+) {
+  const [id, setId] = useState('');
+  const [status, setStatus] = useState<string[]>([]);
+  const [strings, setStrings] = useState<StringsByAttr>({});
+  const [points, setPoints] = useState<PointsByAttr>({});
+  const [error, setError] = useState('');
+  const [tab, setTab] = useState(0);
+  const { postItem, putItem, getItem } = React.useContext(apiContext);
+
+  useEffect(() => {
+    if (edit) {
+      getItem<CollectionView>(`collection/${edit}`)
+        .then(data => {
+          setId(data.id);
+          setStatus(data?.status || []);
+          setStrings(stringsToGrouped(data.attributes?.strings || []));
+          setPoints(pointsToGrouped(data.attributes?.points || []));
+        })
+        .catch(err => setError(err?.message || 'Failed to load'));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edit]);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const payload = {
+      id: edit ? undefined : id,
+      status: status.length > 0 ? status : undefined,
+      strings: groupedToStrings(strings),
+      points: groupedToPoints(points),
+    };
+
+    if (edit) {
+      putItem<CollectionView>(`collection/${edit}`, payload)
+        .then(() => onClose())
+        .catch(err => setError(err?.message || 'Failed to save'));
+    } else {
+      postItem<CollectionView>('collection', { ...payload, id })
+        .then(() => onClose())
+        .catch(err => setError(err?.message || 'Failed to create'));
+    }
+  };
+
+  return (
+    <Dialog
+      open={true}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>{edit ? `Edit Collection ${id}` : 'Create Collection'}</DialogTitle>
+
+      <DialogContent>
+        <form onSubmit={handleSubmit} id="collection-form">
+          {!edit && (
+            <TextField
+              autoFocus
+              margin="dense"
+              name="id"
+              label="ID (optional)"
+              fullWidth
+              value={id}
+              variant="standard"
+              onChange={event => setId(event.target.value)}
+            />
+          )}
+
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+            <Tabs value={tab} onChange={(_, v) => setTab(v)}>
+              <Tab label="Status"/>
+              <Tab label="Strings"/>
+              <Tab label="Points"/>
+            </Tabs>
+          </Box>
+
+          {tab === 0 && (
+            <Box sx={{ mt: 2 }}>
+              <StatusEdit value={status} onChange={setStatus}/>
+            </Box>
+          )}
+
+          {tab === 1 && (
+            <StringEdit strings={strings} onChange={setStrings}/>
+          )}
+
+          {tab === 2 && (
+            <PointEdit points={points} onChange={setPoints}/>
+          )}
+        </form>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button type="submit" form="collection-form">
+          SAVE
+        </Button>
+      </DialogActions>
+
+      {error ? <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        message={error}
+        onClose={() => setError('')}
+      /> : null}
+    </Dialog>
+  );
+}

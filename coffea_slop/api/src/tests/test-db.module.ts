@@ -65,9 +65,27 @@ import { Form4Status } from '../feedback/entities/form/form4status.entity';
 import { Result } from '../feedback/entities/result/result.entity';
 import { Element2Counter } from '../content/entities/element/element2counter.entity';
 import { User2Counter } from '../personal/entities/user/user2counter.entity';
+import { User2File } from '../personal/entities/user/user2file.entity';
+import { User4Image } from '../personal/entities/user/user4image.entity';
 import { Section2Counter } from '../content/entities/section/section2counter.entity';
+import { Section2File } from '../content/entities/section/section2file.entity';
+import { Section4Image } from '../content/entities/section/section4image.entity';
 import { Form2Counter } from '../feedback/entities/form/form2counter.entity';
+import { Form2File } from '../feedback/entities/form/form2file.entity';
 import { Block2Counter } from '../content/entities/block/block2counter.entity';
+import { Block2File } from '../content/entities/block/block2file.entity';
+import { Block4Image } from '../content/entities/block/block4image.entity';
+import { Element2File } from '../content/entities/element/element2file.entity';
+import { Element4Image } from '../content/entities/element/element4image.entity';
+import { Collection } from '../storage/entities/collection/collection.entity';
+import { Collection2String } from '../storage/entities/collection/collection2string.entity';
+import { Collection2Point } from '../storage/entities/collection/collection2point.entity';
+import { Collection4Permission } from '../storage/entities/collection/collection4permission.entity';
+import { Collection4Status } from '../storage/entities/collection/collection4status.entity';
+import { File } from '../storage/entities/file/file.entity';
+import { File2String } from '../storage/entities/file/file2string.entity';
+import { File2Point } from '../storage/entities/file/file2point.entity';
+import { File4Status } from '../storage/entities/file/file4status.entity';
 
 export const TestDbModule = TypeOrmModule.forRoot({
   type: 'sqlite',
@@ -110,6 +128,8 @@ export const TestDbModule = TypeOrmModule.forRoot({
     User2Point,
     User2Description,
     User2Counter,
+    User2File,
+    User4Image,
     User4Status,
     User4Group,
     Access,
@@ -118,6 +138,8 @@ export const TestDbModule = TypeOrmModule.forRoot({
     Block2Point,
     Block2Description,
     Block2Counter,
+    Block2File,
+    Block4Image,
     Block4Status,
     Block4Permission,
     Element,
@@ -125,6 +147,8 @@ export const TestDbModule = TypeOrmModule.forRoot({
     Element2Point,
     Element2Description,
     Element2Counter,
+    Element2File,
+    Element4Image,
     Element4Status,
     Element4Section,
     Element4Permission,
@@ -133,6 +157,8 @@ export const TestDbModule = TypeOrmModule.forRoot({
     Section2Point,
     Section2Description,
     Section2Counter,
+    Section2File,
+    Section4Image,
     Section4Status,
     Section4Permission,
     Form,
@@ -140,9 +166,19 @@ export const TestDbModule = TypeOrmModule.forRoot({
     Form2Point,
     Form2Description,
     Form2Counter,
+    Form2File,
     Form4Status,
     Form4Permission,
     Result,
+    Collection,
+    Collection2String,
+    Collection2Point,
+    Collection4Permission,
+    Collection4Status,
+    File,
+    File2String,
+    File2Point,
+    File4Status,
   ],
   synchronize: true,
   logging: false,

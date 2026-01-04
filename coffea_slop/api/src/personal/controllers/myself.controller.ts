@@ -21,6 +21,9 @@ import { WrongDataException } from '../../exception/wrong-data/wrong-data.except
 
 @Controller('myself')
 export class MyselfController {
+
+  private readonly relations = ['strings', 'points', 'descriptions', 'counters'];
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -78,7 +81,7 @@ export class MyselfController {
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['strings', 'points', 'descriptions', 'counters'],
+      relations: this.relations,
     });
 
     if (!user)
@@ -114,34 +117,14 @@ export class MyselfController {
       });
       const savedUser = await transaction.save(u);
 
-      await this.stringAttributeService.create<User>(
-        transaction,
-        User2String,
-        savedUser.id,
-        strings,
-      );
-      await this.pointAttributeService.create<User>(
-        transaction,
-        User2Point,
-        savedUser.id,
-        points,
-      );
-      await this.descriptionAttributeService.create<User>(
-        transaction,
-        User2Description,
-        savedUser.id,
-        descriptions,
-      );
-      await this.counterAttributeService.create<User>(
-        transaction,
-        User2Counter,
-        savedUser.id,
-        counters,
-      );
+      await this.stringAttributeService.create<User>(transaction, User2String, savedUser.id, strings);
+      await this.pointAttributeService.create<User>(transaction, User2Point, savedUser.id, points);
+      await this.descriptionAttributeService.create<User>(transaction, User2Description, savedUser.id, descriptions);
+      await this.counterAttributeService.create<User>(transaction, User2Counter, savedUser.id, counters);
 
       return transaction.findOne(User, {
         where: { id: savedUser.id },
-        relations: ['strings', 'points', 'descriptions', 'counters', 'groups'],
+        relations: [...this.relations, 'groups'],
       });
     });
 
@@ -178,34 +161,14 @@ export class MyselfController {
         : userData;
       await transaction.update(User, userId, updateData);
 
-      await this.stringAttributeService.update<User>(
-        transaction,
-        User2String,
-        userId,
-        strings,
-      );
-      await this.pointAttributeService.update<User>(
-        transaction,
-        User2Point,
-        userId,
-        points,
-      );
-      await this.descriptionAttributeService.update<User>(
-        transaction,
-        User2Description,
-        userId,
-        descriptions,
-      );
-      await this.counterAttributeService.update<User>(
-        transaction,
-        User2Counter,
-        userId,
-        counters,
-      );
+      await this.stringAttributeService.update<User>(transaction, User2String, userId, strings);
+      await this.pointAttributeService.update<User>(transaction, User2Point, userId, points);
+      await this.descriptionAttributeService.update<User>(transaction, User2Description, userId, descriptions);
+      await this.counterAttributeService.update<User>(transaction, User2Counter, userId, counters);
 
       return transaction.findOne(User, {
         where: { id: userId },
-        relations: ['strings', 'points', 'descriptions', 'counters'],
+        relations: this.relations,
       });
     });
 

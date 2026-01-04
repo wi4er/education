@@ -14,6 +14,7 @@ import { CommonModule } from '../../common/common.module';
 describe('StatusController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,11 +30,11 @@ describe('StatusController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /status', () => {
     it('should return an empty array when no statuses exist', async () => {
@@ -45,8 +46,7 @@ describe('StatusController', () => {
     });
 
     it('should return an array of statuses with relations', async () => {
-      const repo = dataSource.getRepository(Status);
-      await repo.save(repo.create({ id: 'status-1' }));
+      await repo(Status).save({ id: 'status-1' });
 
       const response = await request(app.getHttpServer())
         .get('/status')
@@ -63,9 +63,9 @@ describe('StatusController', () => {
 
   describe('GET /status with pagination', () => {
     it('should return limited statuses when limit is provided', async () => {
-      await dataSource.getRepository(Status).save({ id: 'status-1' });
-      await dataSource.getRepository(Status).save({ id: 'status-2' });
-      await dataSource.getRepository(Status).save({ id: 'status-3' });
+      await repo(Status).save({ id: 'status-1' });
+      await repo(Status).save({ id: 'status-2' });
+      await repo(Status).save({ id: 'status-3' });
 
       const response = await request(app.getHttpServer())
         .get('/status?limit=2')
@@ -75,9 +75,9 @@ describe('StatusController', () => {
     });
 
     it('should skip statuses when offset is provided', async () => {
-      await dataSource.getRepository(Status).save({ id: 'status-1' });
-      await dataSource.getRepository(Status).save({ id: 'status-2' });
-      await dataSource.getRepository(Status).save({ id: 'status-3' });
+      await repo(Status).save({ id: 'status-1' });
+      await repo(Status).save({ id: 'status-2' });
+      await repo(Status).save({ id: 'status-3' });
 
       const response = await request(app.getHttpServer())
         .get('/status?offset=1')
@@ -87,10 +87,10 @@ describe('StatusController', () => {
     });
 
     it('should return paginated statuses when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Status).save({ id: 'status-1' });
-      await dataSource.getRepository(Status).save({ id: 'status-2' });
-      await dataSource.getRepository(Status).save({ id: 'status-3' });
-      await dataSource.getRepository(Status).save({ id: 'status-4' });
+      await repo(Status).save({ id: 'status-1' });
+      await repo(Status).save({ id: 'status-2' });
+      await repo(Status).save({ id: 'status-3' });
+      await repo(Status).save({ id: 'status-4' });
 
       const response = await request(app.getHttpServer())
         .get('/status?limit=2&offset=1')
@@ -100,7 +100,7 @@ describe('StatusController', () => {
     });
 
     it('should return empty array when offset exceeds total statuses', async () => {
-      await dataSource.getRepository(Status).save({ id: 'status-1' });
+      await repo(Status).save({ id: 'status-1' });
 
       const response = await request(app.getHttpServer())
         .get('/status?offset=10')
@@ -126,8 +126,7 @@ describe('StatusController', () => {
     });
 
     it('should return a single status with relations', async () => {
-      const repo = dataSource.getRepository(Status);
-      await repo.save(repo.create({ id: 'status-1' }));
+      await repo(Status).save({ id: 'status-1' });
 
       const response = await request(app.getHttpServer())
         .get('/status/status-1')
@@ -154,8 +153,7 @@ describe('StatusController', () => {
         points: [],
       });
 
-      const repo = dataSource.getRepository(Status);
-      const found = await repo.findOne({ where: { id: 'new-status' } });
+      const found = await repo(Status).findOne({ where: { id: 'new-status' } });
       expect(found).not.toBeNull();
     });
   });
@@ -177,8 +175,7 @@ describe('StatusController', () => {
     });
 
     it('should update and return the status', async () => {
-      const repo = dataSource.getRepository(Status);
-      await repo.save(repo.create({ id: 'status-1' }));
+      await repo(Status).save({ id: 'status-1' });
 
       const response = await request(app.getHttpServer())
         .put('/status/status-1')
@@ -205,12 +202,11 @@ describe('StatusController', () => {
     });
 
     it('should delete the status', async () => {
-      const repo = dataSource.getRepository(Status);
-      await repo.save(repo.create({ id: 'status-1' }));
+      await repo(Status).save({ id: 'status-1' });
 
       await request(app.getHttpServer()).delete('/status/status-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'status-1' } });
+      const found = await repo(Status).findOne({ where: { id: 'status-1' } });
       expect(found).toBeNull();
     });
   });

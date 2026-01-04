@@ -18,6 +18,8 @@ import { Element2String } from '../entities/element/element2string.entity';
 import { Element2Point } from '../entities/element/element2point.entity';
 import { Element2Description } from '../entities/element/element2description.entity';
 import { Element2Counter } from '../entities/element/element2counter.entity';
+import { Element2File } from '../entities/element/element2file.entity';
+import { Element4Image } from '../entities/element/element4image.entity';
 import { ElementView } from '../views/element.view';
 import { ElementInput } from '../inputs/element.input';
 import { PointAttributeService } from '../../common/services/point-attribute.service';
@@ -25,7 +27,9 @@ import { StringAttributeService } from '../../common/services/string-attribute.s
 import { PermissionService } from '../../common/services/permission.service';
 import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
 import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
 import { SectionService } from '../services/section.service';
+import { ImageService } from '../../common/services/image.service';
 import {
   ElementFilterService,
   StringFilter,
@@ -44,6 +48,18 @@ import { StatusService } from '../../common/services/status.service';
 @Controller('element')
 export class ElementController {
 
+  private readonly relations = [
+    'strings',
+    'points',
+    'permissions',
+    'descriptions',
+    'counters',
+    'files',
+    'images',
+    'sections',
+    'statuses',
+  ];
+
   constructor(
     @InjectRepository(Element)
     private readonly elementRepository: Repository<Element>,
@@ -53,7 +69,9 @@ export class ElementController {
     private readonly permissionService: PermissionService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
+    private readonly fileAttributeService: FileAttributeService,
     private readonly sectionService: SectionService,
+    private readonly imageService: ImageService,
     private readonly statusService: StatusService,
     private readonly elementFilterService: ElementFilterService,
     private readonly elementSortService: ElementSortService,
@@ -91,12 +109,18 @@ export class ElementController {
             msr: cnt.measureId,
             count: cnt.count,
           })) ?? [],
+        files:
+          element.files?.map((f) => ({
+            attr: f.attributeId,
+            file: f.fileId,
+          })) ?? [],
       },
       permissions:
         element.permissions?.map((perm) => ({
           group: perm.groupId,
           method: perm.method,
         })) ?? [],
+      images: element.images?.map((img) => img.fileId) ?? [],
       sections: element.sections?.map((e4s) => e4s.sectionId) ?? [],
       status: element.statuses?.map((s) => s.statusId) ?? [],
     };
@@ -129,6 +153,8 @@ export class ElementController {
       .leftJoinAndSelect('element.permissions', 'permissions')
       .leftJoinAndSelect('element.descriptions', 'descriptions')
       .leftJoinAndSelect('element.counters', 'counters')
+      .leftJoinAndSelect('element.files', 'files')
+      .leftJoinAndSelect('element.images', 'images')
       .leftJoinAndSelect('element.sections', 'sections')
       .leftJoinAndSelect('element.statuses', 'statuses')
       .where(
@@ -165,7 +191,7 @@ export class ElementController {
   ): Promise<ElementView> {
     const element = await this.elementRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
+      relations: this.relations,
     });
 
     return this.toView(element);
@@ -177,7 +203,7 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const {strings, points, permissions, descriptions, counters, sections, status, ...elementData} = data;
+    const {strings, points, permissions, descriptions, counters, files, images, sections, status, ...elementData} = data;
 
     const element = await this.dataSource.transaction(async (transaction) => {
       const el = transaction.create(Element, elementData);
@@ -188,12 +214,14 @@ export class ElementController {
       await this.permissionService.create<Element>(transaction, Element4Permission, permissions, id);
       await this.descriptionAttributeService.create<Element>(transaction, Element2Description, id, descriptions);
       await this.counterAttributeService.create<Element>(transaction, Element2Counter, id, counters);
+      await this.fileAttributeService.create<Element>(transaction, Element2File, id, files);
+      await this.imageService.create<Element>(transaction, Element4Image, id, images);
       await this.sectionService.create(transaction, id, sections);
       await this.statusService.create<Element>(transaction, Element4Status, id, status);
 
       return transaction.findOne(Element, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
+        relations: this.relations,
       });
     });
 
@@ -210,7 +238,7 @@ export class ElementController {
     @Body()
     data: ElementInput,
   ): Promise<ElementView> {
-    const {strings, points, permissions, descriptions, counters, sections, status, ...elementData} = data;
+    const {strings, points, permissions, descriptions, counters, files, images, sections, status, ...elementData} = data;
 
     const element = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Element, id, elementData);
@@ -220,12 +248,14 @@ export class ElementController {
       await this.permissionService.update<Element>(transaction, Element4Permission, id, permissions);
       await this.descriptionAttributeService.update<Element>(transaction, Element2Description, id, descriptions);
       await this.counterAttributeService.update<Element>(transaction, Element2Counter, id, counters);
+      await this.fileAttributeService.update<Element>(transaction, Element2File, id, files);
+      await this.imageService.update<Element>(transaction, Element4Image, id, images);
       await this.sectionService.update(transaction, id, sections);
       await this.statusService.update<Element>(transaction, Element4Status, id, status);
 
       return transaction.findOne(Element, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'descriptions', 'counters', 'sections', 'statuses'],
+        relations: this.relations,
       });
     });
 

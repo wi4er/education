@@ -27,7 +27,7 @@ export class Group2Point
   @JoinColumn({ name: 'parentId' })
   parent: Group;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Attribute, {
@@ -38,7 +38,7 @@ export class Group2Point
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
   @ManyToOne(() => Point, {
@@ -49,6 +49,6 @@ export class Group2Point
   @JoinColumn({ name: 'pointId' })
   point: Point;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   pointId: string;
 }

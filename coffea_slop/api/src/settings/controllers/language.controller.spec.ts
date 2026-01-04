@@ -6,8 +6,6 @@ import * as request from 'supertest';
 import { LanguageController } from './language.controller';
 import { Language } from '../entities/language/language.entity';
 import { Attribute } from '../entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
@@ -15,6 +13,7 @@ import { CommonModule } from '../../common/common.module';
 describe('LanguageController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,11 +30,11 @@ describe('LanguageController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /language', () => {
     it('should return an empty array when no languages exist', async () => {
@@ -47,8 +46,7 @@ describe('LanguageController', () => {
     });
 
     it('should return an array of languages with relations', async () => {
-      const repo = dataSource.getRepository(Language);
-      await repo.save(repo.create({ id: 'lang-1' }));
+      await repo(Language).save({ id: 'lang-1' });
 
       const response = await request(app.getHttpServer())
         .get('/language')
@@ -65,9 +63,9 @@ describe('LanguageController', () => {
 
   describe('GET /language with pagination', () => {
     it('should return limited languages when limit is provided', async () => {
-      await dataSource.getRepository(Language).save({ id: 'lang-1' });
-      await dataSource.getRepository(Language).save({ id: 'lang-2' });
-      await dataSource.getRepository(Language).save({ id: 'lang-3' });
+      await repo(Language).save({ id: 'lang-1' });
+      await repo(Language).save({ id: 'lang-2' });
+      await repo(Language).save({ id: 'lang-3' });
 
       const response = await request(app.getHttpServer())
         .get('/language?limit=2')
@@ -77,9 +75,9 @@ describe('LanguageController', () => {
     });
 
     it('should skip languages when offset is provided', async () => {
-      await dataSource.getRepository(Language).save({ id: 'lang-1' });
-      await dataSource.getRepository(Language).save({ id: 'lang-2' });
-      await dataSource.getRepository(Language).save({ id: 'lang-3' });
+      await repo(Language).save({ id: 'lang-1' });
+      await repo(Language).save({ id: 'lang-2' });
+      await repo(Language).save({ id: 'lang-3' });
 
       const response = await request(app.getHttpServer())
         .get('/language?offset=1')
@@ -89,10 +87,10 @@ describe('LanguageController', () => {
     });
 
     it('should return paginated languages when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Language).save({ id: 'lang-1' });
-      await dataSource.getRepository(Language).save({ id: 'lang-2' });
-      await dataSource.getRepository(Language).save({ id: 'lang-3' });
-      await dataSource.getRepository(Language).save({ id: 'lang-4' });
+      await repo(Language).save({ id: 'lang-1' });
+      await repo(Language).save({ id: 'lang-2' });
+      await repo(Language).save({ id: 'lang-3' });
+      await repo(Language).save({ id: 'lang-4' });
 
       const response = await request(app.getHttpServer())
         .get('/language?limit=2&offset=1')
@@ -102,7 +100,7 @@ describe('LanguageController', () => {
     });
 
     it('should return empty array when offset exceeds total languages', async () => {
-      await dataSource.getRepository(Language).save({ id: 'lang-1' });
+      await repo(Language).save({ id: 'lang-1' });
 
       const response = await request(app.getHttpServer())
         .get('/language?offset=10')
@@ -128,8 +126,7 @@ describe('LanguageController', () => {
     });
 
     it('should return a single language with relations', async () => {
-      const repo = dataSource.getRepository(Language);
-      await repo.save(repo.create({ id: 'lang-1' }));
+      await repo(Language).save({ id: 'lang-1' });
 
       const response = await request(app.getHttpServer())
         .get('/language/lang-1')
@@ -156,14 +153,12 @@ describe('LanguageController', () => {
         points: [],
       });
 
-      const repo = dataSource.getRepository(Language);
-      const found = await repo.findOne({ where: { id: 'new-lang' } });
+      const found = await repo(Language).findOne({ where: { id: 'new-lang' } });
       expect(found).not.toBeNull();
     });
 
     it('should create language with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/language')
@@ -200,8 +195,7 @@ describe('LanguageController', () => {
     });
 
     it('should update and return the language', async () => {
-      const repo = dataSource.getRepository(Language);
-      await repo.save(repo.create({ id: 'lang-1' }));
+      await repo(Language).save({ id: 'lang-1' });
 
       const response = await request(app.getHttpServer())
         .put('/language/lang-1')
@@ -228,12 +222,11 @@ describe('LanguageController', () => {
     });
 
     it('should delete the language', async () => {
-      const repo = dataSource.getRepository(Language);
-      await repo.save(repo.create({ id: 'lang-1' }));
+      await repo(Language).save({ id: 'lang-1' });
 
       await request(app.getHttpServer()).delete('/language/lang-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'lang-1' } });
+      const found = await repo(Language).findOne({ where: { id: 'lang-1' } });
       expect(found).toBeNull();
     });
   });

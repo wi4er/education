@@ -24,7 +24,7 @@ export class Point
 {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;
@@ -37,7 +37,7 @@ export class Point
   @JoinColumn({ name: 'directoryId' })
   directory: Directory;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   directoryId: string;
 
   @OneToMany(

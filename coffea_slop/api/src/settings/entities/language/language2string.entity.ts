@@ -26,7 +26,7 @@ export class Language2String
   @JoinColumn({ name: 'parentId' })
   parent: Language;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Language, {
@@ -37,7 +37,7 @@ export class Language2String
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   languageId: string | null;
 
   @ManyToOne(() => Attribute, {
@@ -48,7 +48,7 @@ export class Language2String
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

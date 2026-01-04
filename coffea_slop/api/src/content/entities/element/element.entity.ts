@@ -16,6 +16,8 @@ import { Element4Status } from './element4status.entity';
 import { Element2Description } from './element2description.entity';
 import { Element4Section } from './element4section.entity';
 import { Element2Counter } from './element2counter.entity';
+import { Element2File } from './element2file.entity';
+import { Element4Image } from './element4image.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
@@ -35,7 +37,7 @@ export class Element
 {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;
@@ -72,7 +74,7 @@ export class Element
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   parentId: string;
 
   @OneToMany(
@@ -86,6 +88,18 @@ export class Element
     (elemCounter: Element2Counter) => elemCounter.parent,
   )
   counters: Element2Counter[];
+
+  @OneToMany(
+    () => Element2File,
+    (elemFile: Element2File) => elemFile.parent,
+  )
+  files: Element2File[];
+
+  @OneToMany(
+    () => Element4Image,
+    (elemImage: Element4Image) => elemImage.parent,
+  )
+  images: Element4Image[];
 
   @OneToMany(
     () => Element4Status,

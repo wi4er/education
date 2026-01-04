@@ -15,6 +15,7 @@ import { CommonModule } from '../../common/common.module';
 describe('AccessController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,11 +31,11 @@ describe('AccessController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /access', () => {
     it('should return an empty array when no access entries exist', async () => {
@@ -46,17 +47,12 @@ describe('AccessController', () => {
     });
 
     it('should return an array of access entries', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
-
-      const repo = dataSource.getRepository(Access);
-      await repo.save(
-        repo.create({
-          groupId: 'admins',
-          entity: AccessEntity.USER,
-          method: AccessMethod.GET,
-        }),
-      );
+      await repo(Group).save({ id: 'admins' });
+      await repo(Access).save({
+        groupId: 'admins',
+        entity: AccessEntity.USER,
+        method: AccessMethod.GET,
+      });
 
       const response = await request(app.getHttpServer())
         .get('/access')
@@ -83,17 +79,12 @@ describe('AccessController', () => {
     });
 
     it('should return a single access entry', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
-
-      const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(
-        repo.create({
-          groupId: 'admins',
-          entity: AccessEntity.USER,
-          method: AccessMethod.GET,
-        }),
-      );
+      await repo(Group).save({ id: 'admins' });
+      const saved = await repo(Access).save({
+        groupId: 'admins',
+        entity: AccessEntity.USER,
+        method: AccessMethod.GET,
+      });
 
       const response = await request(app.getHttpServer())
         .get(`/access/${saved.id}`)
@@ -108,8 +99,7 @@ describe('AccessController', () => {
 
   describe('POST /access', () => {
     it('should create and return a new access entry', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
+      await repo(Group).save({ id: 'admins' });
 
       const response = await request(app.getHttpServer())
         .post('/access')
@@ -124,8 +114,7 @@ describe('AccessController', () => {
       expect(response.body.entity).toBe(AccessEntity.USER);
       expect(response.body.method).toBe(AccessMethod.POST);
 
-      const repo = dataSource.getRepository(Access);
-      const found = await repo.findOne({ where: { id: response.body.id } });
+      const found = await repo(Access).findOne({ where: { id: response.body.id } });
       expect(found).not.toBeNull();
     });
   });
@@ -149,18 +138,13 @@ describe('AccessController', () => {
     });
 
     it('should update and return the access entry', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
-      await groupRepo.save(groupRepo.create({ id: 'editors' }));
-
-      const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(
-        repo.create({
-          groupId: 'admins',
-          entity: AccessEntity.USER,
-          method: AccessMethod.GET,
-        }),
-      );
+      await repo(Group).save({ id: 'admins' });
+      await repo(Group).save({ id: 'editors' });
+      const saved = await repo(Access).save({
+        groupId: 'admins',
+        entity: AccessEntity.USER,
+        method: AccessMethod.GET,
+      });
 
       const response = await request(app.getHttpServer())
         .put(`/access/${saved.id}`)
@@ -192,23 +176,18 @@ describe('AccessController', () => {
     });
 
     it('should delete the access entry', async () => {
-      const groupRepo = dataSource.getRepository(Group);
-      await groupRepo.save(groupRepo.create({ id: 'admins' }));
-
-      const repo = dataSource.getRepository(Access);
-      const saved = await repo.save(
-        repo.create({
-          groupId: 'admins',
-          entity: AccessEntity.USER,
-          method: AccessMethod.GET,
-        }),
-      );
+      await repo(Group).save({ id: 'admins' });
+      const saved = await repo(Access).save({
+        groupId: 'admins',
+        entity: AccessEntity.USER,
+        method: AccessMethod.GET,
+      });
 
       await request(app.getHttpServer())
         .delete(`/access/${saved.id}`)
         .expect(200);
 
-      const found = await repo.findOne({ where: { id: saved.id } });
+      const found = await repo(Access).findOne({ where: { id: saved.id } });
       expect(found).toBeNull();
     });
   });

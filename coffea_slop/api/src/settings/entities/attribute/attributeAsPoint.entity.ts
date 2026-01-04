@@ -22,7 +22,7 @@ export class Attribute2AsPoint extends BaseEntity {
   @JoinColumn({ name: 'parentId' })
   parent: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Directory, {
@@ -33,6 +33,6 @@ export class Attribute2AsPoint extends BaseEntity {
   @JoinColumn({ name: 'directoryId' })
   directory: Directory;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   directoryId: string;
 }

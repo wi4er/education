@@ -12,12 +12,14 @@ import { Form4Permission } from './form4permission.entity';
 import { Form4Status } from './form4status.entity';
 import { Form2Description } from './form2description.entity';
 import { Form2Counter } from './form2counter.entity';
+import { Form2File } from './form2file.entity';
 import { Result } from '../result/result.entity';
 import { WithStrings } from '../../../common/entities/with-strings.entity';
 import { WithPoints } from '../../../common/entities/with-points.entity';
 import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
 import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { WithFiles } from '../../../common/entities/with-files.entity';
 
 @Entity('feedback_form')
 export class Form
@@ -27,11 +29,12 @@ export class Form
     WithPoints<Form>,
     WithPermissions<Form>,
     WithDescriptions<Form>,
-    WithStatuses<Form>
+    WithStatuses<Form>,
+    WithFiles<Form>
 {
   @PrimaryColumn({
     type: 'varchar',
-    length: 32,
+    length: 36,
     default: () => 'uuid_generate_v4()',
   })
   id: string;
@@ -62,6 +65,12 @@ export class Form
     (formCounter: Form2Counter) => formCounter.parent,
   )
   counters: Form2Counter[];
+
+  @OneToMany(
+    () => Form2File,
+    (formFile: Form2File) => formFile.parent,
+  )
+  files: Form2File[];
 
   @OneToMany(() => Form4Status, (formStatus: Form4Status) => formStatus.parent)
   statuses: Form4Status[];

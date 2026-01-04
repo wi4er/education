@@ -24,7 +24,7 @@ export class Element2Counter extends BaseEntity {
   @JoinColumn({ name: 'parentId' })
   parent: Element;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
   @ManyToOne(() => Attribute, {
@@ -35,7 +35,7 @@ export class Element2Counter extends BaseEntity {
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
   @ManyToOne(() => Point, {
@@ -46,7 +46,7 @@ export class Element2Counter extends BaseEntity {
   @JoinColumn({ name: 'pointId' })
   point: Point | null;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   pointId: string | null;
 
   @ManyToOne(() => Measure, {
@@ -57,7 +57,7 @@ export class Element2Counter extends BaseEntity {
   @JoinColumn({ name: 'measureId' })
   measure: Measure | null;
 
-  @Column({ type: 'varchar', length: 32, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   measureId: string | null;
 
   @Column({ type: 'float' })

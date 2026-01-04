@@ -22,7 +22,7 @@ export class Element4Section extends BaseEntity {
   @JoinColumn({ name: 'elementId' })
   element: Element;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   elementId: string;
 
   @ManyToOne(() => Section, (section: Section) => section.elements, {
@@ -33,6 +33,6 @@ export class Element4Section extends BaseEntity {
   @JoinColumn({ name: 'sectionId' })
   section: Section;
 
-  @Column({ type: 'varchar', length: 32 })
+  @Column({ type: 'varchar', length: 36 })
   sectionId: string;
 }

@@ -3,6 +3,7 @@ import { CommonPointInput } from '../../common/inputs/common-point.input';
 import { CommonPermissionInput } from '../../common/inputs/common-permission.input';
 import { CommonDescriptionInput } from '../../common/inputs/common-description.input';
 import { CommonCounterInput } from '../../common/inputs/common-counter.input';
+import { CommonFileInput } from '../../common/inputs/common-file.input';
 import { WithStringsInput } from '../../common/inputs/with-strings.input';
 import { WithPointsInput } from '../../common/inputs/with-points.input';
 import { WithPermissionsInput } from '../../common/inputs/with-permissions.input';
@@ -24,6 +25,8 @@ export interface ElementInput
   permissions?: CommonPermissionInput[];
   descriptions?: CommonDescriptionInput[];
   counters?: CommonCounterInput[];
+  files?: CommonFileInput[];
 
+  images?: string[];
   sections?: string[];
 }

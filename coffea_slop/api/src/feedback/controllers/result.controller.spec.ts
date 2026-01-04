@@ -13,6 +13,7 @@ import { CommonModule } from '../../common/common.module';
 describe('ResultController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,11 +30,11 @@ describe('ResultController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /result', () => {
     it('should return an empty array when no results exist', async () => {
@@ -45,11 +46,8 @@ describe('ResultController', () => {
     });
 
     it('should return an array of results', async () => {
-      const formRepo = dataSource.getRepository(Form);
-      await formRepo.save(formRepo.create({ id: 'form-1' }));
-
-      const repo = dataSource.getRepository(Result);
-      await repo.save(repo.create({ id: 'result-1', formId: 'form-1' }));
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Result).save({ id: 'result-1', formId: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .get('/result')
@@ -77,11 +75,8 @@ describe('ResultController', () => {
     });
 
     it('should return a single result', async () => {
-      const formRepo = dataSource.getRepository(Form);
-      await formRepo.save(formRepo.create({ id: 'form-1' }));
-
-      const repo = dataSource.getRepository(Result);
-      await repo.save(repo.create({ id: 'result-1', formId: 'form-1' }));
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Result).save({ id: 'result-1', formId: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .get('/result/result-1')
@@ -94,8 +89,7 @@ describe('ResultController', () => {
 
   describe('POST /result', () => {
     it('should create and return a new result', async () => {
-      const formRepo = dataSource.getRepository(Form);
-      await formRepo.save(formRepo.create({ id: 'form-1' }));
+      await repo(Form).save({ id: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .post('/result')
@@ -105,8 +99,7 @@ describe('ResultController', () => {
       expect(response.body.id).toBe('new-result');
       expect(response.body.formId).toBe('form-1');
 
-      const repo = dataSource.getRepository(Result);
-      const found = await repo.findOne({ where: { id: 'new-result' } });
+      const found = await repo(Result).findOne({ where: { id: 'new-result' } });
       expect(found).not.toBeNull();
     });
   });
@@ -128,12 +121,9 @@ describe('ResultController', () => {
     });
 
     it('should update and return the result', async () => {
-      const formRepo = dataSource.getRepository(Form);
-      await formRepo.save(formRepo.create({ id: 'form-1' }));
-      await formRepo.save(formRepo.create({ id: 'form-2' }));
-
-      const repo = dataSource.getRepository(Result);
-      await repo.save(repo.create({ id: 'result-1', formId: 'form-1' }));
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Form).save({ id: 'form-2' });
+      await repo(Result).save({ id: 'result-1', formId: 'form-1' });
 
       const response = await request(app.getHttpServer())
         .put('/result/result-1')
@@ -161,15 +151,12 @@ describe('ResultController', () => {
     });
 
     it('should delete the result', async () => {
-      const formRepo = dataSource.getRepository(Form);
-      await formRepo.save(formRepo.create({ id: 'form-1' }));
-
-      const repo = dataSource.getRepository(Result);
-      await repo.save(repo.create({ id: 'result-1', formId: 'form-1' }));
+      await repo(Form).save({ id: 'form-1' });
+      await repo(Result).save({ id: 'result-1', formId: 'form-1' });
 
       await request(app.getHttpServer()).delete('/result/result-1').expect(200);
 
-      const found = await repo.findOne({ where: { id: 'result-1' } });
+      const found = await repo(Result).findOne({ where: { id: 'result-1' } });
       expect(found).toBeNull();
     });
   });

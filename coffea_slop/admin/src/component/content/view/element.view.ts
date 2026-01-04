@@ -11,6 +11,7 @@ export interface ElementView {
   permissions: Entity2permissionView[];
   status: string[];
 
+  images: string[];
   sections: string[];
 
 }

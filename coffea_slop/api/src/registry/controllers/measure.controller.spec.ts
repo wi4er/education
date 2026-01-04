@@ -6,8 +6,6 @@ import * as request from 'supertest';
 import { MeasureController } from './measure.controller';
 import { Measure } from '../entities/measure/measure.entity';
 import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
 import { TestDbModule } from '../../tests/test-db.module';
 import { ExceptionModule } from '../../exception/exception.module';
 import { CommonModule } from '../../common/common.module';
@@ -15,6 +13,7 @@ import { CommonModule } from '../../common/common.module';
 describe('MeasureController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,11 +30,11 @@ describe('MeasureController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /measure', () => {
     it('should return an empty array when no measures exist', async () => {
@@ -47,8 +46,7 @@ describe('MeasureController', () => {
     });
 
     it('should return an array of measures with relations', async () => {
-      const repo = dataSource.getRepository(Measure);
-      await repo.save(repo.create({ id: 'measure-1' }));
+      await repo(Measure).save({ id: 'measure-1' });
 
       const response = await request(app.getHttpServer())
         .get('/measure')
@@ -65,9 +63,9 @@ describe('MeasureController', () => {
 
   describe('GET /measure with pagination', () => {
     it('should return limited measures when limit is provided', async () => {
-      await dataSource.getRepository(Measure).save({ id: 'measure-1' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-2' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-3' });
+      await repo(Measure).save({ id: 'measure-1' });
+      await repo(Measure).save({ id: 'measure-2' });
+      await repo(Measure).save({ id: 'measure-3' });
 
       const response = await request(app.getHttpServer())
         .get('/measure?limit=2')
@@ -77,9 +75,9 @@ describe('MeasureController', () => {
     });
 
     it('should skip measures when offset is provided', async () => {
-      await dataSource.getRepository(Measure).save({ id: 'measure-1' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-2' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-3' });
+      await repo(Measure).save({ id: 'measure-1' });
+      await repo(Measure).save({ id: 'measure-2' });
+      await repo(Measure).save({ id: 'measure-3' });
 
       const response = await request(app.getHttpServer())
         .get('/measure?offset=1')
@@ -89,10 +87,10 @@ describe('MeasureController', () => {
     });
 
     it('should return paginated measures when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Measure).save({ id: 'measure-1' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-2' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-3' });
-      await dataSource.getRepository(Measure).save({ id: 'measure-4' });
+      await repo(Measure).save({ id: 'measure-1' });
+      await repo(Measure).save({ id: 'measure-2' });
+      await repo(Measure).save({ id: 'measure-3' });
+      await repo(Measure).save({ id: 'measure-4' });
 
       const response = await request(app.getHttpServer())
         .get('/measure?limit=2&offset=1')
@@ -102,7 +100,7 @@ describe('MeasureController', () => {
     });
 
     it('should return empty array when offset exceeds total measures', async () => {
-      await dataSource.getRepository(Measure).save({ id: 'measure-1' });
+      await repo(Measure).save({ id: 'measure-1' });
 
       const response = await request(app.getHttpServer())
         .get('/measure?offset=10')
@@ -128,8 +126,7 @@ describe('MeasureController', () => {
     });
 
     it('should return a single measure with relations', async () => {
-      const repo = dataSource.getRepository(Measure);
-      await repo.save(repo.create({ id: 'measure-1' }));
+      await repo(Measure).save({ id: 'measure-1' });
 
       const response = await request(app.getHttpServer())
         .get('/measure/measure-1')
@@ -156,14 +153,12 @@ describe('MeasureController', () => {
         points: [],
       });
 
-      const repo = dataSource.getRepository(Measure);
-      const found = await repo.findOne({ where: { id: 'new-measure' } });
+      const found = await repo(Measure).findOne({ where: { id: 'new-measure' } });
       expect(found).not.toBeNull();
     });
 
     it('should create measure with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'name' }));
+      await repo(Attribute).save({ id: 'name' });
 
       const response = await request(app.getHttpServer())
         .post('/measure')
@@ -200,8 +195,7 @@ describe('MeasureController', () => {
     });
 
     it('should update and return the measure', async () => {
-      const repo = dataSource.getRepository(Measure);
-      await repo.save(repo.create({ id: 'measure-1' }));
+      await repo(Measure).save({ id: 'measure-1' });
 
       const response = await request(app.getHttpServer())
         .put('/measure/measure-1')
@@ -228,14 +222,13 @@ describe('MeasureController', () => {
     });
 
     it('should delete the measure', async () => {
-      const repo = dataSource.getRepository(Measure);
-      await repo.save(repo.create({ id: 'measure-1' }));
+      await repo(Measure).save({ id: 'measure-1' });
 
       await request(app.getHttpServer())
         .delete('/measure/measure-1')
         .expect(200);
 
-      const found = await repo.findOne({ where: { id: 'measure-1' } });
+      const found = await repo(Measure).findOne({ where: { id: 'measure-1' } });
       expect(found).toBeNull();
     });
   });

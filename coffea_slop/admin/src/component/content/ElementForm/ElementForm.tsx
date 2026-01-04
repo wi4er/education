@@ -11,6 +11,8 @@ import Snackbar from '@mui/material/Snackbar';
 import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
 import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
 import { DescriptionEdit, DescriptionsByAttr, descriptionsToGrouped, groupedToDescriptions } from '../../shared/DescriptionEdit';
+import { FileEdit, FilesByAttr, filesToGrouped, groupedToFiles } from '../../shared/FileEdit';
+import { ImageEdit } from '../../shared/ImageEdit';
 import { StatusEdit } from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -33,6 +35,8 @@ export function ElementForm(
   const [strings, setStrings] = useState<StringsByAttr>({});
   const [points, setPoints] = useState<PointsByAttr>({});
   const [descriptions, setDescriptions] = useState<DescriptionsByAttr>({});
+  const [files, setFiles] = useState<FilesByAttr>({});
+  const [images, setImages] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [tab, setTab] = useState(0);
   const { postItem, putItem, getItem } = React.useContext(apiContext);
@@ -47,6 +51,8 @@ export function ElementForm(
           setStrings(stringsToGrouped(data.attributes?.strings || []));
           setPoints(pointsToGrouped(data.attributes?.points || []));
           setDescriptions(descriptionsToGrouped(data.attributes?.descriptions || []));
+          setFiles(filesToGrouped(data.attributes?.files || []));
+          setImages(data?.images || []);
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
@@ -63,6 +69,8 @@ export function ElementForm(
       strings: groupedToStrings(strings),
       points: groupedToPoints(points),
       descriptions: groupedToDescriptions(descriptions),
+      files: groupedToFiles(files),
+      images: images.length > 0 ? images : undefined,
     };
 
     if (edit) {
@@ -115,6 +123,8 @@ export function ElementForm(
               <Tab label="Strings"/>
               <Tab label="Descriptions"/>
               <Tab label="Points"/>
+              <Tab label="Files"/>
+              <Tab label="Images"/>
             </Tabs>
           </Box>
 
@@ -134,6 +144,14 @@ export function ElementForm(
 
           {tab === 3 && (
             <PointEdit points={points} onChange={setPoints}/>
+          )}
+
+          {tab === 4 && (
+            <FileEdit files={files} onChange={setFiles}/>
+          )}
+
+          {tab === 5 && (
+            <ImageEdit images={images} onChange={setImages}/>
           )}
         </form>
       </DialogContent>

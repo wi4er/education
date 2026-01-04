@@ -30,6 +30,13 @@ export interface Entity2descriptionView {
 
 }
 
+export interface Entity2fileView {
+
+  attr: string;
+  file: string;
+
+}
+
 export interface Entity2permissionView {
 
   group: string;
@@ -53,6 +60,7 @@ export interface AttributesView extends BaseAttributesView {
 export interface AttributesWithCountersView extends AttributesView {
 
   counters: Entity2counterView[];
+  files?: Entity2fileView[];
 
 }
 
@@ -62,6 +70,7 @@ export enum AttributeType {
   POINT = 'POINT',
   COUNTER = 'COUNTER',
   DESCRIPTION = 'DESCRIPTION',
+  FILE = 'FILE',
 
 }
 

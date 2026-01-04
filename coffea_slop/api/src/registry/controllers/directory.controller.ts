@@ -31,6 +31,9 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('directory')
 export class DirectoryController {
+
+  private readonly relations = ['strings', 'points', 'permissions', 'statuses'];
+
   constructor(
     @InjectRepository(Directory)
     private readonly directoryRepository: Repository<Directory>,
@@ -85,7 +88,7 @@ export class DirectoryController {
           method: In([PermissionMethod.READ, PermissionMethod.ALL]),
         },
       },
-      relations: ['strings', 'points', 'permissions', 'statuses'],
+      relations: this.relations,
       take: limit,
       skip: offset,
     });
@@ -102,7 +105,7 @@ export class DirectoryController {
   ): Promise<DirectoryView> {
     const directory = await this.directoryRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'permissions', 'statuses'],
+      relations: this.relations,
     });
     return this.toView(directory);
   }
@@ -119,34 +122,14 @@ export class DirectoryController {
       const dir = transaction.create(Directory, directoryData);
       const savedDirectory = await transaction.save(dir);
 
-      await this.stringAttributeService.create<Directory>(
-        transaction,
-        Directory2String,
-        savedDirectory.id,
-        strings,
-      );
-      await this.pointAttributeService.create<Directory>(
-        transaction,
-        Directory2Point,
-        savedDirectory.id,
-        points,
-      );
-      await this.permissionService.create<Directory>(
-        transaction,
-        Directory4Permission,
-        permissions,
-        savedDirectory.id,
-      );
-      await this.statusService.create<Directory>(
-        transaction,
-        Directory4Status,
-        savedDirectory.id,
-        status,
-      );
+      await this.stringAttributeService.create<Directory>(transaction, Directory2String, savedDirectory.id, strings);
+      await this.pointAttributeService.create<Directory>(transaction, Directory2Point, savedDirectory.id, points);
+      await this.permissionService.create<Directory>(transaction, Directory4Permission, permissions, savedDirectory.id);
+      await this.statusService.create<Directory>(transaction, Directory4Status, savedDirectory.id, status);
 
       return transaction.findOne(Directory, {
         where: { id: savedDirectory.id },
-        relations: ['strings', 'points', 'permissions', 'statuses'],
+        relations: this.relations,
       });
     });
 
@@ -168,34 +151,14 @@ export class DirectoryController {
     const directory = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Directory, id, directoryData);
 
-      await this.stringAttributeService.update<Directory>(
-        transaction,
-        Directory2String,
-        id,
-        strings,
-      );
-      await this.pointAttributeService.update<Directory>(
-        transaction,
-        Directory2Point,
-        id,
-        points,
-      );
-      await this.permissionService.update<Directory>(
-        transaction,
-        Directory4Permission,
-        id,
-        permissions,
-      );
-      await this.statusService.update<Directory>(
-        transaction,
-        Directory4Status,
-        id,
-        status,
-      );
+      await this.stringAttributeService.update<Directory>(transaction, Directory2String, id, strings);
+      await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
+      await this.permissionService.update<Directory>(transaction, Directory4Permission, id, permissions);
+      await this.statusService.update<Directory>(transaction, Directory4Status, id, status);
 
       return transaction.findOne(Directory, {
         where: { id },
-        relations: ['strings', 'points', 'permissions', 'statuses'],
+        relations: this.relations,
       });
     });
 

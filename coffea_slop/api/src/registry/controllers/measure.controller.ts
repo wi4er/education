@@ -26,6 +26,9 @@ import { StatusService } from '../../common/services/status.service';
 
 @Controller('measure')
 export class MeasureController {
+
+  private readonly relations = ['strings', 'points', 'statuses'];
+
   constructor(
     @InjectRepository(Measure)
     private readonly measureRepository: Repository<Measure>,
@@ -66,7 +69,7 @@ export class MeasureController {
     offset?: number,
   ): Promise<MeasureView[]> {
     const measures = await this.measureRepository.find({
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
       take: limit,
       skip: offset,
     });
@@ -79,7 +82,7 @@ export class MeasureController {
   async findOne(@Param('id') id: string): Promise<MeasureView> {
     const measure = await this.measureRepository.findOne({
       where: { id },
-      relations: ['strings', 'points', 'statuses'],
+      relations: this.relations,
     });
 
     return this.toView(measure);
@@ -94,28 +97,13 @@ export class MeasureController {
       const m = transaction.create(Measure, measureData);
       const savedMeasure = await transaction.save(m);
 
-      await this.stringAttributeService.create<Measure>(
-        transaction,
-        Measure2String,
-        savedMeasure.id,
-        strings,
-      );
-      await this.pointAttributeService.create<Measure>(
-        transaction,
-        Measure2Point,
-        savedMeasure.id,
-        points,
-      );
-      await this.statusService.create<Measure>(
-        transaction,
-        Measure4Status,
-        savedMeasure.id,
-        status,
-      );
+      await this.stringAttributeService.create<Measure>(transaction, Measure2String, savedMeasure.id, strings);
+      await this.pointAttributeService.create<Measure>(transaction, Measure2Point, savedMeasure.id, points);
+      await this.statusService.create<Measure>(transaction, Measure4Status, savedMeasure.id, status);
 
       return transaction.findOne(Measure, {
         where: { id: savedMeasure.id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 
@@ -136,28 +124,13 @@ export class MeasureController {
     const measure = await this.dataSource.transaction(async (transaction) => {
       await transaction.update(Measure, id, measureData);
 
-      await this.stringAttributeService.update<Measure>(
-        transaction,
-        Measure2String,
-        id,
-        strings,
-      );
-      await this.pointAttributeService.update<Measure>(
-        transaction,
-        Measure2Point,
-        id,
-        points,
-      );
-      await this.statusService.update<Measure>(
-        transaction,
-        Measure4Status,
-        id,
-        status,
-      );
+      await this.stringAttributeService.update<Measure>(transaction, Measure2String, id, strings);
+      await this.pointAttributeService.update<Measure>(transaction, Measure2Point, id, points);
+      await this.statusService.update<Measure>(transaction, Measure4Status, id, status);
 
       return transaction.findOne(Measure, {
         where: { id },
-        relations: ['strings', 'points', 'statuses'],
+        relations: this.relations,
       });
     });
 

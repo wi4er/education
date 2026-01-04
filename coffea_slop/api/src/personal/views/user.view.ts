@@ -10,4 +10,5 @@ export interface UserView extends WithStatusesView {
   updatedAt: Date;
 
   attributes: FullAttributesView;
+  images: string[];
 }

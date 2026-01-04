@@ -12,6 +12,9 @@ import { PermissionMethod } from '../../common/permission/permission.method';
 
 @Controller('sign-in')
 export class SignInController {
+
+  private readonly relations = ['groups'];
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -51,7 +54,7 @@ export class SignInController {
   ): Promise<SignInView> {
     const user = await this.userRepository.findOne({
       where: { login: data.login },
-      relations: ['groups'],
+      relations: this.relations,
     });
 
     if (!user || !(await bcrypt.compare(data.password, user.password)))

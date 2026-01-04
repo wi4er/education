@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from './entities/user/user.entity';
 import { User2Description } from './entities/user/user2description.entity';
+import { User2File } from './entities/user/user2file.entity';
 import { User4Status } from './entities/user/user4status.entity';
+import { User4Image } from './entities/user/user4image.entity';
 import { Group } from './entities/group/group.entity';
 import { Group2Description } from './entities/group/group2description.entity';
 import { Group4Status } from './entities/group/group4status.entity';
@@ -21,7 +23,9 @@ import { CommonModule } from '../common/common.module';
     TypeOrmModule.forFeature([
       User,
       User2Description,
+      User2File,
       User4Status,
+      User4Image,
       Group,
       Group2Description,
       Group4Status,

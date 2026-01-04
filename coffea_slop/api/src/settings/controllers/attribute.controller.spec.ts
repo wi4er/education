@@ -13,6 +13,7 @@ import { CommonModule } from '../../common/common.module';
 describe('AttributeController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let repo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,11 +30,11 @@ describe('AttributeController', () => {
     app = module.createNestApplication();
     dataSource = module.get<DataSource>(DataSource);
     await app.init();
+
+    repo = dataSource.getRepository.bind(dataSource);
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
   describe('GET /attribute', () => {
     it('should return an empty array when no attributes exist', async () => {
@@ -45,8 +46,7 @@ describe('AttributeController', () => {
     });
 
     it('should return an array of attributes with relations', async () => {
-      const repo = dataSource.getRepository(Attribute);
-      await repo.save(repo.create({ id: 'attr-1' }));
+      await repo(Attribute).save({ id: 'attr-1' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute')
@@ -63,9 +63,9 @@ describe('AttributeController', () => {
 
   describe('GET /attribute with pagination', () => {
     it('should return limited attributes when limit is provided', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
+      await repo(Attribute).save({ id: 'attr-1' });
+      await repo(Attribute).save({ id: 'attr-2' });
+      await repo(Attribute).save({ id: 'attr-3' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute?limit=2')
@@ -75,9 +75,9 @@ describe('AttributeController', () => {
     });
 
     it('should skip attributes when offset is provided', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
+      await repo(Attribute).save({ id: 'attr-1' });
+      await repo(Attribute).save({ id: 'attr-2' });
+      await repo(Attribute).save({ id: 'attr-3' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute?offset=1')
@@ -87,10 +87,10 @@ describe('AttributeController', () => {
     });
 
     it('should return paginated attributes when both limit and offset are provided', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-2' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-3' });
-      await dataSource.getRepository(Attribute).save({ id: 'attr-4' });
+      await repo(Attribute).save({ id: 'attr-1' });
+      await repo(Attribute).save({ id: 'attr-2' });
+      await repo(Attribute).save({ id: 'attr-3' });
+      await repo(Attribute).save({ id: 'attr-4' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute?limit=2&offset=1')
@@ -100,7 +100,7 @@ describe('AttributeController', () => {
     });
 
     it('should return empty array when offset exceeds total attributes', async () => {
-      await dataSource.getRepository(Attribute).save({ id: 'attr-1' });
+      await repo(Attribute).save({ id: 'attr-1' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute?offset=10')
@@ -126,8 +126,7 @@ describe('AttributeController', () => {
     });
 
     it('should return a single attribute with relations', async () => {
-      const repo = dataSource.getRepository(Attribute);
-      await repo.save(repo.create({ id: 'attr-1' }));
+      await repo(Attribute).save({ id: 'attr-1' });
 
       const response = await request(app.getHttpServer())
         .get('/attribute/attr-1')
@@ -154,14 +153,12 @@ describe('AttributeController', () => {
         points: [],
       });
 
-      const repo = dataSource.getRepository(Attribute);
-      const found = await repo.findOne({ where: { id: 'new-attr' } });
+      const found = await repo(Attribute).findOne({ where: { id: 'new-attr' } });
       expect(found).not.toBeNull();
     });
 
     it('should create attribute with strings', async () => {
-      const attrRepo = dataSource.getRepository(Attribute);
-      await attrRepo.save(attrRepo.create({ id: 'label' }));
+      await repo(Attribute).save({ id: 'label' });
 
       const response = await request(app.getHttpServer())
         .post('/attribute')
@@ -198,8 +195,7 @@ describe('AttributeController', () => {
     });
 
     it('should update and return the attribute', async () => {
-      const repo = dataSource.getRepository(Attribute);
-      await repo.save(repo.create({ id: 'attr-1' }));
+      await repo(Attribute).save({ id: 'attr-1' });
 
       const response = await request(app.getHttpServer())
         .put('/attribute/attr-1')
@@ -226,14 +222,13 @@ describe('AttributeController', () => {
     });
 
     it('should delete the attribute', async () => {
-      const repo = dataSource.getRepository(Attribute);
-      await repo.save(repo.create({ id: 'attr-1' }));
+      await repo(Attribute).save({ id: 'attr-1' });
 
       await request(app.getHttpServer())
         .delete('/attribute/attr-1')
         .expect(200);
 
-      const found = await repo.findOne({ where: { id: 'attr-1' } });
+      const found = await repo(Attribute).findOne({ where: { id: 'attr-1' } });
       expect(found).toBeNull();
     });
   });

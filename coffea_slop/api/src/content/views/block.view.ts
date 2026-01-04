@@ -7,4 +7,5 @@ export interface BlockView extends WithPermissionsView, WithStatusesView {
   updatedAt: Date;
 
   attributes: FullAttributesView;
+  images: string[];
 }
