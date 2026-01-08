@@ -87,7 +87,7 @@ npm run test -- --testPathPattern="<pattern>"        # Single test file
 
 NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 
-**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`, `common/` (shared services), `exception/` (error handling)
+**Modules:** `settings/`, `registry/`, `personal/`, `content/`, `feedback/`, `storage/`, `common/` (shared services), `exception/` (error handling)
 
 **Main Entities:**
 - **settings**: `Attribute`, `Language`, `Status` - base configuration
@@ -95,19 +95,23 @@ NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 - **personal**: `User`, `Group`, `Access` - auth and permissions
 - **content**: `Block`, `Element`, `Section` - CMS content
 - **feedback**: `Form`, `Result` - user feedback forms
+- **storage**: `Collection`, `File` - file storage with parent-child permission inheritance
 
 **Subordinate Entities:** Named `{Parent}2{Type}` (value attributes) or `{Parent}4{Type}` (relations):
 - `*2string` - string values with language support
 - `*2point` - point/location references
 - `*2description` - text descriptions with language
 - `*2counter` - numeric counts with optional measure/point
+- `*2file` - file references
 - `*4permission` - group-based permissions
 - `*4status` - status associations
 
-**Access Control (3 levels):**
+**Access Control (5 levels):**
 1. `@CheckId(Entity)` - Validates entity exists
 2. `@CheckMethodAccess(AccessEntity.*, AccessMethod.*)` - HTTP method access
 3. `@CheckIdPermission(PermissionEntity, PermissionMethod.*)` - Instance-level permissions
+4. `@CheckParentPermission` - For child entities, checks parent's permissions
+5. `@CheckInputPermission` - Validates permission on entity referenced in request body
 
 **Table naming:** `{module}_{entity}` (e.g., `personal_user`, `content_block`)
 

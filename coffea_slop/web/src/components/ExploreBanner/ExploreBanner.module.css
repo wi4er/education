@@ -9,98 +9,35 @@
 
 .imageLeft,
 .imageRight {
-    flex: 1;
     display: flex;
     height: 100%;
 }
 
 .beansImage {
-    width: 100%;
-    max-height: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
 .content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-}
-
-.title {
-    margin-bottom: 1.5rem;
-}
-
-.button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.75rem;
-    background: var(--color-brown);
-    color: var(--color-white);
-    font-weight: 500;
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.button:hover {
-    background: var(--color-brown-light);
-}
-
-@media (max-width: 1024px) {
-    .banner {
-        padding: 2rem;
-    }
-
-    .imageLeft,
-    .imageRight {
-        max-width: 200px;
-    }
+    display: grid;
+    grid-template:
+    ".       .       .   " 82px
+    ".       title   .   "
+    ".       .       .   " 23px
+    ".       button  .   "
+    ".       .       .   " 80px
+    /87px    auto    88px;
 
     .title {
-        font-size: 1.75rem;
+        grid-area: title;
+        text-align: start;
+        line-height: 50px;
+    }
+
+    .button {
+        grid-area: button;
+        width: 258px;
     }
 }
 
-@media (max-width: 768px) {
-    .banner {
-        flex-direction: column;
-        gap: 1.5rem;
-        padding: 3rem 2rem;
-    }
-
-    .imageLeft,
-    .imageRight {
-        max-width: 250px;
-        justify-content: center;
-    }
-
-    .imageRight {
-        order: 3;
-    }
-
-    .content {
-        order: 2;
-        padding: 1rem;
-    }
-
-    .title {
-        font-size: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .imageLeft,
-    .imageRight {
-        display: none;
-    }
-
-    .banner {
-        padding: 3rem 1rem;
-    }
-}
