@@ -1,0 +1,15 @@
+.rating {
+  grid-area: stars;
+  display: flex;
+  gap: 6px;
+  justify-content: end;
+}
+
+.star {
+  fill: #CECECE;
+
+  &.filled {
+    fill: #FFB921
+  }
+}
+

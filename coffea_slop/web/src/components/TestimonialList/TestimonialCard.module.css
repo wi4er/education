@@ -1,0 +1,60 @@
+.card {
+    width: 417px;
+    height: 207px;
+    padding: 27px 16px 0 28px;
+    margin: 14px auto;
+
+    overflow: hidden;
+
+    border: 2px solid #0000;
+    border-radius: 18px;
+    background-color: #E2D9C866;
+
+    display: grid;
+    grid-template:
+    "image    .      name     .      stars  " 31px
+    "image    .      role     .      .      " 25px
+    ".        .      .        .      .      " 12px
+    "text     text   text     text   text   "
+    /56px     12px   1fr      12px   136px;
+    align-content: start;
+
+    transition: 250ms;
+
+    &.active {
+        width: 441px;
+        height: 235px;
+        padding: 28px 26px 0 28px;
+        margin: 0 auto;
+        border: 2px solid #30261C1A;
+    }
+}
+
+.avatar {
+    grid-area: image;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    align-self: end;
+    grid-area: name;
+    color: #30261C;
+}
+
+.rating {
+    grid-area: stars;
+}
+
+.role {
+    align-self: start;
+    grid-area: role;
+    color: #30261CB2;
+}
+
+.text {
+    grid-area: text;
+    color: #30261C;
+}

@@ -1,53 +1,105 @@
-import { Heading2 } from '@/widgets/heading/Heading2';
-import css from './TestimonialList.module.css';
+"use client";
 
-const testimonials = [
+import {useState} from 'react';
+import {Heading2} from '@/widgets/heading/Heading2';
+import {TestimonialCard} from './TestimonialCard';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Pagination} from 'swiper/modules';
+import 'swiper/swiper.css';
+// import 'swiper/modules/pagination.css';
+import css from './TestimonialList.module.css';
+import personPng from './mock/Ellipse 2.png';
+import {TestimonialView} from '@/model/testimonial.view';
+
+const testimonials: Array<TestimonialView> = [
   {
-    id: 1,
-    image: '/testimonials/customer1.jpg',
-    text: '"The best coffee I have ever tasted! The ambiance is perfect for both work and relaxation."',
-    name: 'Sarah Johnson',
+    id: '1',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 5,
   },
   {
-    id: 2,
-    image: '/testimonials/customer2.jpg',
-    text: '"Amazing coffee and even better service. This has become my go-to spot every morning."',
-    name: 'Michael Chen',
+    id: '2',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 3,
   },
   {
-    id: 3,
-    image: '/testimonials/customer3.jpg',
-    text: '"The attention to detail in every cup is remarkable. Truly a premium coffee experience."',
-    name: 'Emma Davis',
+    id: '3',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 4,
+  },
+  {
+    id: '4',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 4,
+  },
+  {
+    id: '5',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 5,
+  },
+  {
+    id: '6',
+    image: personPng.src,
+    name: 'James Smith',
+    role: 'Entrepreneur',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing, Lorem ipsum dolor sit amet, consectetur adipisicing dolor sit amet, consectetur adipisicing elit, Lorem ipsum amet, consectetur adipisicing elit,Lorem ipsum dolor sit adipisicing elit, Lorem ipsum dolor sit dolor sit amet, consectetur adipisicing elit,',
+    rating: 4,
   },
 ];
 
 export function TestimonialList() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <section className={css.testimonials}>
-      <p className={css.testimonialsLabel}>Come and Join</p>
+    <section className={css.wrap}>
+      <div className={css.title}>
+        <p className={css.label}>
+          Come and Join
+        </p>
 
-      <Heading2 className={css.testimonialsTitle}>Our Happy Customers</Heading2>
+        <Heading2 className={css.header}>Our Happy Customers</Heading2>
+      </div>
 
-      <div className={css.testimonialsGrid}>
-        {testimonials.map((testimonial) => (
-          <div key={testimonial.id} className={css.testimonialCard}>
-            <div
-              className={css.testimonialImage}
-              style={{ background: '#d4c4b0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}
-            >
-              👤
-            </div>
-            <p className={css.testimonialText}>{testimonial.text}</p>
-            <p className={css.testimonialName}>{testimonial.name}</p>
-          </div>
+      <Swiper
+        className={css.list}
+        modules={[Pagination]}
+        pagination={{
+          clickable: true,
+          bulletClass: css.pagination_item,
+          bulletActiveClass: css.active,
+          el: `.${css.pagination_list}`,
+        }}
+        slidesPerView={3}
+        centeredSlides
+        loop
+        onSlideChange={swiper => setActiveIndex(swiper.realIndex)}
+      >
+        {testimonials.map((item, index) => (
+          <SwiperSlide key={item.id}>
+            <TestimonialCard
+              item={item}
+              active={index === activeIndex}
+            />
+          </SwiperSlide>
         ))}
-      </div>
-      <div className={css.testimonialDots}>
-        <span className={`${css.testimonialDot} ${css.testimonialDotActive}`}></span>
-        <span className={css.testimonialDot}></span>
-        <span className={css.testimonialDot}></span>
-      </div>
+      </Swiper>
+
+      <div className={css.pagination_list}></div>
     </section>
   );
 }
