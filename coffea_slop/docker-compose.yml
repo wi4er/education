@@ -2,7 +2,7 @@ version: "2.2"
 
 services:
   frontend:
-    container_name: shop-project-frontend
+    container_name: coffea-frontend
     image: nginx:latest
     restart: always
     ports:
