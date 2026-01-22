@@ -31,10 +31,16 @@ export class Group
   })
   id: string;
 
-  @OneToMany(() => Group2String, (groupString) => groupString.parent)
+  @OneToMany(
+    () => Group2String,
+    (groupString: Group2String) => groupString.parent,
+  )
   strings: Group2String[];
 
-  @OneToMany(() => Group2Point, (groupPoint: Group2Point) => groupPoint.parent)
+  @OneToMany(
+    () => Group2Point,
+    (groupPoint: Group2Point) => groupPoint.parent,
+  )
   points: Group2Point[];
 
   @OneToMany(
@@ -43,7 +49,10 @@ export class Group
   )
   descriptions: Group2Description[];
 
-  @OneToMany(() => User4Group, (user4group: User4Group) => user4group.group)
+  @OneToMany(
+    () => User4Group,
+    (user4group: User4Group) => user4group.group,
+  )
   users: User4Group[];
 
   @OneToMany(

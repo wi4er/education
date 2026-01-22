@@ -8,22 +8,22 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { Attribute } from '../entities/attribute/attribute.entity';
-import { Attribute2String } from '../entities/attribute/attribute2string.entity';
-import { Attribute2Point } from '../entities/attribute/attribute2point.entity';
-import { AttributeView } from '../views/attribute.view';
-import { AttributeInput } from '../inputs/attribute.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { StatusService } from '../../common/services/status.service';
-import { AsPointService } from '../services/as-point.service';
-import { Attribute4Status } from '../entities/attribute/attribute4status.entity';
+import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource} from 'typeorm';
+import {Attribute} from '../entities/attribute/attribute.entity';
+import {Attribute2String} from '../entities/attribute/attribute2string.entity';
+import {Attribute2Point} from '../entities/attribute/attribute2point.entity';
+import {AttributeView} from '../views/attribute.view';
+import {AttributeInput} from '../inputs/attribute.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {StatusService} from '../../common/services/status.service';
+import {AsPointService} from '../services/as-point.service';
+import {Attribute4Status} from '../entities/attribute/attribute4status.entity';
 
 @Controller('attribute')
 export class AttributeController {
@@ -38,7 +38,8 @@ export class AttributeController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly asPointService: AsPointService,
     private readonly statusService: StatusService,
-  ) {}
+  ) {
+  }
 
   toView(attribute: Attribute): AttributeView {
     return {

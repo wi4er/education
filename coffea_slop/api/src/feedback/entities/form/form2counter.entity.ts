@@ -18,44 +18,57 @@ export class Form2Counter
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Form, (form: Form) => form.counters, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Form,
+    form => form.counters,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Attribute, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Attribute,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
   @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
-  @ManyToOne(() => Point, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Point,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'pointId' })
   point: Point | null;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   pointId: string | null;
 
-  @ManyToOne(() => Measure, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Measure,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'measureId' })
   measure: Measure | null;
 

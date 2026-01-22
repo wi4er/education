@@ -1,5 +1,5 @@
-import { Group } from '../../personal/entities/group/group.entity';
-import { PermissionMethod } from '../permission/permission.method';
+import {Group} from '../../personal/entities/group/group.entity';
+import {PermissionMethod} from '../permission/permission.method';
 
 export interface CommonPermissionEntity<TParent> {
 

@@ -1,23 +1,29 @@
-import { Controller, Get, Post, Put, Body, Req, Res } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { Request, Response } from 'express';
+import {Controller, Get, Post, Put, Body, Req, Res} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource} from 'typeorm';
+import {Request, Response} from 'express';
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities/user/user.entity';
-import { User2String } from '../entities/user/user2string.entity';
-import { User2Point } from '../entities/user/user2point.entity';
-import { User2Description } from '../entities/user/user2description.entity';
-import { User2Counter } from '../entities/user/user2counter.entity';
-import { MyselfView } from '../views/myself.view';
-import { MyselfInput } from '../inputs/myself.input';
-import { AuthCookieService } from '../services/auth-cookie.service';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
-import { CounterAttributeService } from '../../common/services/counter-attribute.service';
-import { PermissionException } from '../../exception/permission/permission.exception';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { WrongDataException } from '../../exception/wrong-data/wrong-data.exception';
+import {User} from '../entities/user/user.entity';
+import {User2String} from '../entities/user/user2string.entity';
+import {User2Point} from '../entities/user/user2point.entity';
+import {User2Description} from '../entities/user/user2description.entity';
+import {User2Counter} from '../entities/user/user2counter.entity';
+import {MyselfView} from '../views/myself.view';
+import {MyselfInput} from '../inputs/myself.input';
+import {AuthCookieService} from '../services/auth-cookie.service';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
+import {CounterAttributeService} from '../../common/services/counter-attribute.service';
+import {PermissionException} from '../../exception/permission/permission.exception';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {WrongDataException} from '../../exception/wrong-data/wrong-data.exception';
+import {User2File} from '../entities/user/user2file.entity';
+import {User4Image} from '../entities/user/user4image.entity';
+import {User4Status} from '../entities/user/user4status.entity';
+import {FileAttributeService} from '../../common/services/file-attribute.service';
+import {ImageService} from '../../common/services/image.service';
+import {StatusService} from '../../common/services/status.service';
 
 @Controller('myself')
 export class MyselfController {
@@ -33,7 +39,11 @@ export class MyselfController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly descriptionAttributeService: DescriptionAttributeService,
     private readonly counterAttributeService: CounterAttributeService,
-  ) {}
+    private readonly fileAttributeService: FileAttributeService,
+    private readonly imageService: ImageService,
+    private readonly statusService: StatusService,
+  ) {
+  }
 
   toView(user: User): MyselfView {
     return {
@@ -43,6 +53,8 @@ export class MyselfController {
       phone: user.phone,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      images: user.images?.map((img) => img.fileId) ?? [],
+      status: user.statuses?.map((s) => s.statusId) ?? [],
       attributes: {
         strings:
           user.strings?.map((str) => ({
@@ -97,17 +109,14 @@ export class MyselfController {
     @Res({ passthrough: true })
     res: Response,
   ): Promise<MyselfView> {
-    const { strings, points, descriptions, counters, password, ...userData } =
-      data;
+    const { strings, points, descriptions, counters, password, files, images, status, ...userData } = data;
 
-    if (!password) {
-      throw new WrongDataException(
-        'Password is required',
-        'password',
-        undefined,
-        'required',
-      );
-    }
+    if (!password) throw new WrongDataException(
+      'Password is required',
+      'password',
+      undefined,
+      'required',
+    );
 
     const user = await this.dataSource.transaction(async (transaction) => {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -115,15 +124,18 @@ export class MyselfController {
         ...userData,
         password: hashedPassword,
       });
-      const savedUser = await transaction.save(u);
+      const saved = await transaction.save(u);
 
-      await this.stringAttributeService.create<User>(transaction, User2String, savedUser.id, strings);
-      await this.pointAttributeService.create<User>(transaction, User2Point, savedUser.id, points);
-      await this.descriptionAttributeService.create<User>(transaction, User2Description, savedUser.id, descriptions);
-      await this.counterAttributeService.create<User>(transaction, User2Counter, savedUser.id, counters);
+      await this.stringAttributeService.create<User>(transaction, User2String, saved.id, strings);
+      await this.pointAttributeService.create<User>(transaction, User2Point, saved.id, points);
+      await this.descriptionAttributeService.create<User>(transaction, User2Description, saved.id, descriptions);
+      await this.counterAttributeService.create<User>(transaction, User2Counter, saved.id, counters);
+      await this.fileAttributeService.create<User>(transaction, User2File, saved.id, files);
+      await this.imageService.create<User>(transaction, User4Image, saved.id, images);
+      await this.statusService.create<User>(transaction, User4Status, saved.id, status);
 
       return transaction.findOne(User, {
-        where: { id: savedUser.id },
+        where: { id: saved.id },
         relations: [...this.relations, 'groups'],
       });
     });
@@ -149,8 +161,7 @@ export class MyselfController {
     if (!existingUser)
       throw new PermissionException('User', PermissionMethod.AUTH, userId);
 
-    const { strings, points, descriptions, counters, password, ...userData } =
-      data;
+    const { strings, points, descriptions, counters, password, files, images, status, ...userData } = data;
 
     const user = await this.dataSource.transaction(async (transaction) => {
       const hashedPassword = password
@@ -165,6 +176,9 @@ export class MyselfController {
       await this.pointAttributeService.update<User>(transaction, User2Point, userId, points);
       await this.descriptionAttributeService.update<User>(transaction, User2Description, userId, descriptions);
       await this.counterAttributeService.update<User>(transaction, User2Counter, userId, counters);
+      await this.fileAttributeService.update<User>(transaction, User2File, userId, files);
+      await this.imageService.update<User>(transaction, User4Image, userId, images);
+      await this.statusService.update<User>(transaction, User4Status, userId, status);
 
       return transaction.findOne(User, {
         where: { id: userId },
@@ -174,4 +188,5 @@ export class MyselfController {
 
     return this.toView(user);
   }
+
 }

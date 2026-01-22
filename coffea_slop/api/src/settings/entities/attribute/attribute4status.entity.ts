@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Attribute } from './attribute.entity';
-import { Status } from '../status/status.entity';
+import {Attribute} from './attribute.entity';
+import {Status} from '../status/status.entity';
 
 @Entity('settings_attribute4status')
 export class Attribute4Status
@@ -16,22 +16,29 @@ export class Attribute4Status
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Attribute, (attribute: Attribute) => attribute.statuses, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Attribute,
+    attribute => attribute.statuses,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Attribute;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Status, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Status,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'statusId' })
   status: Status;
 

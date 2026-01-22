@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  BaseEntity,
-} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity} from 'typeorm';
 import {Collection} from './collection.entity';
 import {Status} from '../../../settings/entities/status/status.entity';
 
@@ -16,22 +9,29 @@ export class Collection4Status
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Collection, (collection: Collection) => collection.statuses, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Collection,
+    collection => collection.statuses,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Collection;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Status, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Status,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'statusId' })
   status: Status;
 

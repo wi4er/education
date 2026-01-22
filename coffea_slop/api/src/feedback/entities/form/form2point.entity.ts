@@ -19,33 +19,43 @@ export class Form2Point
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Form, (form: Form) => form.points, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Form,
+    form => form.points,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Form;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Attribute, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Attribute,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 
   @Column({ type: 'varchar', length: 36 })
   attributeId: string;
 
-  @ManyToOne(() => Point, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Point,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'pointId' })
   point: Point;
 

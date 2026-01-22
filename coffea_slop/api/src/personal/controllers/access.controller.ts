@@ -7,15 +7,15 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../entities/access/access-method.enum';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Access } from '../entities/access/access.entity';
-import { AccessView } from '../views/access.view';
-import { AccessInput } from '../inputs/access.input';
+import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../entities/access/access-method.enum';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {Access} from '../entities/access/access.entity';
+import {AccessView} from '../views/access.view';
+import {AccessInput} from '../inputs/access.input';
 
 @Controller('access')
 export class AccessController {

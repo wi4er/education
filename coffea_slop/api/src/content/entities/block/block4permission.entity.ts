@@ -19,22 +19,29 @@ export class Block4Permission
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Block, (block) => block.permissions, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Block,
+    block => block.permissions,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Group, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Group,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 

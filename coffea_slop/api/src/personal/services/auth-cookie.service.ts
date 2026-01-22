@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { Request, Response } from 'express';
-import { PermissionException } from '../../exception/permission/permission.exception';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { User } from '../entities/user/user.entity';
+import {Injectable} from '@nestjs/common';
+import {JwtService, JwtSignOptions} from '@nestjs/jwt';
+import {Request, Response} from 'express';
+import {PermissionException} from '../../exception/permission/permission.exception';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {User} from '../entities/user/user.entity';
 
 const COOKIE_NAME = 'auth_token';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -22,7 +22,10 @@ interface TokenPayload {
 
 @Injectable()
 export class AuthCookieService {
-  constructor(private readonly jwtService: JwtService) {}
+
+  constructor(
+    private readonly jwtService: JwtService
+  ) {}
 
   private createPayload(
     userId: string,
@@ -74,4 +77,5 @@ export class AuthCookieService {
   createExpiredAuthCookie(userId: string): string {
     return `${COOKIE_NAME}=${this.signToken(this.createPayload(userId), { expiresIn: '-1s' })}`;
   }
+
 }

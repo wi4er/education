@@ -27,10 +27,16 @@ export class Language
   })
   id: string;
 
-  @OneToMany(() => Language2String, (langString) => langString.parent)
+  @OneToMany(
+    () => Language2String,
+    (langString: Language2String) => langString.parent,
+  )
   strings: Language2String[];
 
-  @OneToMany(() => Language2Point, (langPoint) => langPoint.parent)
+  @OneToMany(
+    () => Language2Point,
+    (langPoint: Language2Point) => langPoint.parent,
+  )
   points: Language2Point[];
 
   @OneToMany(

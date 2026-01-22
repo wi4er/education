@@ -1,16 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
-import { AccessController } from './access.controller';
-import { Access } from '../entities/access/access.entity';
-import { Group } from '../entities/group/group.entity';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../entities/access/access-method.enum';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
+import {AccessController} from './access.controller';
+import {Access} from '../entities/access/access.entity';
+import {Group} from '../entities/group/group.entity';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../entities/access/access-method.enum';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
 
 describe('AccessController', () => {
   let app: INestApplication;

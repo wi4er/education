@@ -53,7 +53,10 @@ export class Directory
   )
   statuses: Directory4Status[];
 
-  @OneToMany(() => Point, (point: Point) => point.directory)
+  @OneToMany(
+    () => Point,
+    (point: Point) => point.directory,
+  )
   children: Point[];
 
   @CreateDateColumn()

@@ -19,22 +19,29 @@ export class Directory4Permission
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Directory, (directory: Directory) => directory.permissions, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Directory,
+    directory => directory.permissions,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Directory;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Group, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Group,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'groupId' })
   group?: Group;
 

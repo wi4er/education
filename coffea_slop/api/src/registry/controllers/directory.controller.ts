@@ -8,26 +8,26 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
-import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { Directory } from '../entities/directory/directory.entity';
-import { Directory2String } from '../entities/directory/directory2string.entity';
-import { Directory2Point } from '../entities/directory/directory2point.entity';
-import { Directory4Permission } from '../entities/directory/directory4permission.entity';
-import { Directory4Status } from '../entities/directory/directory4status.entity';
-import { DirectoryView } from '../views/directory.view';
-import { DirectoryInput } from '../inputs/directory.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { PermissionService } from '../../common/services/permission.service';
-import { StatusService } from '../../common/services/status.service';
+import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource, In, IsNull, Or} from 'typeorm';
+import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {Directory} from '../entities/directory/directory.entity';
+import {Directory2String} from '../entities/directory/directory2string.entity';
+import {Directory2Point} from '../entities/directory/directory2point.entity';
+import {Directory4Permission} from '../entities/directory/directory4permission.entity';
+import {Directory4Status} from '../entities/directory/directory4status.entity';
+import {DirectoryView} from '../views/directory.view';
+import {DirectoryInput} from '../inputs/directory.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {PermissionService} from '../../common/services/permission.service';
+import {StatusService} from '../../common/services/status.service';
 
 @Controller('directory')
 export class DirectoryController {
@@ -42,7 +42,8 @@ export class DirectoryController {
     private readonly stringAttributeService: StringAttributeService,
     private readonly permissionService: PermissionService,
     private readonly statusService: StatusService,
-  ) {}
+  ) {
+  }
 
   toView(directory: Directory): DirectoryView {
     return {
@@ -175,4 +176,5 @@ export class DirectoryController {
   ): Promise<void> {
     await this.directoryRepository.delete(id);
   }
+
 }

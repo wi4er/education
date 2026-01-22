@@ -46,7 +46,10 @@ export class Block
   )
   strings: Block2String[];
 
-  @OneToMany(() => Block2Point, (blockPoint: Block2Point) => blockPoint.parent)
+  @OneToMany(
+    () => Block2Point,
+    (blockPoint: Block2Point) => blockPoint.parent,
+  )
   points: Block2Point[];
 
   @OneToMany(
@@ -61,10 +64,16 @@ export class Block
   )
   descriptions: Block2Description[];
 
-  @OneToMany(() => Element, (element: Element) => element.parent)
+  @OneToMany(
+    () => Element,
+    (element: Element) => element.parent,
+  )
   elements: Element[];
 
-  @OneToMany(() => Section, (section: Section) => section.parent)
+  @OneToMany(
+    () => Section,
+    (section: Section) => section.parent,
+  )
   sections: Section[];
 
   @OneToMany(

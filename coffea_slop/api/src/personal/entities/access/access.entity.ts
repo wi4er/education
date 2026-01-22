@@ -6,9 +6,9 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Group } from '../group/group.entity';
-import { AccessEntity } from '../../../common/access/access-entity.enum';
-import { AccessMethod } from './access-method.enum';
+import {Group} from '../group/group.entity';
+import {AccessEntity} from '../../../common/access/access-entity.enum';
+import {AccessMethod} from './access-method.enum';
 
 @Entity('personal_access')
 export class Access
@@ -17,11 +17,14 @@ export class Access
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Group, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Group,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'groupId' })
   group: Group;
 

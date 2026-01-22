@@ -156,6 +156,7 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
   ```
 - Import destructuring without spaces: `import {Repository, DataSource} from 'typeorm'`
 - Arrow functions: no brackets for single untyped parameter (`s =>` not `(s) =>`)
+- `@ManyToOne`/`@OneToMany` decorators with each argument on new line
 - Controllers use `*View` interfaces for responses, `*Input` for request bodies
 - POST/PUT methods handle subordinates in a transaction via shared services
 - Tests co-located with source as `*.spec.ts`, use `test-db.module.ts` for mocked DataSource

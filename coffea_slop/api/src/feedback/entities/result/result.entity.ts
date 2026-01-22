@@ -21,11 +21,15 @@ export class Result
   })
   id: string;
 
-  @ManyToOne(() => Form, (form: Form) => form.results, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Form,
+    form => form.results,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'formId' })
   form: Form;
 

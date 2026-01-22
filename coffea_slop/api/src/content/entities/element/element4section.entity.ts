@@ -16,22 +16,30 @@ export class Element4Section
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Element, (element: Element) => element.sections, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Element,
+    (element: Element) => element.sections,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'elementId' })
   element: Element;
 
   @Column({ type: 'varchar', length: 36 })
   elementId: string;
 
-  @ManyToOne(() => Section, (section: Section) => section.elements, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Section,
+    (section: Section) => section.elements,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'sectionId' })
   section: Section;
 

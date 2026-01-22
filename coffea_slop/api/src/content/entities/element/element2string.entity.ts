@@ -19,33 +19,43 @@ export class Element2String
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Element, (element) => element.strings, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Element,
+    element => element.strings,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Element;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Language, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Language,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'languageId' })
   language: Language | null;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   languageId: string | null;
 
-  @ManyToOne(() => Attribute, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Attribute,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'attributeId' })
   attribute: Attribute;
 

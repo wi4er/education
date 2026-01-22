@@ -30,6 +30,7 @@ export class Form
     WithDescriptions<Form>,
     WithStatuses<Form>,
     WithFiles<Form> {
+
   @PrimaryColumn({
     type: 'varchar',
     length: 36,
@@ -61,7 +62,10 @@ export class Form
   )
   descriptions: Form2Description[];
 
-  @OneToMany(() => Result, (result: Result) => result.form)
+  @OneToMany(
+    () => Result,
+    (result: Result) => result.form,
+  )
   results: Result[];
 
   @OneToMany(
@@ -78,7 +82,7 @@ export class Form
 
   @OneToMany(
     () => Form4Status,
-    (formStatus: Form4Status) => formStatus.parent
+    (formStatus: Form4Status) => formStatus.parent,
   )
   statuses: Form4Status[];
 

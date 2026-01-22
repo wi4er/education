@@ -16,22 +16,30 @@ export class User4Group
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user: User) => user.groups, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => User,
+    (user: User) => user.groups,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column({ type: 'varchar', length: 36 })
   userId: string;
 
-  @ManyToOne(() => Group, (group: Group) => group.users, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Group,
+    (group: Group) => group.users,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'groupId' })
   group: Group;
 

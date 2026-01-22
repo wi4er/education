@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager, EntityTarget } from 'typeorm';
-import { CommonStringEntity } from '../entities/common-string.entity';
-import { CommonStringInput } from '../inputs/common-string.input';
+import {Injectable} from '@nestjs/common';
+import {EntityManager, EntityTarget} from 'typeorm';
+import {CommonStringEntity} from '../entities/common-string.entity';
+import {CommonStringInput} from '../inputs/common-string.input';
 
 @Injectable()
 export class StringAttributeService {

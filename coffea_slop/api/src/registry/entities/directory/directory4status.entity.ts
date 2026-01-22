@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Directory } from './directory.entity';
-import { Status } from '../../../settings/entities/status/status.entity';
+import {Directory} from './directory.entity';
+import {Status} from '../../../settings/entities/status/status.entity';
 
 @Entity('registry_directory4status')
 export class Directory4Status
@@ -16,22 +16,29 @@ export class Directory4Status
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Directory, (directory: Directory) => directory.statuses, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Directory,
+    directory => directory.statuses,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Directory;
 
   @Column({ type: 'varchar', length: 36 })
   parentId: string;
 
-  @ManyToOne(() => Status, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Status,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'statusId' })
   status: Status;
 

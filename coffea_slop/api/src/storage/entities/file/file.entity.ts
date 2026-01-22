@@ -1,14 +1,4 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
-  BaseEntity,
-} from 'typeorm';
+import {Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity} from 'typeorm';
 import {File2String} from './file2string.entity';
 import {File2Point} from './file2point.entity';
 import {File4Status} from './file4status.entity';
@@ -32,11 +22,15 @@ export class File
   })
   id: string;
 
-  @ManyToOne(() => Collection, parent => parent.files, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Collection,
+    parent => parent.files,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Collection;
 

@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {JwtModule, JwtService} from '@nestjs/jwt';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { BlockController } from './block.controller';
-import { Block } from '../entities/block/block.entity';
-import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { Group } from '../../personal/entities/group/group.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { Block4Permission } from '../entities/block/block4permission.entity';
+import {BlockController} from './block.controller';
+import {Block} from '../entities/block/block.entity';
+import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import {Group} from '../../personal/entities/group/group.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {Block4Permission} from '../entities/block/block4permission.entity';
 
 const JWT_SECRET = 'test-secret';
 
@@ -78,6 +78,7 @@ describe('BlockController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
       expect(response.body[0].permissions).toHaveLength(1);
     });
@@ -217,6 +218,7 @@ describe('BlockController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
       expect(response.body.permissions).toHaveLength(1);
     });
@@ -261,6 +263,7 @@ describe('BlockController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
 
       const found = await repo(Block)

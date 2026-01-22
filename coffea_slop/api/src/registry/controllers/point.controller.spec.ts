@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
-import { PointController } from './point.controller';
-import { Point } from '../entities/point/point.entity';
-import { Directory } from '../entities/directory/directory.entity';
-import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
+import {PointController} from './point.controller';
+import {Point} from '../entities/point/point.entity';
+import {Directory} from '../entities/directory/directory.entity';
+import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
+import {Directory4Permission} from '../entities/directory/directory4permission.entity';
 
 describe('PointController', () => {
   let app: INestApplication;
@@ -48,6 +49,7 @@ describe('PointController', () => {
 
     it('should return an array of points with relations', async () => {
       await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: 'ALL' });
       await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
       const response = await request(app.getHttpServer())
@@ -67,6 +69,7 @@ describe('PointController', () => {
   describe('GET /point with pagination', () => {
     it('should return limited points when limit is provided', async () => {
       await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: 'ALL' });
       await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });
@@ -80,6 +83,7 @@ describe('PointController', () => {
 
     it('should skip points when offset is provided', async () => {
       await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: 'ALL' });
       await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });
@@ -93,6 +97,7 @@ describe('PointController', () => {
 
     it('should return paginated points when both limit and offset are provided', async () => {
       await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: 'ALL' });
       await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
       await repo(Point).save({ id: 'point-3', directoryId: 'dir-1' });

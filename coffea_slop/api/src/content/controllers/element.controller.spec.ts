@@ -1,30 +1,30 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {JwtModule, JwtService} from '@nestjs/jwt';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { ElementController } from './element.controller';
-import { Element } from '../entities/element/element.entity';
-import { Block } from '../entities/block/block.entity';
-import { Section } from '../entities/section/section.entity';
-import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { Language } from '../../settings/entities/language/language.entity';
-import { Group } from '../../personal/entities/group/group.entity';
-import { Directory } from '../../registry/entities/directory/directory.entity';
-import { Point } from '../../registry/entities/point/point.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { Element4Permission } from '../entities/element/element4permission.entity';
-import { Element2String } from '../entities/element/element2string.entity';
-import { Element2Point } from '../entities/element/element2point.entity';
-import { Element2Counter } from '../entities/element/element2counter.entity';
-import { SectionService } from '../services/section.service';
-import { ElementFilterService } from '../services/element-filter.service';
-import { ElementSortService } from '../services/element-sort.service';
+import {ElementController} from './element.controller';
+import {Element} from '../entities/element/element.entity';
+import {Block} from '../entities/block/block.entity';
+import {Section} from '../entities/section/section.entity';
+import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import {Language} from '../../settings/entities/language/language.entity';
+import {Group} from '../../personal/entities/group/group.entity';
+import {Directory} from '../../registry/entities/directory/directory.entity';
+import {Point} from '../../registry/entities/point/point.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {Element4Permission} from '../entities/element/element4permission.entity';
+import {Element2String} from '../entities/element/element2string.entity';
+import {Element2Point} from '../entities/element/element2point.entity';
+import {Element2Counter} from '../entities/element/element2counter.entity';
+import {SectionService} from '../services/section.service';
+import {ElementFilterService} from '../services/element-filter.service';
+import {ElementSortService} from '../services/element-sort.service';
 
 const JWT_SECRET = 'test-secret';
 
@@ -90,6 +90,7 @@ describe('ElementController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
       expect(response.body[0].permissions).toHaveLength(1);
       expect(response.body[0].sections).toEqual([]);
@@ -1034,6 +1035,7 @@ describe('ElementController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
       expect(response.body.permissions).toHaveLength(1);
     });
@@ -1291,6 +1293,7 @@ describe('ElementController', () => {
         points: [],
         descriptions: [],
         counters: [],
+        files: [],
       });
 
       const found = await repo(Element)

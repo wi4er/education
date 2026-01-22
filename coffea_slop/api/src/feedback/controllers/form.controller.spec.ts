@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {JwtModule, JwtService} from '@nestjs/jwt';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { FormController } from './form.controller';
-import { Form } from '../entities/form/form.entity';
-import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { Group } from '../../personal/entities/group/group.entity';
-import { Form4Permission } from '../entities/form/form4permission.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
-import { PermissionMethod } from '../../common/permission/permission.method';
+import {FormController} from './form.controller';
+import {Form} from '../entities/form/form.entity';
+import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import {Group} from '../../personal/entities/group/group.entity';
+import {Form4Permission} from '../entities/form/form4permission.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
+import {PermissionMethod} from '../../common/permission/permission.method';
 
 const JWT_SECRET = 'test-secret';
 
@@ -80,6 +80,7 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        files: [],
         counters: [],
       });
       expect(response.body[0].permissions).toHaveLength(1);
@@ -281,6 +282,7 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        files: [],
         counters: [],
       });
       expect(response.body.permissions).toHaveLength(1);
@@ -311,6 +313,7 @@ describe('FormController', () => {
         strings: [],
         points: [],
         descriptions: [],
+        files: [],
         counters: [],
       });
 

@@ -1,6 +1,10 @@
 import {FullAttributesView} from '../../common/views/attributes.view';
+import {WithStatusesView} from '../../common/views/with-statuses.view';
+import {WithImagesView} from '../../common/views/with-images.view';
 
-export interface MyselfView {
+export interface MyselfView
+  extends WithStatusesView,
+    WithImagesView {
 
   id: string;
   login?: string;

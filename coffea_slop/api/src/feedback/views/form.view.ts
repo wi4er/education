@@ -3,7 +3,8 @@ import {WithPermissionsView} from '../../common/views/with-permissions.view';
 import {WithStatusesView} from '../../common/views/with-statuses.view';
 
 export interface FormView
-  extends WithPermissionsView, WithStatusesView {
+  extends WithPermissionsView,
+    WithStatusesView {
 
   createdAt: Date;
   updatedAt: Date;

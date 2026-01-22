@@ -1,21 +1,14 @@
-import {
-  Controller,
-  Post,
-  Param,
-  UseInterceptors,
-  UploadedFile,
-  BadRequestException,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { File } from '../entities/file/file.entity';
-import { FileView } from '../views/file.view';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { Collection } from '../entities/collection/collection.entity';
-import { uploadStorage } from '../services/upload.service';
+import {Controller, Post, Param, UseInterceptors, UploadedFile, BadRequestException} from '@nestjs/common';
+import {FileInterceptor} from '@nestjs/platform-express';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {File} from '../entities/file/file.entity';
+import {FileView} from '../views/file.view';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {Collection} from '../entities/collection/collection.entity';
+import {uploadStorage} from '../services/upload.service';
 
 @Controller('upload')
 export class UploadController {

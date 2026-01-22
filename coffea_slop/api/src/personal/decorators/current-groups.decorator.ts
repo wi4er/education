@@ -1,5 +1,5 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {createParamDecorator, ExecutionContext} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
 
 const COOKIE_NAME = 'auth_token';
 

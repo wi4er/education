@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SettingsModule } from './settings/settings.module';
-import { RegistryModule } from './registry/registry.module';
-import { PersonalModule } from './personal/personal.module';
-import { ContentModule } from './content/content.module';
-import { ExceptionModule } from './exception/exception.module';
-import { FeedbackModule } from './feedback/feedback.module';
-import { StorageModule } from './storage/storage.module';
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {SettingsModule} from './settings/settings.module';
+import {RegistryModule} from './registry/registry.module';
+import {PersonalModule} from './personal/personal.module';
+import {ContentModule} from './content/content.module';
+import {ExceptionModule} from './exception/exception.module';
+import {FeedbackModule} from './feedback/feedback.module';
+import {StorageModule} from './storage/storage.module';
 
 @Module({
   imports: [

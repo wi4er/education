@@ -9,13 +9,15 @@ import {WithPointsInput} from '../../common/inputs/with-points.input';
 import {WithPermissionsInput} from '../../common/inputs/with-permissions.input';
 import {WithDescriptionsInput} from '../../common/inputs/with-descriptions.input';
 import {WithStatusesInput} from '../../common/inputs/with-statuses.input';
+import {WithImagesInput} from '../../common/inputs/with-images.input';
 
 export interface BlockInput
   extends WithStringsInput,
     WithPointsInput,
     WithPermissionsInput,
     WithDescriptionsInput,
-    WithStatusesInput {
+    WithStatusesInput,
+    WithImagesInput {
 
   id?: string;
 
@@ -25,6 +27,5 @@ export interface BlockInput
   descriptions?: CommonDescriptionInput[];
   counters?: CommonCounterInput[];
   files?: CommonFileInput[];
-  images?: string[];
 
 }

@@ -49,10 +49,16 @@ export class User
   @Column({ type: 'varchar', length: 36, nullable: true })
   phone?: string;
 
-  @OneToMany(() => User2String, (string: User2String) => string.parent)
+  @OneToMany(
+    () => User2String,
+    (string: User2String) => string.parent,
+  )
   strings: User2String[];
 
-  @OneToMany(() => User2Point, (point: User2Point) => point.parent)
+  @OneToMany(
+    () => User2Point,
+    (point: User2Point) => point.parent,
+  )
   points: User2Point[];
 
   @OneToMany(
@@ -61,7 +67,10 @@ export class User
   )
   descriptions: User2Description[];
 
-  @OneToMany(() => User4Group, (group: User4Group) => group.user)
+  @OneToMany(
+    () => User4Group,
+    (group: User4Group) => group.user,
+  )
   groups: User4Group[];
 
   @OneToMany(
@@ -82,7 +91,10 @@ export class User
   )
   images: User4Image[];
 
-  @OneToMany(() => User4Status, (userStatus: User4Status) => userStatus.parent)
+  @OneToMany(
+    () => User4Status,
+    (userStatus: User4Status) => userStatus.parent,
+  )
   statuses: User4Status[];
 
   @CreateDateColumn()

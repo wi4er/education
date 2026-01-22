@@ -1,30 +1,21 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Query,
-} from '@nestjs/common';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
+import {Controller, Get, Post, Put, Delete, Body, Param, Query} from '@nestjs/common';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
 import {Repository, DataSource, In, Or, IsNull} from 'typeorm';
-import { File } from '../entities/file/file.entity';
-import { File2String } from '../entities/file/file2string.entity';
-import { File2Point } from '../entities/file/file2point.entity';
-import { File4Status } from '../entities/file/file4status.entity';
-import { FileView } from '../views/file.view';
-import { FileInput } from '../inputs/file.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { StatusService } from '../../common/services/status.service';
-import { CheckParentPermission } from '../../common/permission/check-parent-permission.guard';
-import { CheckInputPermission } from '../../common/permission/check-input-permission.guard';
-import { PermissionMethod } from '../../common/permission/permission.method';
-import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
-import { Collection } from '../entities/collection/collection.entity';
+import {File} from '../entities/file/file.entity';
+import {File2String} from '../entities/file/file2string.entity';
+import {File2Point} from '../entities/file/file2point.entity';
+import {File4Status} from '../entities/file/file4status.entity';
+import {FileView} from '../views/file.view';
+import {FileInput} from '../inputs/file.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {StatusService} from '../../common/services/status.service';
+import {CheckParentPermission} from '../../common/permission/check-parent-permission.guard';
+import {CheckInputPermission} from '../../common/permission/check-input-permission.guard';
+import {PermissionMethod} from '../../common/permission/permission.method';
+import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
+import {Collection} from '../entities/collection/collection.entity';
 
 @Controller('file')
 export class FileController {

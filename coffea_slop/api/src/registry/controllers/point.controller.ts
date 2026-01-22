@@ -8,20 +8,20 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, In, Or, IsNull } from 'typeorm';
-import { Point } from '../entities/point/point.entity';
-import { Point2String } from '../entities/point/point2string.entity';
-import { Point2Point } from '../entities/point/point2point.entity';
-import { Point4Status } from '../entities/point/point4status.entity';
-import { PointView } from '../views/point.view';
-import { PointInput } from '../inputs/point.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { StatusService } from '../../common/services/status.service';
-import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
-import { PermissionMethod } from '../../common/permission/permission.method';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource, In, Or, IsNull} from 'typeorm';
+import {Point} from '../entities/point/point.entity';
+import {Point2String} from '../entities/point/point2string.entity';
+import {Point2Point} from '../entities/point/point2point.entity';
+import {Point4Status} from '../entities/point/point4status.entity';
+import {PointView} from '../views/point.view';
+import {PointInput} from '../inputs/point.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {StatusService} from '../../common/services/status.service';
+import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
+import {PermissionMethod} from '../../common/permission/permission.method';
 
 @Controller('point')
 export class PointController {
@@ -156,4 +156,5 @@ export class PointController {
   ): Promise<void> {
     await this.pointRepository.delete(id);
   }
+
 }

@@ -91,11 +91,15 @@ export class Section
   )
   images: Section4Image[];
 
-  @ManyToOne(() => Block, (block: Block) => block.sections, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Block,
+    (block: Block) => block.sections,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 

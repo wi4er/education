@@ -31,11 +31,15 @@ export class Point
   })
   id: string;
 
-  @ManyToOne(() => Directory, (directory: Directory) => directory.points, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Directory,
+    directory => directory.points,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'directoryId' })
   directory: Directory;
 
@@ -48,7 +52,10 @@ export class Point
   )
   strings: Point2String[];
 
-  @OneToMany(() => Point2Point, (pointPoint: Point2Point) => pointPoint.parent)
+  @OneToMany(
+    () => Point2Point,
+    (pointPoint: Point2Point) => pointPoint.parent,
+  )
   points: Point2Point[];
 
   @OneToMany(

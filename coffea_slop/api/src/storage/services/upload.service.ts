@@ -1,7 +1,7 @@
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import { v4 as uuid } from 'uuid';
+import {diskStorage} from 'multer';
+import {extname} from 'path';
+import {existsSync, mkdirSync} from 'fs';
+import {v4 as uuid} from 'uuid';
 
 export const uploadStorage = diskStorage({
   destination: (req, file, cb) => {

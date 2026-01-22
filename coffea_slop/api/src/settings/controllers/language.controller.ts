@@ -8,21 +8,21 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { Language } from '../entities/language/language.entity';
-import { Language2String } from '../entities/language/language2string.entity';
-import { Language2Point } from '../entities/language/language2point.entity';
-import { Language4Status } from '../entities/language/language4status.entity';
-import { LanguageView } from '../views/language.view';
-import { LanguageInput } from '../inputs/language.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { StatusService } from '../../common/services/status.service';
+import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource} from 'typeorm';
+import {Language} from '../entities/language/language.entity';
+import {Language2String} from '../entities/language/language2string.entity';
+import {Language2Point} from '../entities/language/language2point.entity';
+import {Language4Status} from '../entities/language/language4status.entity';
+import {LanguageView} from '../views/language.view';
+import {LanguageInput} from '../inputs/language.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {StatusService} from '../../common/services/status.service';
 
 @Controller('language')
 export class LanguageController {
@@ -36,7 +36,8 @@ export class LanguageController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly statusService: StatusService,
-  ) {}
+  ) {
+  }
 
   toView(language: Language): LanguageView {
     return {

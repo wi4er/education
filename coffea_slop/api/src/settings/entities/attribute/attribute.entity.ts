@@ -19,7 +19,8 @@ import {AttributeType} from './attribute-type.enum';
 @Entity('settings_attribute')
 export class Attribute
   extends BaseEntity
-  implements WithStrings<Attribute>, WithPoints<Attribute> {
+  implements WithStrings<Attribute>,
+    WithPoints<Attribute> {
 
   @PrimaryColumn({
     type: 'varchar',
@@ -49,7 +50,7 @@ export class Attribute
 
   @OneToOne(
     () => Attribute2AsPoint,
-    (asPoint: Attribute2AsPoint) => asPoint.parent,
+    asPoint => asPoint.parent,
   )
   asPoint: Attribute2AsPoint;
 

@@ -65,11 +65,15 @@ export class Element
   )
   descriptions: Element2Description[];
 
-  @ManyToOne(() => Block, (block: Block) => block.elements, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Block,
+    (block: Block) => block.elements,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'parentId' })
   parent: Block;
 

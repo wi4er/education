@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
-import { GroupController } from './group.controller';
-import { Group } from '../entities/group/group.entity';
-import { Attribute } from '../../settings/entities/attribute/attribute.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
+import {GroupController} from './group.controller';
+import {Group} from '../entities/group/group.entity';
+import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
 
 describe('GroupController', () => {
   let app: INestApplication;

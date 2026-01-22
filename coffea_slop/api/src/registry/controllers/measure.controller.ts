@@ -8,21 +8,21 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
-import { AccessEntity } from '../../common/access/access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
-import { CheckId } from '../../common/check-id/check-id.guard';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { Measure } from '../entities/measure/measure.entity';
-import { Measure2String } from '../entities/measure/measure2string.entity';
-import { Measure2Point } from '../entities/measure/measure2point.entity';
-import { Measure4Status } from '../entities/measure/measure4status.entity';
-import { MeasureView } from '../views/measure.view';
-import { MeasureInput } from '../inputs/measure.input';
-import { PointAttributeService } from '../../common/services/point-attribute.service';
-import { StringAttributeService } from '../../common/services/string-attribute.service';
-import { StatusService } from '../../common/services/status.service';
+import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
+import {AccessEntity} from '../../common/access/access-entity.enum';
+import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import {CheckId} from '../../common/check-id/check-id.guard';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository, DataSource} from 'typeorm';
+import {Measure} from '../entities/measure/measure.entity';
+import {Measure2String} from '../entities/measure/measure2string.entity';
+import {Measure2Point} from '../entities/measure/measure2point.entity';
+import {Measure4Status} from '../entities/measure/measure4status.entity';
+import {MeasureView} from '../views/measure.view';
+import {MeasureInput} from '../inputs/measure.input';
+import {PointAttributeService} from '../../common/services/point-attribute.service';
+import {StringAttributeService} from '../../common/services/string-attribute.service';
+import {StatusService} from '../../common/services/status.service';
 
 @Controller('measure')
 export class MeasureController {
@@ -36,7 +36,8 @@ export class MeasureController {
     private readonly pointAttributeService: PointAttributeService,
     private readonly stringAttributeService: StringAttributeService,
     private readonly statusService: StatusService,
-  ) {}
+  ) {
+  }
 
   toView(measure: Measure): MeasureView {
     return {

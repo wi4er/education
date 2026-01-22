@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {INestApplication} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 import * as request from 'supertest';
-import { LanguageController } from './language.controller';
-import { Language } from '../entities/language/language.entity';
-import { Attribute } from '../entities/attribute/attribute.entity';
-import { TestDbModule } from '../../tests/test-db.module';
-import { ExceptionModule } from '../../exception/exception.module';
-import { CommonModule } from '../../common/common.module';
+import {LanguageController} from './language.controller';
+import {Language} from '../entities/language/language.entity';
+import {Attribute} from '../entities/attribute/attribute.entity';
+import {TestDbModule} from '../../tests/test-db.module';
+import {ExceptionModule} from '../../exception/exception.module';
+import {CommonModule} from '../../common/common.module';
 
 describe('LanguageController', () => {
   let app: INestApplication;

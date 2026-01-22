@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
-import { Element4Section } from '../entities/element/element4section.entity';
+import {Injectable} from '@nestjs/common';
+import {EntityManager} from 'typeorm';
+import {Element4Section} from '../entities/element/element4section.entity';
 
 @Injectable()
 export class SectionService {
