@@ -102,7 +102,8 @@ NestJS with TypeORM using an EAV (Entity-Attribute-Value) pattern:
 - `*2point` - point/location references
 - `*2description` - text descriptions with language
 - `*2counter` - numeric counts with optional measure/point
-- `*2file` - file references
+- `*2file` - file references with attributeId
+- `*4image` - direct file references (no attributeId)
 - `*4permission` - group-based permissions
 - `*4status` - status associations
 
