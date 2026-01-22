@@ -10,7 +10,9 @@ import { Attribute } from './attribute.entity';
 import { Status } from '../status/status.entity';
 
 @Entity('settings_attribute4status')
-export class Attribute4Status extends BaseEntity {
+export class Attribute4Status
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class Attribute4Status extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   statusId: string;
+
 }

@@ -1,6 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {HttpException, HttpStatus} from '@nestjs/common';
 
-export class WrongDataException extends HttpException {
+export class WrongDataException
+  extends HttpException {
+
   readonly field?: string;
   readonly value?: any;
   readonly reason?: string;
@@ -12,4 +14,5 @@ export class WrongDataException extends HttpException {
     this.value = value;
     this.reason = reason;
   }
+
 }

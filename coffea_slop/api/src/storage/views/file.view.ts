@@ -1,7 +1,8 @@
 import { BaseAttributesView } from '../../common/views/attributes.view';
 import { WithStatusesView } from '../../common/views/with-statuses.view';
 
-export interface FileView extends WithStatusesView {
+export interface FileView
+  extends WithStatusesView {
 
   id: string;
   parentId: string;

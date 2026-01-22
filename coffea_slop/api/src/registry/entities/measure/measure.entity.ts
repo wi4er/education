@@ -6,18 +6,20 @@ import {
   OneToMany,
   BaseEntity,
 } from 'typeorm';
-import { Measure2String } from './measure2string.entity';
-import { Measure2Point } from './measure2point.entity';
-import { Measure4Status } from './measure4status.entity';
-import { WithStrings } from '../../../common/entities/with-strings.entity';
-import { WithPoints } from '../../../common/entities/with-points.entity';
-import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import {Measure2String} from './measure2string.entity';
+import {Measure2Point} from './measure2point.entity';
+import {Measure4Status} from './measure4status.entity';
+import {WithStrings} from '../../../common/entities/with-strings.entity';
+import {WithPoints} from '../../../common/entities/with-points.entity';
+import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_measure')
 export class Measure
   extends BaseEntity
-  implements WithStrings<Measure>, WithPoints<Measure>, WithStatuses<Measure>
-{
+  implements WithStrings<Measure>,
+    WithPoints<Measure>,
+    WithStatuses<Measure> {
+
   @PrimaryColumn({
     type: 'varchar',
     length: 36,
@@ -48,4 +50,5 @@ export class Measure
 
   @UpdateDateColumn()
   updatedAt: Date;
+
 }

@@ -6,15 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Attribute } from './attribute.entity';
-import { Language } from '../language/language.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {Attribute} from './attribute.entity';
+import {Language} from '../language/language.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('settings_attribute2string')
 export class Attribute2String
   extends BaseEntity
-  implements CommonStringEntity<Attribute>
-{
+  implements CommonStringEntity<Attribute> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -53,4 +53,5 @@ export class Attribute2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
+
 }

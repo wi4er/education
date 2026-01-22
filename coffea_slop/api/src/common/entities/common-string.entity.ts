@@ -2,6 +2,7 @@ import { Attribute } from '../../settings/entities/attribute/attribute.entity';
 import { Language } from '../../settings/entities/language/language.entity';
 
 export interface CommonStringEntity<TParent> {
+
   id: number;
 
   parent: TParent;
@@ -14,4 +15,5 @@ export interface CommonStringEntity<TParent> {
   attributeId: string;
 
   value: string;
+
 }

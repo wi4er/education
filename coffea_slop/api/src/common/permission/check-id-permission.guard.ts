@@ -4,13 +4,13 @@ import {
   Injectable,
   SetMetadata,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { PermissionMethod } from './permission.method';
-import { WithPermissions } from '../entities/with-permissions.entity';
-import { PermissionException } from '../../exception/permission/permission.exception';
+import {Reflector} from '@nestjs/core';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {EntityManager} from 'typeorm';
+import {JwtService} from '@nestjs/jwt';
+import {PermissionMethod} from './permission.method';
+import {WithPermissions} from '../entities/with-permissions.entity';
+import {PermissionException} from '../../exception/permission/permission.exception';
 
 const COOKIE_NAME = 'auth_token';
 
@@ -31,13 +31,16 @@ export function CheckIdPermission<T>(
 }
 
 @Injectable()
-export class CheckIdPermissionGuard implements CanActivate {
+export class CheckIdPermissionGuard
+  implements CanActivate {
+
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+  }
 
   private getUserGroups(request: any): string[] {
     const token = request.cookies?.[COOKIE_NAME];
@@ -90,4 +93,5 @@ export class CheckIdPermissionGuard implements CanActivate {
 
     return true;
   }
+
 }

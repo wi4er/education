@@ -6,13 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Form } from './form.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { CommonPointEntity } from '../../../common/entities/common-point.entity';
+import {Form} from './form.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {CommonPointEntity} from '../../../common/entities/common-point.entity';
 
 @Entity('feedback_form2point')
-export class Form2Point extends BaseEntity implements CommonPointEntity<Form> {
+export class Form2Point
+  extends BaseEntity
+  implements CommonPointEntity<Form> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -48,4 +51,5 @@ export class Form2Point extends BaseEntity implements CommonPointEntity<Form> {
 
   @Column({ type: 'varchar', length: 36 })
   pointId: string;
+
 }

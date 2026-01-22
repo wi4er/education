@@ -6,16 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Block } from './block.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { CommonPointEntity } from '../../../common/entities/common-point.entity';
+import {Block} from './block.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {CommonPointEntity} from '../../../common/entities/common-point.entity';
 
 @Entity('content_block2point')
 export class Block2Point
   extends BaseEntity
-  implements CommonPointEntity<Block>
-{
+  implements CommonPointEntity<Block> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -51,4 +51,5 @@ export class Block2Point
 
   @Column({ type: 'varchar', length: 36 })
   pointId: string;
+
 }

@@ -6,11 +6,13 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { Element } from './element.entity';
-import { Section } from '../section/section.entity';
+import {Element} from './element.entity';
+import {Section} from '../section/section.entity';
 
 @Entity('content_element4section')
-export class Element4Section extends BaseEntity {
+export class Element4Section
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class Element4Section extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   sectionId: string;
+
 }

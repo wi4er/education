@@ -6,13 +6,16 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { CommonPointEntity } from '../../../common/entities/common-point.entity';
+import {User} from './user.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {CommonPointEntity} from '../../../common/entities/common-point.entity';
 
 @Entity('personal_user2point')
-export class User2Point extends BaseEntity implements CommonPointEntity<User> {
+export class User2Point
+  extends BaseEntity
+  implements CommonPointEntity<User> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -48,4 +51,5 @@ export class User2Point extends BaseEntity implements CommonPointEntity<User> {
 
   @Column({ type: 'varchar', length: 36 })
   pointId: string;
+
 }

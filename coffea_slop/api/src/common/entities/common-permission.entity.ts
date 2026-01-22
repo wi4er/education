@@ -2,6 +2,7 @@ import { Group } from '../../personal/entities/group/group.entity';
 import { PermissionMethod } from '../permission/permission.method';
 
 export interface CommonPermissionEntity<TParent> {
+
   id: number;
 
   parent: TParent;
@@ -11,4 +12,5 @@ export interface CommonPermissionEntity<TParent> {
   groupId?: string;
 
   method: PermissionMethod;
+
 }

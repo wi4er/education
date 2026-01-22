@@ -3,6 +3,7 @@ import { Point } from '../../registry/entities/point/point.entity';
 import { Measure } from '../../registry/entities/measure/measure.entity';
 
 export interface CommonCounterEntity<T> {
+
   id: number;
   parent: T;
   parentId: string;
@@ -13,4 +14,5 @@ export interface CommonCounterEntity<T> {
   measure: Measure | null;
   measureId: string | null;
   count: number;
+
 }

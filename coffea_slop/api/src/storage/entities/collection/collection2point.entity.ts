@@ -6,16 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Collection } from './collection.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { CommonPointEntity } from '../../../common/entities/common-point.entity';
+import {Collection} from './collection.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {CommonPointEntity} from '../../../common/entities/common-point.entity';
 
 @Entity('storage_collection2point')
 export class Collection2Point
   extends BaseEntity
-  implements CommonPointEntity<Collection>
-{
+  implements CommonPointEntity<Collection> {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -54,3 +53,4 @@ export class Collection2Point
   pointId: string;
 
 }
+

@@ -10,7 +10,9 @@ import { Attribute } from './attribute.entity';
 import { Directory } from '../../../registry/entities/directory/directory.entity';
 
 @Entity('settings_attribute2aspoint')
-export class Attribute2AsPoint extends BaseEntity {
+export class Attribute2AsPoint
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class Attribute2AsPoint extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   directoryId: string;
+
 }

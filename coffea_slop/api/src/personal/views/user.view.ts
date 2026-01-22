@@ -1,7 +1,9 @@
-import { FullAttributesView } from '../../common/views/attributes.view';
-import { WithStatusesView } from '../../common/views/with-statuses.view';
+import {FullAttributesView} from '../../common/views/attributes.view';
+import {WithStatusesView} from '../../common/views/with-statuses.view';
 
-export interface UserView extends WithStatusesView {
+export interface UserView
+  extends WithStatusesView {
+
   id: string;
   login?: string;
   email?: string;
@@ -11,4 +13,5 @@ export interface UserView extends WithStatusesView {
 
   attributes: FullAttributesView;
   images: string[];
+
 }

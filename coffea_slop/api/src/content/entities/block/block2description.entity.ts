@@ -6,16 +6,16 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { Block } from './block.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonDescriptionEntity } from '../../../common/entities/common-description.entity';
+import {Block} from './block.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonDescriptionEntity} from '../../../common/entities/common-description.entity';
 
 @Entity('content_block2description')
 export class Block2Description
   extends BaseEntity
-  implements CommonDescriptionEntity<Block>
-{
+  implements CommonDescriptionEntity<Block> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class Block2Description
 
   @Column({ type: 'text' })
   value: string;
+
 }

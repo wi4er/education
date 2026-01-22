@@ -4,10 +4,10 @@ import {
   ExecutionContext,
   SetMetadata,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager, ObjectType } from 'typeorm';
-import { NoDataException } from '../../exception/no-data/no-data.exception';
+import {Reflector} from '@nestjs/core';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {EntityManager, ObjectType} from 'typeorm';
+import {NoDataException} from '../../exception/no-data/no-data.exception';
 
 export const CHECK_ID = 'CHECK_ID';
 
@@ -21,12 +21,15 @@ export function CheckId<T>(entity: ObjectType<T>, idParam: string = 'id') {
 }
 
 @Injectable()
-export class CheckIdGuard implements CanActivate {
+export class CheckIdGuard
+  implements CanActivate {
+
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -49,4 +52,5 @@ export class CheckIdGuard implements CanActivate {
 
     return true;
   }
+
 }

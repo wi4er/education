@@ -8,19 +8,19 @@ import {
   OneToOne,
   BaseEntity,
 } from 'typeorm';
-import { Attribute2String } from './attribute2string.entity';
-import { Attribute2Point } from './attribute2point.entity';
-import { Attribute2AsPoint } from './attributeAsPoint.entity';
-import { Attribute4Status } from './attribute4status.entity';
-import { WithStrings } from '../../../common/entities/with-strings.entity';
-import { WithPoints } from '../../../common/entities/with-points.entity';
-import { AttributeType } from './attribute-type.enum';
+import {Attribute2String} from './attribute2string.entity';
+import {Attribute2Point} from './attribute2point.entity';
+import {Attribute2AsPoint} from './attributeAsPoint.entity';
+import {Attribute4Status} from './attribute4status.entity';
+import {WithStrings} from '../../../common/entities/with-strings.entity';
+import {WithPoints} from '../../../common/entities/with-points.entity';
+import {AttributeType} from './attribute-type.enum';
 
 @Entity('settings_attribute')
 export class Attribute
   extends BaseEntity
-  implements WithStrings<Attribute>, WithPoints<Attribute>
-{
+  implements WithStrings<Attribute>, WithPoints<Attribute> {
+
   @PrimaryColumn({
     type: 'varchar',
     length: 36,
@@ -64,4 +64,5 @@ export class Attribute
 
   @UpdateDateColumn()
   updatedAt: Date;
+
 }

@@ -6,16 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Measure } from './measure.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {Measure} from './measure.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('registry_measure2string')
 export class Measure2String
   extends BaseEntity
-  implements CommonStringEntity<Measure>
-{
+  implements CommonStringEntity<Measure> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class Measure2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
+
 }

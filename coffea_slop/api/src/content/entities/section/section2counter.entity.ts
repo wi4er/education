@@ -6,13 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Section } from './section.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { Measure } from '../../../registry/entities/measure/measure.entity';
+import {Section} from './section.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {Measure} from '../../../registry/entities/measure/measure.entity';
 
 @Entity('content_section2counter')
-export class Section2Counter extends BaseEntity {
+export class Section2Counter
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -62,4 +64,5 @@ export class Section2Counter extends BaseEntity {
 
   @Column({ type: 'float' })
   count: number;
+
 }

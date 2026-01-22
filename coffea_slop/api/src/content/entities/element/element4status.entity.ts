@@ -6,11 +6,13 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Element } from './element.entity';
-import { Status } from '../../../settings/entities/status/status.entity';
+import {Element} from './element.entity';
+import {Status} from '../../../settings/entities/status/status.entity';
 
 @Entity('content_element4status')
-export class Element4Status extends BaseEntity {
+export class Element4Status
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class Element4Status extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   statusId: string;
+
 }

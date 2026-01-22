@@ -4,11 +4,13 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { PermissionException } from './permission.exception';
+import {Response} from 'express';
+import {PermissionException} from './permission.exception';
 
 @Catch(PermissionException)
-export class PermissionFilter implements ExceptionFilter {
+export class PermissionFilter
+  implements ExceptionFilter {
+
   catch(exception: PermissionException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -24,4 +26,5 @@ export class PermissionFilter implements ExceptionFilter {
       },
     });
   }
+
 }

@@ -1,17 +1,17 @@
-import { PermissionMethod } from './permission.method';
+import {PermissionMethod} from './permission.method';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   SetMetadata,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
-import { CommonPermissionEntity } from '../entities/common-permission.entity';
-import { PermissionException } from '../../exception/permission/permission.exception';
-import { JwtService } from '@nestjs/jwt';
-import { WithPermissions } from '../entities/with-permissions.entity';
+import {Reflector} from '@nestjs/core';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {EntityManager} from 'typeorm';
+import {CommonPermissionEntity} from '../entities/common-permission.entity';
+import {PermissionException} from '../../exception/permission/permission.exception';
+import {JwtService} from '@nestjs/jwt';
+import {WithPermissions} from '../entities/with-permissions.entity';
 
 const COOKIE_NAME = 'auth_token';
 
@@ -32,7 +32,9 @@ export function CheckParentPermission<T>(
 }
 
 @Injectable()
-export class CheckParentPermissionGuard implements CanActivate {
+export class CheckParentPermissionGuard
+  implements CanActivate {
+
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
@@ -93,4 +95,5 @@ export class CheckParentPermissionGuard implements CanActivate {
 
     return true;
   }
+
 }

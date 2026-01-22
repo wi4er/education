@@ -6,16 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Collection } from './collection.entity';
-import { Group } from '../../../personal/entities/group/group.entity';
-import { PermissionMethod } from '../../../common/permission/permission.method';
-import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
+import {Collection} from './collection.entity';
+import {Group} from '../../../personal/entities/group/group.entity';
+import {PermissionMethod} from '../../../common/permission/permission.method';
+import {CommonPermissionEntity} from '../../../common/entities/common-permission.entity';
 
 @Entity('storage_collection4permission')
 export class Collection4Permission
   extends BaseEntity
-  implements CommonPermissionEntity<Collection>
-{
+  implements CommonPermissionEntity<Collection> {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -46,3 +45,4 @@ export class Collection4Permission
   method: PermissionMethod;
 
 }
+

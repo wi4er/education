@@ -32,7 +32,8 @@ export function CheckInputPermission<T>(
 }
 
 @Injectable()
-export class CheckInputPermissionGuard implements CanActivate {
+export class CheckInputPermissionGuard
+  implements CanActivate {
 
   constructor(
     private readonly reflector: Reflector,

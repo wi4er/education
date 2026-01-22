@@ -6,16 +6,16 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { Group } from './group.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonDescriptionEntity } from '../../../common/entities/common-description.entity';
+import {Group} from './group.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonDescriptionEntity} from '../../../common/entities/common-description.entity';
 
 @Entity('personal_group2description')
 export class Group2Description
   extends BaseEntity
-  implements CommonDescriptionEntity<Group>
-{
+  implements CommonDescriptionEntity<Group> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class Group2Description
 
   @Column({ type: 'text' })
   value: string;
+
 }

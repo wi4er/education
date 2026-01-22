@@ -5,15 +5,23 @@ import { Entity2counterView } from './entity2counter.view';
 import { Entity2fileView } from './entity2file.view';
 
 export interface BaseAttributesView {
+
   strings: Entity2stringView[];
   points: Entity2pointView[];
+
 }
 
-export interface AttributesView extends BaseAttributesView {
+export interface AttributesView
+  extends BaseAttributesView {
+
   descriptions: Entity2descriptionView[];
+
 }
 
-export interface FullAttributesView extends AttributesView {
+export interface FullAttributesView
+  extends AttributesView {
+
   counters: Entity2counterView[];
   files?: Entity2fileView[];
+
 }

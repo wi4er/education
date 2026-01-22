@@ -1,6 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {HttpException, HttpStatus} from '@nestjs/common';
 
-export class NoDataException extends HttpException {
+export class NoDataException
+  extends HttpException {
+
   readonly entity: string;
   readonly id?: string;
 
@@ -14,4 +16,5 @@ export class NoDataException extends HttpException {
     this.entity = entity;
     this.id = id;
   }
+
 }

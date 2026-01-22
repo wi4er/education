@@ -11,7 +11,9 @@ import { AccessEntity } from '../../../common/access/access-entity.enum';
 import { AccessMethod } from './access-method.enum';
 
 @Entity('personal_access')
-export class Access extends BaseEntity {
+export class Access
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -31,4 +33,5 @@ export class Access extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   method: AccessMethod;
+
 }

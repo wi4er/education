@@ -4,11 +4,13 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { WrongDataException } from './wrong-data.exception';
+import {Response} from 'express';
+import {WrongDataException} from './wrong-data.exception';
 
 @Catch(WrongDataException)
-export class WrongDataFilter implements ExceptionFilter {
+export class WrongDataFilter
+  implements ExceptionFilter {
+
   catch(exception: WrongDataException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -24,4 +26,5 @@ export class WrongDataFilter implements ExceptionFilter {
       },
     });
   }
+
 }

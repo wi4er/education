@@ -4,12 +4,12 @@ import {
   ExecutionContext,
   SetMetadata,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
-import { AccessEntity } from './access-entity.enum';
-import { AccessMethod } from '../../personal/entities/access/access-method.enum';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import {Reflector} from '@nestjs/core';
+import {Observable} from 'rxjs';
+import {AccessEntity} from './access-entity.enum';
+import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {EntityManager} from 'typeorm';
 
 export const CHECK_METHOD_ACCESS = 'CHECK_METHOD_ACCESS';
 
@@ -18,12 +18,15 @@ export function CheckMethodAccess(target: AccessEntity, method: AccessMethod) {
 }
 
 @Injectable()
-export class CheckMethodAccessGuard implements CanActivate {
+export class CheckMethodAccessGuard
+  implements CanActivate {
+
   constructor(
     private readonly reflector: Reflector,
     @InjectEntityManager()
     private manager: EntityManager,
-  ) {}
+  ) {
+  }
 
   canActivate(
     context: ExecutionContext,
@@ -40,4 +43,5 @@ export class CheckMethodAccessGuard implements CanActivate {
 
     return true;
   }
+  ß
 }

@@ -1,7 +1,9 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { PermissionMethod } from '../../common/permission/permission.method';
+import {HttpException, HttpStatus} from '@nestjs/common';
+import {PermissionMethod} from '../../common/permission/permission.method';
 
-export class PermissionException extends HttpException {
+export class PermissionException
+  extends HttpException {
+
   readonly entity: string;
   readonly method: PermissionMethod;
   readonly resourceId?: string;
@@ -17,4 +19,5 @@ export class PermissionException extends HttpException {
     this.method = method;
     this.resourceId = resourceId;
   }
+
 }

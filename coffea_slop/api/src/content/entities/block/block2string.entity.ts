@@ -6,16 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Block } from './block.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {Block} from './block.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('content_block2string')
 export class Block2String
   extends BaseEntity
-  implements CommonStringEntity<Block>
-{
+  implements CommonStringEntity<Block> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class Block2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
+
 }

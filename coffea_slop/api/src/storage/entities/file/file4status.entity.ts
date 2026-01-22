@@ -6,11 +6,12 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { File } from './file.entity';
-import { Status } from '../../../settings/entities/status/status.entity';
+import {File} from './file.entity';
+import {Status} from '../../../settings/entities/status/status.entity';
 
 @Entity('storage_file4status')
-export class File4Status extends BaseEntity {
+export class File4Status
+  extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -38,3 +39,4 @@ export class File4Status extends BaseEntity {
   statusId: string;
 
 }
+

@@ -8,10 +8,12 @@ import {
   Column,
   BaseEntity,
 } from 'typeorm';
-import { Form } from '../form/form.entity';
+import {Form} from '../form/form.entity';
 
 @Entity('feedback_result')
-export class Result extends BaseEntity {
+export class Result
+  extends BaseEntity {
+
   @PrimaryColumn({
     type: 'varchar',
     length: 36,
@@ -35,4 +37,5 @@ export class Result extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
 }

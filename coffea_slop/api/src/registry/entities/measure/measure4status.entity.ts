@@ -6,11 +6,13 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Measure } from './measure.entity';
-import { Status } from '../../../settings/entities/status/status.entity';
+import {Measure} from './measure.entity';
+import {Status} from '../../../settings/entities/status/status.entity';
 
 @Entity('registry_measure4status')
-export class Measure4Status extends BaseEntity {
+export class Measure4Status
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class Measure4Status extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   statusId: string;
+
 }

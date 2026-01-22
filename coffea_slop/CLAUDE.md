@@ -24,7 +24,7 @@ docker compose down      # Stop all services
 **Service URLs (via nginx on port 80):**
 - Web: `http://localhost/` (proxies to web:3030)
 - Admin: `http://localhost/admin` (proxies to admin:3010)
-- API: `http://localhost/api` (proxies to api:3000)
+- API: `http://localhost/api/*` → proxies to `api:3000/*` (strips `/api` prefix)
 
 **Direct service ports (bypass nginx):**
 - PostgreSQL: `localhost:5432`
@@ -40,7 +40,7 @@ JWT_SECRET=your_secret
 ADMIN_GROUP=admin
 ```
 
-**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts. PostgreSQL data persists in `data/postgres/`, file storage in `data/storage/`.
+**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts. PostgreSQL data persists in `data/postgres/`, file storage in `data/storage/`, uploads in `data/upload/`.
 
 **Default admin credentials:** login `admin`, password `qwerty`
 
@@ -147,7 +147,14 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
 ## Code Patterns
 
 **API:**
-- Entity classes have blank line after opening brace and before closing brace
+- Entity classes and interfaces have blank line after opening brace and before closing brace
+- `extends` and `implements` clauses on new line with 2-space indent:
+  ```typescript
+  export class Directory
+    extends BaseEntity
+    implements WithStrings<Directory> {
+  ```
+- Import destructuring without spaces: `import {Repository, DataSource} from 'typeorm'`
 - Arrow functions: no brackets for single untyped parameter (`s =>` not `(s) =>`)
 - Controllers use `*View` interfaces for responses, `*Input` for request bodies
 - POST/PUT methods handle subordinates in a transaction via shared services

@@ -6,13 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { Measure } from '../../../registry/entities/measure/measure.entity';
+import {User} from './user.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {Measure} from '../../../registry/entities/measure/measure.entity';
 
 @Entity('personal_user2counter')
-export class User2Counter extends BaseEntity {
+export class User2Counter
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -62,4 +64,5 @@ export class User2Counter extends BaseEntity {
 
   @Column({ type: 'float' })
   count: number;
+
 }

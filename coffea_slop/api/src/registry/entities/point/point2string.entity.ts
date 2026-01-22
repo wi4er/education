@@ -6,16 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Point } from './point.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {Point} from './point.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('registry_point2string')
 export class Point2String
   extends BaseEntity
-  implements CommonStringEntity<Point>
-{
+  implements CommonStringEntity<Point> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class Point2String
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   value: string;
+
 }

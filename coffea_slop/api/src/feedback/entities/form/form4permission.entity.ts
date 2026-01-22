@@ -6,16 +6,16 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Form } from './form.entity';
-import { Group } from '../../../personal/entities/group/group.entity';
-import { PermissionMethod } from '../../../common/permission/permission.method';
-import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
+import {Form} from './form.entity';
+import {Group} from '../../../personal/entities/group/group.entity';
+import {PermissionMethod} from '../../../common/permission/permission.method';
+import {CommonPermissionEntity} from '../../../common/entities/common-permission.entity';
 
 @Entity('feedback_form4permission')
 export class Form4Permission
   extends BaseEntity
-  implements CommonPermissionEntity<Form>
-{
+  implements CommonPermissionEntity<Form> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -43,4 +43,5 @@ export class Form4Permission
 
   @Column({ type: 'varchar', length: 36 })
   method: PermissionMethod;
+
 }

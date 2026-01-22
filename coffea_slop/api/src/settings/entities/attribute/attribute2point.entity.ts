@@ -6,15 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Attribute } from './attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { CommonPointEntity } from '../../../common/entities/common-point.entity';
+import {Attribute} from './attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {CommonPointEntity} from '../../../common/entities/common-point.entity';
 
 @Entity('settings_attribute2point')
 export class Attribute2Point
   extends BaseEntity
-  implements CommonPointEntity<Attribute>
-{
+  implements CommonPointEntity<Attribute> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -50,4 +50,5 @@ export class Attribute2Point
 
   @Column({ type: 'varchar', length: 36 })
   pointId: string;
+
 }

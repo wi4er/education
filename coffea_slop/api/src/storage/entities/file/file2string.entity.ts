@@ -6,16 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { File } from './file.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {File} from './file.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('storage_file2string')
 export class File2String
   extends BaseEntity
-  implements CommonStringEntity<File>
-{
+  implements CommonStringEntity<File> {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -57,3 +56,4 @@ export class File2String
   value: string;
 
 }
+

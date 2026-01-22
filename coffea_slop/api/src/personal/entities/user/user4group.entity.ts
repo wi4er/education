@@ -6,11 +6,13 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Group } from '../group/group.entity';
+import {User} from './user.entity';
+import {Group} from '../group/group.entity';
 
 @Entity('personal_user4group')
-export class User4Group extends BaseEntity {
+export class User4Group
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,4 +37,5 @@ export class User4Group extends BaseEntity {
 
   @Column({ type: 'varchar', length: 36 })
   groupId: string;
+
 }

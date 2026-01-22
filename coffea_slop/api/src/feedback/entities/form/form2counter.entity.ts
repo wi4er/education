@@ -6,13 +6,15 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import { Form } from './form.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { Point } from '../../../registry/entities/point/point.entity';
-import { Measure } from '../../../registry/entities/measure/measure.entity';
+import {Form} from './form.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {Point} from '../../../registry/entities/point/point.entity';
+import {Measure} from '../../../registry/entities/measure/measure.entity';
 
 @Entity('feedback_form2counter')
-export class Form2Counter extends BaseEntity {
+export class Form2Counter
+  extends BaseEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -62,4 +64,5 @@ export class Form2Counter extends BaseEntity {
 
   @Column({ type: 'float' })
   count: number;
+
 }

@@ -6,16 +6,16 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Language } from '../../../settings/entities/language/language.entity';
-import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
-import { CommonStringEntity } from '../../../common/entities/common-string.entity';
+import {User} from './user.entity';
+import {Language} from '../../../settings/entities/language/language.entity';
+import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
+import {CommonStringEntity} from '../../../common/entities/common-string.entity';
 
 @Entity('personal_user2string')
 export class User2String
   extends BaseEntity
-  implements CommonStringEntity<User>
-{
+  implements CommonStringEntity<User> {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -54,4 +54,5 @@ export class User2String
 
   @Column({ type: 'varchar', length: 255, default: '' })
   value: string;
+
 }

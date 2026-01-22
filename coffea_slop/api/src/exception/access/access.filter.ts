@@ -8,7 +8,9 @@ import { Response } from 'express';
 import { AccessException } from './access.exception';
 
 @Catch(AccessException)
-export class AccessFilter implements ExceptionFilter {
+export class AccessFilter
+  implements ExceptionFilter {
+
   catch(exception: AccessException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -23,4 +25,5 @@ export class AccessFilter implements ExceptionFilter {
       },
     });
   }
+
 }
