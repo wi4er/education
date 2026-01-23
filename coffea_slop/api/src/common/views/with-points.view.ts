@@ -1,4 +1,4 @@
-import {Entity2pointView} from './entity2point.view';
+import { Entity2pointView } from './entity2point.view';
 
 export interface WithPointsView {
 

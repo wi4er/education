@@ -1,14 +1,14 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {INestApplication} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {DataSource, Repository, EntityTarget} from 'typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, Repository, EntityTarget } from 'typeorm';
 import * as request from 'supertest';
-import {ResultController} from './result.controller';
-import {Result} from '../entities/result/result.entity';
-import {Form} from '../entities/form/form.entity';
-import {TestDbModule} from '../../tests/test-db.module';
-import {ExceptionModule} from '../../exception/exception.module';
-import {CommonModule} from '../../common/common.module';
+import { ResultController } from './result.controller';
+import { Result } from '../entities/result/result.entity';
+import { Form } from '../entities/form/form.entity';
+import { TestDbModule } from '../../tests/test-db.module';
+import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('ResultController', () => {
   let app: INestApplication;

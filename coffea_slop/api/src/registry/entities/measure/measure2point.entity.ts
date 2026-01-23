@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Measure} from './measure.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Measure } from './measure.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('registry_measure2point')
 export class Measure2Point

@@ -8,30 +8,30 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource} from 'typeorm';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import {User} from '../entities/user/user.entity';
-import {User2String} from '../entities/user/user2string.entity';
-import {User2Point} from '../entities/user/user2point.entity';
-import {User2Description} from '../entities/user/user2description.entity';
-import {User2Counter} from '../entities/user/user2counter.entity';
-import {User2File} from '../entities/user/user2file.entity';
-import {User4Status} from '../entities/user/user4status.entity';
-import {User4Image} from '../entities/user/user4image.entity';
-import {UserView} from '../views/user.view';
-import {UserInput} from '../inputs/user.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {CounterAttributeService} from '../../common/services/counter-attribute.service';
-import {FileAttributeService} from '../../common/services/file-attribute.service';
-import {StatusService} from '../../common/services/status.service';
-import {ImageService} from '../../common/services/image.service';
+import { User } from '../entities/user/user.entity';
+import { User2String } from '../entities/user/user2string.entity';
+import { User2Point } from '../entities/user/user2point.entity';
+import { User2Description } from '../entities/user/user2description.entity';
+import { User2Counter } from '../entities/user/user2counter.entity';
+import { User2File } from '../entities/user/user2file.entity';
+import { User4Status } from '../entities/user/user4status.entity';
+import { User4Image } from '../entities/user/user4image.entity';
+import { UserView } from '../views/user.view';
+import { UserInput } from '../inputs/user.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
+import { StatusService } from '../../common/services/status.service';
+import { ImageService } from '../../common/services/image.service';
 
 @Controller('user')
 export class UserController {

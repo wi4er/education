@@ -4,12 +4,12 @@ import {
   ExecutionContext,
   SetMetadata,
 } from '@nestjs/common';
-import {Reflector} from '@nestjs/core';
-import {Observable} from 'rxjs';
-import {AccessEntity} from './access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {InjectEntityManager} from '@nestjs/typeorm';
-import {EntityManager} from 'typeorm';
+import { Reflector } from '@nestjs/core';
+import { Observable } from 'rxjs';
+import { AccessEntity } from './access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
 
 export const CHECK_METHOD_ACCESS = 'CHECK_METHOD_ACCESS';
 

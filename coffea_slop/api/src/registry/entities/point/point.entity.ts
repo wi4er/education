@@ -10,13 +10,13 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Point2String} from './point2string.entity';
-import {Point2Point} from './point2point.entity';
-import {Point4Status} from './point4status.entity';
-import {Directory} from '../directory/directory.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
+import { Point2String } from './point2string.entity';
+import { Point2Point } from './point2point.entity';
+import { Point4Status } from './point4status.entity';
+import { Directory } from '../directory/directory.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_point')
 @Check('"id" <> \'\'')

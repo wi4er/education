@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {User} from './user.entity';
-import {File} from '../../../storage/entities/file/file.entity';
+import { User } from './user.entity';
+import { File } from '../../../storage/entities/file/file.entity';
 
 @Entity('personal_user4image')
 export class User4Image

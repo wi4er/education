@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Measure} from './measure.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { Measure } from './measure.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('registry_measure4status')
 export class Measure4Status

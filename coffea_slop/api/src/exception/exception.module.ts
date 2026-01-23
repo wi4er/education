@@ -1,10 +1,10 @@
-import {Module} from '@nestjs/common';
-import {APP_FILTER} from '@nestjs/core';
-import {PermissionFilter} from './permission/permission.filter';
-import {AccessFilter} from './access/access.filter';
-import {WrongDataFilter} from './wrong-data/wrong-data.filter';
-import {NoDataFilter} from './no-data/no-data.filter';
-import {QueryFailedFilter} from './query-failed/query-failed.filter';
+import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+import { PermissionFilter } from './permission/permission.filter';
+import { AccessFilter } from './access/access.filter';
+import { WrongDataFilter } from './wrong-data/wrong-data.filter';
+import { NoDataFilter } from './no-data/no-data.filter';
+import { QueryFailedFilter } from './query-failed/query-failed.filter';
 
 @Module({
   providers: [

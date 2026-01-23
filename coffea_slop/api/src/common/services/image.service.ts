@@ -1,6 +1,6 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonImageEntity} from '../entities/common-image.entity';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonImageEntity } from '../entities/common-image.entity';
 
 @Injectable()
 export class ImageService {

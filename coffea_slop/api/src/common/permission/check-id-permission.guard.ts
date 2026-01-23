@@ -4,13 +4,13 @@ import {
   Injectable,
   SetMetadata,
 } from '@nestjs/common';
-import {Reflector} from '@nestjs/core';
-import {InjectEntityManager} from '@nestjs/typeorm';
-import {EntityManager} from 'typeorm';
-import {JwtService} from '@nestjs/jwt';
-import {PermissionMethod} from './permission.method';
-import {WithPermissions} from '../entities/with-permissions.entity';
-import {PermissionException} from '../../exception/permission/permission.exception';
+import { Reflector } from '@nestjs/core';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { PermissionMethod } from './permission.method';
+import { WithPermissions } from '../entities/with-permissions.entity';
+import { PermissionException } from '../../exception/permission/permission.exception';
 
 const COOKIE_NAME = 'auth_token';
 

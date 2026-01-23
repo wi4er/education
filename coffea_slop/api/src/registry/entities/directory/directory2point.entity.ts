@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Directory} from './directory.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Directory } from './directory.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('registry_directory2point')
 export class Directory2Point

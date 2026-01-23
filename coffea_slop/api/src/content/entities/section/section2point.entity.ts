@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Section} from './section.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Section } from './section.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('content_section2point')
 export class Section2Point

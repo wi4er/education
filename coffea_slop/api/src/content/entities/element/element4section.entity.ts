@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import {Element} from './element.entity';
-import {Section} from '../section/section.entity';
+import { Element } from './element.entity';
+import { Section } from '../section/section.entity';
 
 @Entity('content_element4section')
 export class Element4Section

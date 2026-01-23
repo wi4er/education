@@ -4,8 +4,8 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import {Response} from 'express';
-import {AccessException} from './access.exception';
+import { Response } from 'express';
+import { AccessException } from './access.exception';
 
 @Catch(AccessException)
 export class AccessFilter

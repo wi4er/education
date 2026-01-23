@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Directory} from './directory.entity';
-import {Group} from '../../../personal/entities/group/group.entity';
-import {PermissionMethod} from '../../../common/permission/permission.method';
-import {CommonPermissionEntity} from '../../../common/entities/common-permission.entity';
+import { Directory } from './directory.entity';
+import { Group } from '../../../personal/entities/group/group.entity';
+import { PermissionMethod } from '../../../common/permission/permission.method';
+import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
 @Entity('registry_directory4permission')
 export class Directory4Permission

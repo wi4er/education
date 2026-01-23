@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import {Form} from './form.entity';
-import {Language} from '../../../settings/entities/language/language.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {CommonDescriptionEntity} from '../../../common/entities/common-description.entity';
+import { Form } from './form.entity';
+import { Language } from '../../../settings/entities/language/language.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { CommonDescriptionEntity } from '../../../common/entities/common-description.entity';
 
 @Entity('feedback_form2description')
 export class Form2Description

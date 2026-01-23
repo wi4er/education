@@ -4,8 +4,8 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import {Response} from 'express';
-import {NoDataException} from './no-data.exception';
+import { Response } from 'express';
+import { NoDataException } from './no-data.exception';
 
 @Catch(NoDataException)
 export class NoDataFilter

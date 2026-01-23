@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import {User} from './user.entity';
-import {Group} from '../group/group.entity';
+import { User } from './user.entity';
+import { Group } from '../group/group.entity';
 
 @Entity('personal_user4group')
 export class User4Group

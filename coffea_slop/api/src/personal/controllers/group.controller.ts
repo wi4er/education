@@ -8,23 +8,23 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource} from 'typeorm';
-import {Group} from '../entities/group/group.entity';
-import {Group2String} from '../entities/group/group2string.entity';
-import {Group2Point} from '../entities/group/group2point.entity';
-import {Group2Description} from '../entities/group/group2description.entity';
-import {Group4Status} from '../entities/group/group4status.entity';
-import {GroupView} from '../views/group.view';
-import {GroupInput} from '../inputs/group.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {StatusService} from '../../common/services/status.service';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
+import { Group } from '../entities/group/group.entity';
+import { Group2String } from '../entities/group/group2string.entity';
+import { Group2Point } from '../entities/group/group2point.entity';
+import { Group2Description } from '../entities/group/group2description.entity';
+import { Group4Status } from '../entities/group/group4status.entity';
+import { GroupView } from '../views/group.view';
+import { GroupInput } from '../inputs/group.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('group')
 export class GroupController {

@@ -8,32 +8,32 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource, In, IsNull, Or} from 'typeorm';
-import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {Form} from '../entities/form/form.entity';
-import {Form2String} from '../entities/form/form2string.entity';
-import {Form2Point} from '../entities/form/form2point.entity';
-import {Form4Permission} from '../entities/form/form4permission.entity';
-import {Form2Description} from '../entities/form/form2description.entity';
-import {Form2Counter} from '../entities/form/form2counter.entity';
-import {Form2File} from '../entities/form/form2file.entity';
-import {FormView} from '../views/form.view';
-import {FormInput} from '../inputs/form.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {PermissionService} from '../../common/services/permission.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {CounterAttributeService} from '../../common/services/counter-attribute.service';
-import {FileAttributeService} from '../../common/services/file-attribute.service';
-import {StatusService} from '../../common/services/status.service';
-import {Form4Status} from '../entities/form/form4status.entity';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { Form } from '../entities/form/form.entity';
+import { Form2String } from '../entities/form/form2string.entity';
+import { Form2Point } from '../entities/form/form2point.entity';
+import { Form4Permission } from '../entities/form/form4permission.entity';
+import { Form2Description } from '../entities/form/form2description.entity';
+import { Form2Counter } from '../entities/form/form2counter.entity';
+import { Form2File } from '../entities/form/form2file.entity';
+import { FormView } from '../views/form.view';
+import { FormInput } from '../inputs/form.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
+import { StatusService } from '../../common/services/status.service';
+import { Form4Status } from '../entities/form/form4status.entity';
 
 @Controller('form')
 export class FormController {

@@ -1,6 +1,6 @@
-import {Attribute} from '../../settings/entities/attribute/attribute.entity';
-import {Point} from '../../registry/entities/point/point.entity';
-import {Measure} from '../../registry/entities/measure/measure.entity';
+import { Attribute } from '../../settings/entities/attribute/attribute.entity';
+import { Point } from '../../registry/entities/point/point.entity';
+import { Measure } from '../../registry/entities/measure/measure.entity';
 
 export interface CommonCounterEntity<T> {
 

@@ -1,4 +1,4 @@
-import {CommonStringInput} from './common-string.input';
+import { CommonStringInput } from './common-string.input';
 
 export interface WithStringsInput {
 

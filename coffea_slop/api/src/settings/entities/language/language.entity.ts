@@ -7,12 +7,12 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Language2String} from './language2string.entity';
-import {Language2Point} from './language2point.entity';
-import {Language4Status} from './language4status.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
+import { Language2String } from './language2string.entity';
+import { Language2Point } from './language2point.entity';
+import { Language4Status } from './language4status.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 @Entity('settings_language')
 @Check('"id" <> \'\'')

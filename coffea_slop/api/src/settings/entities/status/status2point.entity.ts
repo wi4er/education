@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Status} from './status.entity';
-import {Attribute} from '../attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Status } from './status.entity';
+import { Attribute } from '../attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('settings_status2point')
 export class Status2Point

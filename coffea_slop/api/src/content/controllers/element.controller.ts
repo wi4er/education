@@ -8,42 +8,42 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {InjectRepository} from '@nestjs/typeorm';
-import {DataSource, Repository} from 'typeorm';
-import {Element} from '../entities/element/element.entity';
-import {Element2String} from '../entities/element/element2string.entity';
-import {Element2Point} from '../entities/element/element2point.entity';
-import {Element2Description} from '../entities/element/element2description.entity';
-import {Element2Counter} from '../entities/element/element2counter.entity';
-import {Element2File} from '../entities/element/element2file.entity';
-import {Element4Image} from '../entities/element/element4image.entity';
-import {ElementView} from '../views/element.view';
-import {ElementInput} from '../inputs/element.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {PermissionService} from '../../common/services/permission.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {CounterAttributeService} from '../../common/services/counter-attribute.service';
-import {FileAttributeService} from '../../common/services/file-attribute.service';
-import {SectionService} from '../services/section.service';
-import {ImageService} from '../../common/services/image.service';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { Element } from '../entities/element/element.entity';
+import { Element2String } from '../entities/element/element2string.entity';
+import { Element2Point } from '../entities/element/element2point.entity';
+import { Element2Description } from '../entities/element/element2description.entity';
+import { Element2Counter } from '../entities/element/element2counter.entity';
+import { Element2File } from '../entities/element/element2file.entity';
+import { Element4Image } from '../entities/element/element4image.entity';
+import { ElementView } from '../views/element.view';
+import { ElementInput } from '../inputs/element.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
+import { SectionService } from '../services/section.service';
+import { ImageService } from '../../common/services/image.service';
 import {
   ElementFilterService,
   StringFilter,
   PointFilter,
   CounterFilter,
 } from '../services/element-filter.service';
-import {ElementSortService} from '../services/element-sort.service';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {Element4Permission} from '../entities/element/element4permission.entity';
-import {Element4Status} from '../entities/element/element4status.entity';
-import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
-import {StatusService} from '../../common/services/status.service';
+import { ElementSortService } from '../services/element-sort.service';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { Element4Permission } from '../entities/element/element4permission.entity';
+import { Element4Status } from '../entities/element/element4status.entity';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('element')
 export class ElementController {

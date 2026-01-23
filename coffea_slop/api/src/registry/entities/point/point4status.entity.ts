@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Point} from './point.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { Point } from './point.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('registry_point4status')
 export class Point4Status

@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {User} from './user.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { User } from './user.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('personal_user4status')
 export class User4Status

@@ -1,6 +1,6 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonStatusEntity} from '../entities/common-status.entity';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonStatusEntity } from '../entities/common-status.entity';
 
 @Injectable()
 export class StatusService {

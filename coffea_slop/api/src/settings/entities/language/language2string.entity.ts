@@ -6,9 +6,9 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Language} from './language.entity';
-import {Attribute} from '../attribute/attribute.entity';
-import {CommonStringEntity} from '../../../common/entities/common-string.entity';
+import { Language } from './language.entity';
+import { Attribute } from '../attribute/attribute.entity';
+import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('settings_language2string')
 export class Language2String

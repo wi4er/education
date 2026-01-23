@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Block} from './block.entity';
-import {File} from '../../../storage/entities/file/file.entity';
+import { Block } from './block.entity';
+import { File } from '../../../storage/entities/file/file.entity';
 
 @Entity('content_block4image')
 export class Block4Image

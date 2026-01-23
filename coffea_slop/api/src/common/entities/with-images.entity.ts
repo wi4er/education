@@ -1,4 +1,4 @@
-import {CommonImageEntity} from './common-image.entity';
+import { CommonImageEntity } from './common-image.entity';
 
 export interface WithImages<T> {
 

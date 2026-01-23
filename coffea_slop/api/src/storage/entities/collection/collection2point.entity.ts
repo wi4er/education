@@ -1,8 +1,8 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity} from 'typeorm';
-import {Collection} from './collection.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity } from 'typeorm';
+import { Collection } from './collection.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('storage_collection2point')
 export class Collection2Point

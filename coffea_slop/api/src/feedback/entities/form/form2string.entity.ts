@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Form} from './form.entity';
-import {Language} from '../../../settings/entities/language/language.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {CommonStringEntity} from '../../../common/entities/common-string.entity';
+import { Form } from './form.entity';
+import { Language } from '../../../settings/entities/language/language.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('feedback_form2string')
 export class Form2String

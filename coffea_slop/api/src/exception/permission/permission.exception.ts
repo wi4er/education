@@ -1,5 +1,5 @@
-import {HttpException, HttpStatus} from '@nestjs/common';
-import {PermissionMethod} from '../../common/permission/permission.method';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { PermissionMethod } from '../../common/permission/permission.method';
 
 export class PermissionException
   extends HttpException {

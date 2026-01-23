@@ -8,34 +8,34 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource, In, IsNull, Or} from 'typeorm';
-import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
-import {Section} from '../entities/section/section.entity';
-import {Section2String} from '../entities/section/section2string.entity';
-import {Section2Point} from '../entities/section/section2point.entity';
-import {Section2Description} from '../entities/section/section2description.entity';
-import {Section2Counter} from '../entities/section/section2counter.entity';
-import {Section2File} from '../entities/section/section2file.entity';
-import {SectionView} from '../views/section.view';
-import {SectionInput} from '../inputs/section.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {PermissionService} from '../../common/services/permission.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {CounterAttributeService} from '../../common/services/counter-attribute.service';
-import {FileAttributeService} from '../../common/services/file-attribute.service';
-import {StatusService} from '../../common/services/status.service';
-import {Section4Permission} from '../entities/section/section4permission.entity';
-import {Section4Status} from '../entities/section/section4status.entity';
-import {Section4Image} from '../entities/section/section4image.entity';
-import {ImageService} from '../../common/services/image.service';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { Section } from '../entities/section/section.entity';
+import { Section2String } from '../entities/section/section2string.entity';
+import { Section2Point } from '../entities/section/section2point.entity';
+import { Section2Description } from '../entities/section/section2description.entity';
+import { Section2Counter } from '../entities/section/section2counter.entity';
+import { Section2File } from '../entities/section/section2file.entity';
+import { SectionView } from '../views/section.view';
+import { SectionInput } from '../inputs/section.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
+import { StatusService } from '../../common/services/status.service';
+import { Section4Permission } from '../entities/section/section4permission.entity';
+import { Section4Status } from '../entities/section/section4status.entity';
+import { Section4Image } from '../entities/section/section4image.entity';
+import { ImageService } from '../../common/services/image.service';
 
 @Controller('section')
 export class SectionController {

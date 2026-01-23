@@ -1,6 +1,6 @@
-import {Injectable} from '@nestjs/common';
-import {SelectQueryBuilder} from 'typeorm';
-import {Element} from '../entities/element/element.entity';
+import { Injectable } from '@nestjs/common';
+import { SelectQueryBuilder } from 'typeorm';
+import { Element } from '../entities/element/element.entity';
 
 export type SortDirection = 'ASC' | 'DESC';
 

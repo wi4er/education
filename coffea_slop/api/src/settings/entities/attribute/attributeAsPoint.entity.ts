@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Attribute} from './attribute.entity';
-import {Directory} from '../../../registry/entities/directory/directory.entity';
+import { Attribute } from './attribute.entity';
+import { Directory } from '../../../registry/entities/directory/directory.entity';
 
 @Entity('settings_attributeAsPoint')
 export class Attribute2AsPoint

@@ -1,4 +1,4 @@
-import {File} from '../../storage/entities/file/file.entity';
+import { File } from '../../storage/entities/file/file.entity';
 
 export interface CommonImageEntity<TParent> {
 

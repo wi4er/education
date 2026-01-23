@@ -1,13 +1,13 @@
-import {Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BaseEntity, Check} from 'typeorm';
-import {Collection2String} from './collection2string.entity';
-import {Collection2Point} from './collection2point.entity';
-import {Collection4Status} from './collection4status.entity';
-import {Collection4Permission} from './collection4permission.entity';
-import {File} from '../file/file.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
-import {WithPermissions} from '../../../common/entities/with-permissions.entity';
+import { Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BaseEntity, Check } from 'typeorm';
+import { Collection2String } from './collection2string.entity';
+import { Collection2Point } from './collection2point.entity';
+import { Collection4Status } from './collection4status.entity';
+import { Collection4Permission } from './collection4permission.entity';
+import { File } from '../file/file.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { WithPermissions } from '../../../common/entities/with-permissions.entity';
 
 @Entity('storage_collection')
 @Check('"id" <> \'\'')

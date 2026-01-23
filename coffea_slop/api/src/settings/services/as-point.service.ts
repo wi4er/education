@@ -1,6 +1,6 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager} from 'typeorm';
-import {Attribute2AsPoint} from '../entities/attribute/attributeAsPoint.entity';
+import { Injectable } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
+import { Attribute2AsPoint } from '../entities/attribute/attributeAsPoint.entity';
 
 @Injectable()
 export class AsPointService {

@@ -6,7 +6,7 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Status} from './status.entity';
+import { Status } from './status.entity';
 
 @Entity('settings_status4status')
 export class Status4Status

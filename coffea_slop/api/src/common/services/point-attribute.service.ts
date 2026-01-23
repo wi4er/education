@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonPointEntity} from '../entities/common-point.entity';
-import {CommonPointInput} from '../inputs/common-point.input';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonPointEntity } from '../entities/common-point.entity';
+import { CommonPointInput } from '../inputs/common-point.input';
 
 @Injectable()
 export class PointAttributeService {

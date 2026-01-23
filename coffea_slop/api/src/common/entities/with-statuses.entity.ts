@@ -1,4 +1,4 @@
-import {CommonStatusEntity} from './common-status.entity';
+import { CommonStatusEntity } from './common-status.entity';
 
 export interface WithStatuses<T> {
 

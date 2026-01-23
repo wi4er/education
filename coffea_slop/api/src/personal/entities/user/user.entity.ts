@@ -8,19 +8,19 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {User2String} from './user2string.entity';
-import {User2Point} from './user2point.entity';
-import {User2Description} from './user2description.entity';
-import {User2Counter} from './user2counter.entity';
-import {User2File} from './user2file.entity';
-import {User4Image} from './user4image.entity';
-import {User4Group} from './user4group.entity';
-import {User4Status} from './user4status.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithDescriptions} from '../../../common/entities/with-descriptions.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
-import {WithFiles} from '../../../common/entities/with-files.entity';
+import { User2String } from './user2string.entity';
+import { User2Point } from './user2point.entity';
+import { User2Description } from './user2description.entity';
+import { User2Counter } from './user2counter.entity';
+import { User2File } from './user2file.entity';
+import { User4Image } from './user4image.entity';
+import { User4Group } from './user4group.entity';
+import { User4Status } from './user4status.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { WithFiles } from '../../../common/entities/with-files.entity';
 
 @Entity('personal_user')
 @Check('"id" <> \'\'')

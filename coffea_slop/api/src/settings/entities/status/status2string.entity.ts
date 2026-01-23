@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Status} from './status.entity';
-import {Language} from '../language/language.entity';
-import {Attribute} from '../attribute/attribute.entity';
-import {CommonStringEntity} from '../../../common/entities/common-string.entity';
+import { Status } from './status.entity';
+import { Language } from '../language/language.entity';
+import { Attribute } from '../attribute/attribute.entity';
+import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('settings_status2string')
 export class Status2String

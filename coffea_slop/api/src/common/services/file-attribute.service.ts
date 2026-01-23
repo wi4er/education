@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonFileEntity} from '../entities/common-file.entity';
-import {CommonFileInput} from '../inputs/common-file.input';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonFileEntity } from '../entities/common-file.entity';
+import { CommonFileInput } from '../inputs/common-file.input';
 
 @Injectable()
 export class FileAttributeService {

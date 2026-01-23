@@ -9,7 +9,7 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Form} from '../form/form.entity';
+import { Form } from '../form/form.entity';
 
 @Entity('feedback_result')
 @Check('"id" <> \'\'')

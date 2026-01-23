@@ -8,34 +8,34 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource, In, IsNull, Or} from 'typeorm';
-import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
-import {Block} from '../entities/block/block.entity';
-import {Block2String} from '../entities/block/block2string.entity';
-import {Block2Point} from '../entities/block/block2point.entity';
-import {Block2Description} from '../entities/block/block2description.entity';
-import {Block2Counter} from '../entities/block/block2counter.entity';
-import {Block2File} from '../entities/block/block2file.entity';
-import {BlockView} from '../views/block.view';
-import {BlockInput} from '../inputs/block.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {PermissionService} from '../../common/services/permission.service';
-import {DescriptionAttributeService} from '../../common/services/description-attribute.service';
-import {CounterAttributeService} from '../../common/services/counter-attribute.service';
-import {FileAttributeService} from '../../common/services/file-attribute.service';
-import {StatusService} from '../../common/services/status.service';
-import {Block4Permission} from '../entities/block/block4permission.entity';
-import {Block4Status} from '../entities/block/block4status.entity';
-import {Block4Image} from '../entities/block/block4image.entity';
-import {ImageService} from '../../common/services/image.service';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource, In, IsNull, Or } from 'typeorm';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { Block } from '../entities/block/block.entity';
+import { Block2String } from '../entities/block/block2string.entity';
+import { Block2Point } from '../entities/block/block2point.entity';
+import { Block2Description } from '../entities/block/block2description.entity';
+import { Block2Counter } from '../entities/block/block2counter.entity';
+import { Block2File } from '../entities/block/block2file.entity';
+import { BlockView } from '../views/block.view';
+import { BlockInput } from '../inputs/block.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
+import { DescriptionAttributeService } from '../../common/services/description-attribute.service';
+import { CounterAttributeService } from '../../common/services/counter-attribute.service';
+import { FileAttributeService } from '../../common/services/file-attribute.service';
+import { StatusService } from '../../common/services/status.service';
+import { Block4Permission } from '../entities/block/block4permission.entity';
+import { Block4Status } from '../entities/block/block4status.entity';
+import { Block4Image } from '../entities/block/block4image.entity';
+import { ImageService } from '../../common/services/image.service';
 
 @Controller('block')
 export class BlockController {

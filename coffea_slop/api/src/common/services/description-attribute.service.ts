@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonDescriptionEntity} from '../entities/common-description.entity';
-import {CommonDescriptionInput} from '../inputs/common-description.input';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonDescriptionEntity } from '../entities/common-description.entity';
+import { CommonDescriptionInput } from '../inputs/common-description.input';
 
 @Injectable()
 export class DescriptionAttributeService {

@@ -10,21 +10,21 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Element2String} from './element2string.entity';
-import {Element2Point} from './element2point.entity';
-import {Element4Permission} from './element4permission.entity';
-import {Element4Status} from './element4status.entity';
-import {Element2Description} from './element2description.entity';
-import {Element4Section} from './element4section.entity';
-import {Element2Counter} from './element2counter.entity';
-import {Element2File} from './element2file.entity';
-import {Element4Image} from './element4image.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithPermissions} from '../../../common/entities/with-permissions.entity';
-import {WithDescriptions} from '../../../common/entities/with-descriptions.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
-import {Block} from '../block/block.entity';
+import { Element2String } from './element2string.entity';
+import { Element2Point } from './element2point.entity';
+import { Element4Permission } from './element4permission.entity';
+import { Element4Status } from './element4status.entity';
+import { Element2Description } from './element2description.entity';
+import { Element4Section } from './element4section.entity';
+import { Element2Counter } from './element2counter.entity';
+import { Element2File } from './element2file.entity';
+import { Element4Image } from './element4image.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithPermissions } from '../../../common/entities/with-permissions.entity';
+import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { Block } from '../block/block.entity';
 
 @Entity('content_element')
 @Check('"id" <> \'\'')

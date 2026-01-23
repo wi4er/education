@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Form} from './form.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { Form } from './form.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('feedback_form4status')
 export class Form4Status

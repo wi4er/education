@@ -1,11 +1,11 @@
-import {Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity, Check} from 'typeorm';
-import {File2String} from './file2string.entity';
-import {File2Point} from './file2point.entity';
-import {File4Status} from './file4status.entity';
-import {Collection} from '../collection/collection.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity, Check } from 'typeorm';
+import { File2String } from './file2string.entity';
+import { File2Point } from './file2point.entity';
+import { File4Status } from './file4status.entity';
+import { Collection } from '../collection/collection.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
 
 
 @Entity('storage_file')

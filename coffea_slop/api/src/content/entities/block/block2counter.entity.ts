@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Block} from './block.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {Measure} from '../../../registry/entities/measure/measure.entity';
+import { Block } from './block.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { Measure } from '../../../registry/entities/measure/measure.entity';
 
 @Entity('content_block2counter')
 export class Block2Counter

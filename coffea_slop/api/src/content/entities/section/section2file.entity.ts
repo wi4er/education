@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Section} from './section.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {File} from '../../../storage/entities/file/file.entity';
-import {CommonFileEntity} from '../../../common/entities/common-file.entity';
+import { Section } from './section.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { File } from '../../../storage/entities/file/file.entity';
+import { CommonFileEntity } from '../../../common/entities/common-file.entity';
 
 @Entity('content_section2file')
 export class Section2File

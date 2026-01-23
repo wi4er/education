@@ -10,22 +10,22 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Section2String} from './section2string.entity';
-import {Section2Point} from './section2point.entity';
-import {Section4Permission} from './section4permission.entity';
-import {Section4Status} from './section4status.entity';
-import {Section2Description} from './section2description.entity';
-import {Section2Counter} from './section2counter.entity';
-import {Section2File} from './section2file.entity';
-import {Section4Image} from './section4image.entity';
-import {Element4Section} from '../element/element4section.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {WithPermissions} from '../../../common/entities/with-permissions.entity';
-import {WithDescriptions} from '../../../common/entities/with-descriptions.entity';
-import {WithStatuses} from '../../../common/entities/with-statuses.entity';
-import {WithFiles} from '../../../common/entities/with-files.entity';
-import {Block} from '../block/block.entity';
+import { Section2String } from './section2string.entity';
+import { Section2Point } from './section2point.entity';
+import { Section4Permission } from './section4permission.entity';
+import { Section4Status } from './section4status.entity';
+import { Section2Description } from './section2description.entity';
+import { Section2Counter } from './section2counter.entity';
+import { Section2File } from './section2file.entity';
+import { Section4Image } from './section4image.entity';
+import { Element4Section } from '../element/element4section.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { WithPermissions } from '../../../common/entities/with-permissions.entity';
+import { WithDescriptions } from '../../../common/entities/with-descriptions.entity';
+import { WithStatuses } from '../../../common/entities/with-statuses.entity';
+import { WithFiles } from '../../../common/entities/with-files.entity';
+import { Block } from '../block/block.entity';
 
 @Entity('content_section')
 @Check('"id" <> \'\'')

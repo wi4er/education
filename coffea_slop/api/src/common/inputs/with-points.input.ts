@@ -1,4 +1,4 @@
-import {CommonPointInput} from './common-point.input';
+import { CommonPointInput } from './common-point.input';
 
 export interface WithPointsInput {
 

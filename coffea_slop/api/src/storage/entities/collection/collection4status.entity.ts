@@ -1,6 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity} from 'typeorm';
-import {Collection} from './collection.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity } from 'typeorm';
+import { Collection } from './collection.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('storage_collection4status')
 export class Collection4Status

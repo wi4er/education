@@ -1,4 +1,4 @@
-import {Entity2descriptionView} from './entity2description.view';
+import { Entity2descriptionView } from './entity2description.view';
 
 export interface WithDescriptionsView {
 

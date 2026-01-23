@@ -1,5 +1,5 @@
-import {Language} from '../../settings/entities/language/language.entity';
-import {Attribute} from '../../settings/entities/attribute/attribute.entity';
+import { Language } from '../../settings/entities/language/language.entity';
+import { Attribute } from '../../settings/entities/attribute/attribute.entity';
 
 export interface CommonDescriptionEntity<TParent> {
 

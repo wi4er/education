@@ -1,6 +1,6 @@
-import {HttpException, HttpStatus} from '@nestjs/common';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
 
 export class AccessException
   extends HttpException {

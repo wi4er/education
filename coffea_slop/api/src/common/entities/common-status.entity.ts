@@ -1,4 +1,4 @@
-import {Status} from '../../settings/entities/status/status.entity';
+import { Status } from '../../settings/entities/status/status.entity';
 
 export interface CommonStatusEntity<TParent> {
 

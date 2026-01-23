@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Directory} from './directory.entity';
-import {Status} from '../../../settings/entities/status/status.entity';
+import { Directory } from './directory.entity';
+import { Status } from '../../../settings/entities/status/status.entity';
 
 @Entity('registry_directory4status')
 export class Directory4Status

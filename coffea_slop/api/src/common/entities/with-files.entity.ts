@@ -1,4 +1,4 @@
-import {CommonFileEntity} from './common-file.entity';
+import { CommonFileEntity } from './common-file.entity';
 
 export interface WithFiles<TParent> {
 

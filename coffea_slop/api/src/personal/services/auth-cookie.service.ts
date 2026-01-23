@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {JwtService, JwtSignOptions} from '@nestjs/jwt';
-import {Request, Response} from 'express';
-import {PermissionException} from '../../exception/permission/permission.exception';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {User} from '../entities/user/user.entity';
+import { Injectable } from '@nestjs/common';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { Request, Response } from 'express';
+import { PermissionException } from '../../exception/permission/permission.exception';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { User } from '../entities/user/user.entity';
 
 const COOKIE_NAME = 'auth_token';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days

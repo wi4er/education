@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Element} from './element.entity';
-import {Language} from '../../../settings/entities/language/language.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {CommonStringEntity} from '../../../common/entities/common-string.entity';
+import { Element } from './element.entity';
+import { Language } from '../../../settings/entities/language/language.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('content_element2string')
 export class Element2String

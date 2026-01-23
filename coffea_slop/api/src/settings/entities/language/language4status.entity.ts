@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Language} from './language.entity';
-import {Status} from '../status/status.entity';
+import { Language } from './language.entity';
+import { Status } from '../status/status.entity';
 
 @Entity('settings_language4status')
 export class Language4Status

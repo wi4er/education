@@ -4,8 +4,8 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import {Response} from 'express';
-import {PermissionException} from './permission.exception';
+import { Response } from 'express';
+import { PermissionException } from './permission.exception';
 
 @Catch(PermissionException)
 export class PermissionFilter

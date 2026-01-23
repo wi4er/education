@@ -1,19 +1,22 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {INestApplication} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {JwtModule, JwtService} from '@nestjs/jwt';
-import {DataSource, Repository, EntityTarget} from 'typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { DataSource, Repository, EntityTarget } from 'typeorm';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import {DirectoryController} from './directory.controller';
-import {Directory} from '../entities/directory/directory.entity';
-import {Attribute} from '../../settings/entities/attribute/attribute.entity';
-import {Group} from '../../personal/entities/group/group.entity';
-import {Directory4Permission} from '../entities/directory/directory4permission.entity';
-import {TestDbModule} from '../../tests/test-db.module';
-import {ExceptionModule} from '../../exception/exception.module';
-import {CommonModule} from '../../common/common.module';
-import {PermissionMethod} from '../../common/permission/permission.method';
+import { DirectoryController } from './directory.controller';
+import { Directory } from '../entities/directory/directory.entity';
+import { Attribute } from '../../settings/entities/attribute/attribute.entity';
+import { Group } from '../../personal/entities/group/group.entity';
+import { Directory4Permission } from '../entities/directory/directory4permission.entity';
+import { Directory2String } from '../entities/directory/directory2string.entity';
+import { Directory2Point } from '../entities/directory/directory2point.entity';
+import { Point } from '../entities/point/point.entity';
+import { TestDbModule } from '../../tests/test-db.module';
+import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
+import { PermissionMethod } from '../../common/permission/permission.method';
 
 const JWT_SECRET = 'test-secret';
 
@@ -33,10 +36,10 @@ describe('DirectoryController', () => {
         TestDbModule,
         ExceptionModule,
         CommonModule,
-        TypeOrmModule.forFeature([Directory]),
+        TypeOrmModule.forFeature([ Directory ]),
         JwtModule.register({ secret: JWT_SECRET }),
       ],
-      controllers: [DirectoryController],
+      controllers: [ DirectoryController ],
       providers: [],
     }).compile();
 
@@ -91,7 +94,7 @@ describe('DirectoryController', () => {
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(d => d.id)).toEqual(['dir-1', 'dir-3']);
+      expect(response.body.map(d => d.id)).toEqual([ 'dir-1', 'dir-3' ]);
     });
 
     it('should return directories with group permission when user has matching group in token', async () => {
@@ -105,7 +108,7 @@ describe('DirectoryController', () => {
       });
       await repo(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
 
-      const token = jwtService.sign({ sub: 'user-1', groups: ['admins'] });
+      const token = jwtService.sign({ sub: 'user-1', groups: [ 'admins' ] });
 
       const response = await request(app.getHttpServer())
         .get('/directory')
@@ -113,7 +116,7 @@ describe('DirectoryController', () => {
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body.map(d => d.id)).toEqual(['dir-1', 'dir-2']);
+      expect(response.body.map(d => d.id)).toEqual([ 'dir-1', 'dir-2' ]);
     });
 
     it('should not return directories with group permission when user lacks that group', async () => {
@@ -127,7 +130,7 @@ describe('DirectoryController', () => {
       });
       await repo(Directory4Permission).save({ parentId: 'dir-2', method: PermissionMethod.READ });
 
-      const token = jwtService.sign({ sub: 'user-1', groups: ['users'] });
+      const token = jwtService.sign({ sub: 'user-1', groups: [ 'users' ] });
 
       const response = await request(app.getHttpServer())
         .get('/directory')
@@ -267,7 +270,7 @@ describe('DirectoryController', () => {
         .post('/directory')
         .send({
           id: 'new-dir',
-          strings: [{ attr: 'name', value: 'Test Directory' }],
+          strings: [ { attr: 'name', value: 'Test Directory' } ],
         })
         .expect(201);
 
@@ -440,6 +443,114 @@ describe('DirectoryController', () => {
         },
       });
       expect(permAfter.id).toBe(existingPerm.id);
+    });
+
+    it('should add strings to directory', async () => {
+      await repo(Attribute).save({ id: 'name' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          strings: [{ attr: 'name', value: 'Updated Name' }],
+        })
+        .expect(200);
+
+      expect(response.body.attributes.strings).toHaveLength(1);
+      expect(response.body.attributes.strings[0]).toEqual({
+        lang: null,
+        attr: 'name',
+        value: 'Updated Name',
+      });
+    });
+
+    it('should update existing strings', async () => {
+      await repo(Attribute).save({ id: 'name' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory2String).save({ parentId: 'dir-1', attributeId: 'name', value: 'Old Name' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          strings: [{ attr: 'name', value: 'New Name' }],
+        })
+        .expect(200);
+
+      expect(response.body.attributes.strings).toHaveLength(1);
+      expect(response.body.attributes.strings[0].value).toBe('New Name');
+
+      const stringsInDb = await repo(Directory2String).find({ where: { parentId: 'dir-1' } });
+      expect(stringsInDb).toHaveLength(1);
+    });
+
+    it('should remove strings not in the update list', async () => {
+      await repo(Attribute).save({ id: 'name' });
+      await repo(Attribute).save({ id: 'desc' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory2String).save({ parentId: 'dir-1', attributeId: 'name', value: 'Name' });
+      await repo(Directory2String).save({ parentId: 'dir-1', attributeId: 'desc', value: 'Description' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          strings: [{ attr: 'name', value: 'Name' }],
+        })
+        .expect(200);
+
+      expect(response.body.attributes.strings).toHaveLength(1);
+      expect(response.body.attributes.strings[0].attr).toBe('name');
+
+      const stringsInDb = await repo(Directory2String).find({ where: { parentId: 'dir-1' } });
+      expect(stringsInDb).toHaveLength(1);
+    });
+
+    it('should add points to directory', async () => {
+      await repo(Attribute).save({ id: 'location' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.ALL });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          points: [{ attr: 'location', pnt: 'point-1' }],
+        })
+        .expect(200);
+
+      expect(response.body.attributes.points).toHaveLength(1);
+      expect(response.body.attributes.points[0]).toEqual({
+        attr: 'location',
+        pnt: 'point-1',
+      });
+    });
+
+    it('should remove points not in the update list', async () => {
+      await repo(Attribute).save({ id: 'location' });
+      await repo(Attribute).save({ id: 'origin' });
+      await repo(Directory).save({ id: 'dir-1' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.ALL });
+      await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
+      await repo(Point).save({ id: 'point-2', directoryId: 'dir-1' });
+      await repo(Directory2Point).save({ parentId: 'dir-1', attributeId: 'location', pointId: 'point-1' });
+      await repo(Directory2Point).save({ parentId: 'dir-1', attributeId: 'origin', pointId: 'point-2' });
+      await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.WRITE });
+
+      const response = await request(app.getHttpServer())
+        .put('/directory/dir-1')
+        .send({
+          points: [{ attr: 'location', pnt: 'point-1' }],
+        })
+        .expect(200);
+
+      expect(response.body.attributes.points).toHaveLength(1);
+      expect(response.body.attributes.points[0].attr).toBe('location');
+
+      const pointsInDb = await repo(Directory2Point).find({ where: { parentId: 'dir-1' } });
+      expect(pointsInDb).toHaveLength(1);
     });
   });
 

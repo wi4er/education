@@ -6,8 +6,8 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Section} from './section.entity';
-import {File} from '../../../storage/entities/file/file.entity';
+import { Section } from './section.entity';
+import { File } from '../../../storage/entities/file/file.entity';
 
 @Entity('content_section4image')
 export class Section4Image

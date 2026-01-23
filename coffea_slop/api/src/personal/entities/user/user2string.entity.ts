@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import {User} from './user.entity';
-import {Language} from '../../../settings/entities/language/language.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {CommonStringEntity} from '../../../common/entities/common-string.entity';
+import { User } from './user.entity';
+import { Language } from '../../../settings/entities/language/language.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { CommonStringEntity } from '../../../common/entities/common-string.entity';
 
 @Entity('personal_user2string')
 export class User2String

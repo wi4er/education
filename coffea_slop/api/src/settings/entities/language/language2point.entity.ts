@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Language} from './language.entity';
-import {Attribute} from '../attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Language } from './language.entity';
+import { Attribute } from '../attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('settings_language2point')
 export class Language2Point

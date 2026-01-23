@@ -9,13 +9,13 @@ import {
   BaseEntity,
   Check,
 } from 'typeorm';
-import {Attribute2String} from './attribute2string.entity';
-import {Attribute2Point} from './attribute2point.entity';
-import {Attribute2AsPoint} from './attributeAsPoint.entity';
-import {Attribute4Status} from './attribute4status.entity';
-import {WithStrings} from '../../../common/entities/with-strings.entity';
-import {WithPoints} from '../../../common/entities/with-points.entity';
-import {AttributeType} from './attribute-type.enum';
+import { Attribute2String } from './attribute2string.entity';
+import { Attribute2Point } from './attribute2point.entity';
+import { Attribute2AsPoint } from './attributeAsPoint.entity';
+import { Attribute4Status } from './attribute4status.entity';
+import { WithStrings } from '../../../common/entities/with-strings.entity';
+import { WithPoints } from '../../../common/entities/with-points.entity';
+import { AttributeType } from './attribute-type.enum';
 
 @Entity('settings_attribute')
 @Check('"id" <> \'\'')

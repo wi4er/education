@@ -1,4 +1,4 @@
-import {CommonDescriptionEntity} from './common-description.entity';
+import { CommonDescriptionEntity } from './common-description.entity';
 
 export interface WithDescriptions<T> {
 

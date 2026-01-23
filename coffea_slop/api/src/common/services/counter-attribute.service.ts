@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonCounterEntity} from '../entities/common-counter.entity';
-import {CommonCounterInput} from '../inputs/common-counter.input';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonCounterEntity } from '../entities/common-counter.entity';
+import { CommonCounterInput } from '../inputs/common-counter.input';
 
 @Injectable()
 export class CounterAttributeService {

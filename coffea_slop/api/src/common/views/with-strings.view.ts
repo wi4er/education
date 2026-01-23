@@ -1,4 +1,4 @@
-import {Entity2stringView} from './entity2string.view';
+import { Entity2stringView } from './entity2string.view';
 
 export interface WithStringsView {
 

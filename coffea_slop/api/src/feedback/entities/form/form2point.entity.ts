@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Form} from './form.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {Point} from '../../../registry/entities/point/point.entity';
-import {CommonPointEntity} from '../../../common/entities/common-point.entity';
+import { Form } from './form.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { Point } from '../../../registry/entities/point/point.entity';
+import { CommonPointEntity } from '../../../common/entities/common-point.entity';
 
 @Entity('feedback_form2point')
 export class Form2Point

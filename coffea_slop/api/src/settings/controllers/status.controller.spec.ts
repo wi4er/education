@@ -1,15 +1,15 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {INestApplication} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {DataSource, Repository, EntityTarget} from 'typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, Repository, EntityTarget } from 'typeorm';
 import * as request from 'supertest';
-import {StatusController} from './status.controller';
-import {Status} from '../entities/status/status.entity';
-import {Status2String} from '../entities/status/status2string.entity';
-import {Status2Point} from '../entities/status/status2point.entity';
-import {TestDbModule} from '../../tests/test-db.module';
-import {ExceptionModule} from '../../exception/exception.module';
-import {CommonModule} from '../../common/common.module';
+import { StatusController } from './status.controller';
+import { Status } from '../entities/status/status.entity';
+import { Status2String } from '../entities/status/status2string.entity';
+import { Status2Point } from '../entities/status/status2point.entity';
+import { TestDbModule } from '../../tests/test-db.module';
+import { ExceptionModule } from '../../exception/exception.module';
+import { CommonModule } from '../../common/common.module';
 
 describe('StatusController', () => {
   let app: INestApplication;

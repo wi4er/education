@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Form} from './form.entity';
-import {Group} from '../../../personal/entities/group/group.entity';
-import {PermissionMethod} from '../../../common/permission/permission.method';
-import {CommonPermissionEntity} from '../../../common/entities/common-permission.entity';
+import { Form } from './form.entity';
+import { Group } from '../../../personal/entities/group/group.entity';
+import { PermissionMethod } from '../../../common/permission/permission.method';
+import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
 @Entity('feedback_form4permission')
 export class Form4Permission

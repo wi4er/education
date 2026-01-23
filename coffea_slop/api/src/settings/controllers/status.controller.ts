@@ -8,21 +8,21 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource} from 'typeorm';
-import {Status} from '../entities/status/status.entity';
-import {Status2String} from '../entities/status/status2string.entity';
-import {Status2Point} from '../entities/status/status2point.entity';
-import {Status4Status} from '../entities/status/status4status.entity';
-import {StatusView} from '../views/status.view';
-import {StatusInput} from '../inputs/status.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {StatusService} from '../../common/services/status.service';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
+import { Status } from '../entities/status/status.entity';
+import { Status2String } from '../entities/status/status2string.entity';
+import { Status2Point } from '../entities/status/status2point.entity';
+import { Status4Status } from '../entities/status/status4status.entity';
+import { StatusView } from '../views/status.view';
+import { StatusInput } from '../inputs/status.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { StatusService } from '../../common/services/status.service';
 
 @Controller('status')
 export class StatusController {

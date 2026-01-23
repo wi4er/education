@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, EntityTarget} from 'typeorm';
-import {CommonPermissionEntity} from '../entities/common-permission.entity';
-import {CommonPermissionInput} from '../inputs/common-permission.input';
-import {PermissionMethod} from '../permission/permission.method';
-import {env} from '../config/env.config';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, EntityTarget } from 'typeorm';
+import { CommonPermissionEntity } from '../entities/common-permission.entity';
+import { CommonPermissionInput } from '../inputs/common-permission.input';
+import { PermissionMethod } from '../permission/permission.method';
+import { env } from '../config/env.config';
 
 @Injectable()
 export class PermissionService {

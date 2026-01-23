@@ -6,9 +6,9 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Group} from '../group/group.entity';
-import {AccessEntity} from '../../../common/access/access-entity.enum';
-import {AccessMethod} from './access-method.enum';
+import { Group } from '../group/group.entity';
+import { AccessEntity } from '../../../common/access/access-entity.enum';
+import { AccessMethod } from './access-method.enum';
 
 @Entity('personal_access')
 export class Access

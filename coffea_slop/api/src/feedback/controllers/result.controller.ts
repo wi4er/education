@@ -7,15 +7,15 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {Result} from '../entities/result/result.entity';
-import {ResultView} from '../views/result.view';
-import {ResultInput} from '../inputs/result.input';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Result } from '../entities/result/result.entity';
+import { ResultView } from '../views/result.view';
+import { ResultInput } from '../inputs/result.input';
 
 @Controller('result')
 export class ResultController {

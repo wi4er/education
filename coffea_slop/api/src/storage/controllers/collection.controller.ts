@@ -1,25 +1,25 @@
-import {Controller, Get, Post, Put, Delete, Body, Param, Query} from '@nestjs/common';
-import {CheckMethodAccess} from '../../common/access/check-method-access.guard';
-import {AccessEntity} from '../../common/access/access-entity.enum';
-import {AccessMethod} from '../../personal/entities/access/access-method.enum';
-import {CheckId} from '../../common/check-id/check-id.guard';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource} from 'typeorm';
-import {Collection} from '../entities/collection/collection.entity';
-import {Collection2String} from '../entities/collection/collection2string.entity';
-import {Collection2Point} from '../entities/collection/collection2point.entity';
-import {Collection4Permission} from '../entities/collection/collection4permission.entity';
-import {Collection4Status} from '../entities/collection/collection4status.entity';
-import {CollectionView} from '../views/collection.view';
-import {CollectionInput} from '../inputs/collection.input';
-import {PointAttributeService} from '../../common/services/point-attribute.service';
-import {StringAttributeService} from '../../common/services/string-attribute.service';
-import {PermissionService} from '../../common/services/permission.service';
-import {StatusService} from '../../common/services/status.service';
-import {CurrentGroups} from '../../personal/decorators/current-groups.decorator';
-import {CheckIdPermission} from '../../common/permission/check-id-permission.guard';
-import {PermissionMethod} from '../../common/permission/permission.method';
-import {In, IsNull, Or} from 'typeorm';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
+import { AccessEntity } from '../../common/access/access-entity.enum';
+import { AccessMethod } from '../../personal/entities/access/access-method.enum';
+import { CheckId } from '../../common/check-id/check-id.guard';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
+import { Collection } from '../entities/collection/collection.entity';
+import { Collection2String } from '../entities/collection/collection2string.entity';
+import { Collection2Point } from '../entities/collection/collection2point.entity';
+import { Collection4Permission } from '../entities/collection/collection4permission.entity';
+import { Collection4Status } from '../entities/collection/collection4status.entity';
+import { CollectionView } from '../views/collection.view';
+import { CollectionInput } from '../inputs/collection.input';
+import { PointAttributeService } from '../../common/services/point-attribute.service';
+import { StringAttributeService } from '../../common/services/string-attribute.service';
+import { PermissionService } from '../../common/services/permission.service';
+import { StatusService } from '../../common/services/status.service';
+import { CurrentGroups } from '../../personal/decorators/current-groups.decorator';
+import { CheckIdPermission } from '../../common/permission/check-id-permission.guard';
+import { PermissionMethod } from '../../common/permission/permission.method';
+import { In, IsNull, Or } from 'typeorm';
 
 @Controller('collection')
 export class CollectionController {

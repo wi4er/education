@@ -6,10 +6,10 @@ import {
   JoinColumn,
   BaseEntity,
 } from 'typeorm';
-import {Block} from './block.entity';
-import {Group} from '../../../personal/entities/group/group.entity';
-import {PermissionMethod} from '../../../common/permission/permission.method';
-import {CommonPermissionEntity} from '../../../common/entities/common-permission.entity';
+import { Block } from './block.entity';
+import { Group } from '../../../personal/entities/group/group.entity';
+import { PermissionMethod } from '../../../common/permission/permission.method';
+import { CommonPermissionEntity } from '../../../common/entities/common-permission.entity';
 
 @Entity('content_block4permission')
 export class Block4Permission

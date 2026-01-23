@@ -4,8 +4,8 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import {Response} from 'express';
-import {QueryFailedError} from 'typeorm';
+import { Response } from 'express';
+import { QueryFailedError } from 'typeorm';
 
 @Catch(QueryFailedError)
 export class QueryFailedFilter

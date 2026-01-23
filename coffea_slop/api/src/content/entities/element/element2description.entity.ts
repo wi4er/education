@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-import {Element} from './element.entity';
-import {Language} from '../../../settings/entities/language/language.entity';
-import {Attribute} from '../../../settings/entities/attribute/attribute.entity';
-import {CommonDescriptionEntity} from '../../../common/entities/common-description.entity';
+import { Element } from './element.entity';
+import { Language } from '../../../settings/entities/language/language.entity';
+import { Attribute } from '../../../settings/entities/attribute/attribute.entity';
+import { CommonDescriptionEntity } from '../../../common/entities/common-description.entity';
 
 @Entity('content_element2description')
 export class Element2Description

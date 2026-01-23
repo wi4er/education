@@ -1,4 +1,4 @@
-import {CommonPointEntity} from './common-point.entity';
+import { CommonPointEntity } from './common-point.entity';
 
 export interface WithPoints<TParent> {
 
