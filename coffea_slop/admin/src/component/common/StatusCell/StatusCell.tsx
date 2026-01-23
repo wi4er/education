@@ -2,14 +2,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import TableCell from '@mui/material/TableCell';
 import Tooltip from '@mui/material/Tooltip';
-import * as Icons from '@mui/icons-material';
+import { IconComponent } from '../../../widget';
 import { StatusColumn, getStatusValue } from '../../../service/status.service';
-
-const IconComponent = ({ name, color }: { name: string | null; color?: string | null }) => {
-  if (!name) return null;
-  const Icon = (Icons as Record<string, React.ComponentType<{ sx?: object }>>)[name];
-  return Icon ? <Icon sx={color ? { color } : undefined}/> : null;
-};
 
 interface WithStatus {
   status?: string[];

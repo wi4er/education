@@ -34,6 +34,21 @@ export function ResultTable({
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
+  function getActions(row: ResultView) {
+    return [
+      {
+        title: 'Edit',
+        icon: <EditIcon fontSize="small"/>,
+        onClick: () => onEdit(row.id),
+      },
+      {
+        title: 'Delete',
+        icon: <DeleteIcon fontSize="small"/>,
+        onClick: () => onDelete(row.id),
+      },
+    ];
+  }
+
   return (
     <TableContainer>
       <Table stickyHeader aria-label="sticky table">
@@ -57,15 +72,7 @@ export function ResultTable({
           {list.map(row => (
             <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
               <TableCell key={'actions'}>
-                <Actions list={[{
-                  title: 'Edit',
-                  icon: <EditIcon fontSize="small"/>,
-                  onClick: () => onEdit(row.id),
-                }, {
-                  title: 'Delete',
-                  icon: <DeleteIcon fontSize="small"/>,
-                  onClick: () => onDelete(row.id),
-                }]}/>
+                <Actions list={getActions(row)}/>
               </TableCell>
 
               {columns.map(column => {

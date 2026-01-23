@@ -14,17 +14,20 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Actions } from '../../common/Actions';
 import { StatusHeaderCell, StatusCell } from '../../common/StatusCell';
+import { IconComponent } from '../../../widget';
 
 export function AttributeTable({
   list,
   columns,
   onEdit,
   onDelete,
+  onStatusChange,
 }: {
   list: Array<AttributeView>;
   columns: readonly Column[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onStatusChange?: (id: string, statusId: string) => void;
 }) {
   const { getList } = useContext(apiContext);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
@@ -36,6 +39,26 @@ export function AttributeTable({
       .then(({ data }) => setStatuses(data))
       .catch(() => setStatuses([]));
   }, []);
+
+  function getActions(row: AttributeView) {
+    return [
+      {
+        title: 'Edit',
+        icon: <EditIcon fontSize="small"/>,
+        onClick: () => onEdit(row.id),
+      },
+      {
+        title: 'Delete',
+        icon: <DeleteIcon fontSize="small"/>,
+        onClick: () => onDelete(row.id),
+      },
+      ...statuses.map(status => ({
+        title: getStringValue(status, 'name') || status.id,
+        icon: <IconComponent name={status.icon} color={status.color}/>,
+        onClick: () => onStatusChange?.(row.id, status.id),
+      })),
+    ];
+  }
 
   return (
     <TableContainer>
@@ -61,15 +84,7 @@ export function AttributeTable({
           {list.map(row => (
             <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
               <TableCell key={'actions'}>
-                <Actions list={[{
-                  title: 'Edit',
-                  icon: <EditIcon fontSize="small"/>,
-                  onClick: () => onEdit(row.id),
-                }, {
-                  title: 'Delete',
-                  icon: <DeleteIcon fontSize="small"/>,
-                  onClick: () => onDelete(row.id),
-                }]}/>
+                <Actions list={getActions(row)}/>
               </TableCell>
 
               <StatusCell statusColumns={statusColumns} row={row}/>

@@ -16,8 +16,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Tooltip from '@mui/material/Tooltip';
 import { Actions } from '../../common/Actions';
 import { StatusHeaderCell, StatusCell } from '../../common/StatusCell';
+import { IconComponent } from '../../../widget';
 
 const formatDate = (date: Date | string | null | undefined): string => {
   if (!date) return '';
@@ -36,11 +38,13 @@ export function FormTable({
   columns,
   onEdit,
   onDelete,
+  onStatusChange,
 }: {
   list: Array<FormView>;
   columns: readonly Column[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onStatusChange?: (id: string, statusId: string) => void;
 }) {
   const navigate = useNavigate();
   const { getList } = useContext(apiContext);
@@ -53,6 +57,26 @@ export function FormTable({
       .then(({ data }) => setStatuses(data))
       .catch(() => setStatuses([]));
   }, []);
+
+  function getActions(row: FormView) {
+    return [
+      {
+        title: 'Edit',
+        icon: <EditIcon fontSize="small"/>,
+        onClick: () => onEdit(row.id),
+      },
+      {
+        title: 'Delete',
+        icon: <DeleteIcon fontSize="small"/>,
+        onClick: () => onDelete(row.id),
+      },
+      ...statuses.map(status => ({
+        title: getStringValue(status, 'name') || status.id,
+        icon: <IconComponent name={status.icon} color={status.color}/>,
+        onClick: () => onStatusChange?.(row.id, status.id),
+      })),
+    ];
+  }
 
   return (
     <TableContainer>
@@ -79,24 +103,18 @@ export function FormTable({
           {list.map(row => (
             <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
               <TableCell key={'actions'}>
-                <Actions list={[{
-                  title: 'Edit',
-                  icon: <EditIcon fontSize="small"/>,
-                  onClick: () => onEdit(row.id),
-                }, {
-                  title: 'Delete',
-                  icon: <DeleteIcon fontSize="small"/>,
-                  onClick: () => onDelete(row.id),
-                }]}/>
+                <Actions list={getActions(row)}/>
               </TableCell>
 
               <TableCell key={'view'}>
-                <IconButton
-                  size="small"
-                  onClick={() => navigate(`/forms/${row.id}`)}
-                >
-                  <VisibilityIcon fontSize="small"/>
-                </IconButton>
+                <Tooltip title="View" arrow>
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate(`/forms/${row.id}`)}
+                  >
+                    <VisibilityIcon fontSize="small"/>
+                  </IconButton>
+                </Tooltip>
               </TableCell>
 
               <StatusCell statusColumns={statusColumns} row={row}/>

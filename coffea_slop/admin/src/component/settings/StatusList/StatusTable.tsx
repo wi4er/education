@@ -14,26 +14,42 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Actions } from '../../common/Actions';
 import { StatusHeaderCell, StatusCell } from '../../common/StatusCell';
-import * as Icons from '@mui/icons-material';
-
-const IconComponent = ({ name, color }: { name: string | null; color?: string | null }) => {
-  if (!name) return null;
-  const Icon = (Icons as Record<string, React.ComponentType<{ sx?: object }>>)[name];
-  return Icon ? <Icon sx={color ? { color } : undefined} /> : null;
-};
+import { IconComponent } from '../../../widget';
 
 export function StatusTable({
   list,
   columns,
   onEdit,
   onDelete,
+  onStatusChange,
 }: {
   list: Array<StatusView>;
   columns: readonly Column[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onStatusChange?: (id: string, statusId: string) => void;
 }) {
   const statusColumns = useMemo(() => getStatusColumns(list, list), [list]);
+
+  function getActions(row: StatusView) {
+    return [
+      {
+        title: 'Edit',
+        icon: <EditIcon fontSize="small"/>,
+        onClick: () => onEdit(row.id),
+      },
+      {
+        title: 'Delete',
+        icon: <DeleteIcon fontSize="small"/>,
+        onClick: () => onDelete(row.id),
+      },
+      ...list.map(status => ({
+        title: getStringValue(status, 'name') || status.id,
+        icon: <IconComponent name={status.icon} color={status.color}/>,
+        onClick: () => onStatusChange?.(row.id, status.id),
+      })),
+    ];
+  }
 
   return (
     <TableContainer>
@@ -59,15 +75,7 @@ export function StatusTable({
           {list.map(row => (
             <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
               <TableCell key={'actions'}>
-                <Actions list={[{
-                  title: 'Edit',
-                  icon: <EditIcon fontSize="small"/>,
-                  onClick: () => onEdit(row.id),
-                }, {
-                  title: 'Delete',
-                  icon: <DeleteIcon fontSize="small"/>,
-                  onClick: () => onDelete(row.id),
-                }]}/>
+                <Actions list={getActions(row)}/>
               </TableCell>
 
               <StatusCell statusColumns={statusColumns} row={row}/>
