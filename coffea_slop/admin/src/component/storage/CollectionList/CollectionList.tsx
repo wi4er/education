@@ -84,6 +84,7 @@ export function CollectionList() {
                   refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
                 });
             }}
+            onStatusChange={() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage })}
           />
 
           <TablePagination

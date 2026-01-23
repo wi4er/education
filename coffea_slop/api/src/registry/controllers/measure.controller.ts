@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -132,6 +133,35 @@ export class MeasureController {
       await this.stringAttributeService.update<Measure>(transaction, Measure2String, id, strings);
       await this.pointAttributeService.update<Measure>(transaction, Measure2Point, id, points);
       await this.statusService.update<Measure>(transaction, Measure4Status, id, status);
+
+      return transaction.findOne(Measure, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(measure);
+  }
+
+  @Patch(':id')
+  @CheckId(Measure)
+  @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.PUT)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<MeasureInput>,
+  ): Promise<MeasureView> {
+    const { strings, points, status, ...measureData } = data;
+
+    const measure = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(measureData).length > 0) {
+        await transaction.update(Measure, id, measureData);
+      }
+
+      strings && await this.stringAttributeService.update<Measure>(transaction, Measure2String, id, strings);
+      points && await this.pointAttributeService.update<Measure>(transaction, Measure2Point, id, points);
+      status && await this.statusService.update<Measure>(transaction, Measure4Status, id, status);
 
       return transaction.findOne(Measure, {
         where: { id },

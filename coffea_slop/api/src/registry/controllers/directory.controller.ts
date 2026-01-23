@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -83,7 +84,7 @@ export class DirectoryController {
     @Query('offset')
     offset?: number,
   ): Promise<{ data: DirectoryView[]; count: number }> {
-    const [directories, count] = await this.directoryRepository.findAndCount({
+    const [ directories, count ] = await this.directoryRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
@@ -162,6 +163,37 @@ export class DirectoryController {
       await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
       await this.permissionService.update<Directory>(transaction, Directory4Permission, id, permissions);
       await this.statusService.update<Directory>(transaction, Directory4Status, id, status);
+
+      return transaction.findOne(Directory, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(directory);
+  }
+
+  @Patch(':id')
+  @CheckId(Directory)
+  @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.PUT)
+  @CheckIdPermission(Directory, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<DirectoryInput>,
+  ): Promise<DirectoryView> {
+    const { strings, points, permissions, status, ...directoryData } = data;
+
+    const directory = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(directoryData).length > 0) {
+        await transaction.update(Directory, id, directoryData);
+      }
+
+      strings && await this.stringAttributeService.update<Directory>(transaction, Directory2String, id, strings);
+      points && await this.pointAttributeService.update<Directory>(transaction, Directory2Point, id, points);
+      permissions && await this.permissionService.update<Directory>(transaction, Directory4Permission, id, permissions);
+      status && await this.statusService.update<Directory>(transaction, Directory4Status, id, status);
 
       return transaction.findOne(Directory, {
         where: { id },

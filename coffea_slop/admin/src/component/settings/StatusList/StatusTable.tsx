@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { StatusView } from '../view';
+import { apiContext } from '../../../context/ApiProvider';
 import { getStringValue, Column } from '../../../service/string.service';
 import { getPointValue } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -27,8 +28,9 @@ export function StatusTable({
   columns: readonly Column[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onStatusChange?: (id: string, statusId: string) => void;
+  onStatusChange?: () => void;
 }) {
+  const { patchItem } = useContext(apiContext);
   const statusColumns = useMemo(() => getStatusColumns(list, list), [list]);
 
   function getActions(row: StatusView) {
@@ -46,7 +48,14 @@ export function StatusTable({
       ...list.map(status => ({
         title: getStringValue(status, 'name') || status.id,
         icon: <IconComponent name={status.icon} color={status.color}/>,
-        onClick: () => onStatusChange?.(row.id, status.id),
+        onClick: () => {
+          const currentStatuses = row.status || [];
+          const newStatuses = currentStatuses.includes(status.id)
+            ? currentStatuses.filter(s => s !== status.id)
+            : [...currentStatuses, status.id];
+          patchItem<StatusView>('status', row.id, { status: newStatuses })
+            .then(() => onStatusChange?.());
+        },
       })),
     ];
   }

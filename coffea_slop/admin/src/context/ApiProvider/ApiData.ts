@@ -21,6 +21,7 @@ export interface ApiData {
   getItem: <T>(path: string, id: string) => Promise<T>;
   postItem: <T>(url: string, data: object) => Promise<T>;
   putItem: <T>(path: string, id: string, data: object) => Promise<T>;
+  patchItem: <T>(path: string, id: string, data: object) => Promise<T>;
   deleteItem: <T>(path: string, id: string) => Promise<DeleteResponse<T>>;
 }
 

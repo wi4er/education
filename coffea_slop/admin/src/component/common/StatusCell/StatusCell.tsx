@@ -33,7 +33,7 @@ export function StatusCell<T extends WithStatus>(
   if (statusColumns.length === 0) return null;
 
   return (
-    <TableCell key={'status'}>
+    <TableCell key={'status'} sx={{width: '1%'}}>
       <Box sx={{ display: 'flex', gap: 0.5 }}>
         {statusColumns.filter(sc => getStatusValue(row, sc.id.slice(4))).map(sc => (
           <Tooltip key={sc.id} title={sc.id.slice(4)} arrow>

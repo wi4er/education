@@ -86,6 +86,7 @@ export function FormList() {
                   refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
                 });
             }}
+            onStatusChange={() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage })}
           />
 
           <TablePagination

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -215,6 +216,49 @@ export class FormController {
       await this.counterAttributeService.update<Form>(transaction, Form2Counter, id, counters);
       await this.fileAttributeService.update<Form>(transaction, Form2File, id, files);
       await this.statusService.update<Form>(transaction, Form4Status, id, status);
+
+      return transaction.findOne(Form, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(form);
+  }
+
+  @Patch(':id')
+  @CheckId(Form)
+  @CheckMethodAccess(AccessEntity.FORM, AccessMethod.PUT)
+  @CheckIdPermission(Form, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<FormInput>,
+  ): Promise<FormView> {
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      files,
+      status,
+      ...formData
+    } = data;
+
+    const form = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(formData).length > 0) {
+        await transaction.update(Form, id, formData);
+      }
+
+      strings && await this.stringAttributeService.update<Form>(transaction, Form2String, id, strings);
+      points && await this.pointAttributeService.update<Form>(transaction, Form2Point, id, points);
+      permissions && await this.permissionService.update<Form>(transaction, Form4Permission, id, permissions);
+      descriptions && await this.descriptionAttributeService.update<Form>(transaction, Form2Description, id, descriptions);
+      counters && await this.counterAttributeService.update<Form>(transaction, Form2Counter, id, counters);
+      files && await this.fileAttributeService.update<Form>(transaction, Form2File, id, files);
+      status && await this.statusService.update<Form>(transaction, Form4Status, id, status);
 
       return transaction.findOne(Form, {
         where: { id },

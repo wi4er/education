@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -225,6 +226,51 @@ export class BlockController {
       await this.fileAttributeService.update<Block>(transaction, Block2File, id, files);
       await this.imageService.update<Block>(transaction, Block4Image, id, images);
       await this.statusService.update<Block>(transaction, Block4Status, id, status);
+
+      return transaction.findOne(Block, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(block);
+  }
+
+  @Patch(':id')
+  @CheckId(Block)
+  @CheckMethodAccess(AccessEntity.BLOCK, AccessMethod.PUT)
+  @CheckIdPermission(Block, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<BlockInput>,
+  ): Promise<BlockView> {
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      files,
+      images,
+      status,
+      ...blockData
+    } = data;
+
+    const block = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(blockData).length > 0) {
+        await transaction.update(Block, id, blockData);
+      }
+
+      strings && await this.stringAttributeService.update<Block>(transaction, Block2String, id, strings);
+      points && await this.pointAttributeService.update<Block>(transaction, Block2Point, id, points);
+      permissions && await this.permissionService.update<Block>(transaction, Block4Permission, id, permissions);
+      descriptions && await this.descriptionAttributeService.update<Block>(transaction, Block2Description, id, descriptions);
+      counters && await this.counterAttributeService.update<Block>(transaction, Block2Counter, id, counters);
+      files && await this.fileAttributeService.update<Block>(transaction, Block2File, id, files);
+      images && await this.imageService.update<Block>(transaction, Block4Image, id, images);
+      status && await this.statusService.update<Block>(transaction, Block4Status, id, status);
 
       return transaction.findOne(Block, {
         where: { id },

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -139,6 +140,35 @@ export class LanguageController {
       await this.stringAttributeService.update<Language>(transaction, Language2String, id, strings);
       await this.pointAttributeService.update<Language>(transaction, Language2Point, id, points);
       await this.statusService.update<Language>(transaction, Language4Status, id, status);
+
+      return transaction.findOne(Language, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(language);
+  }
+
+  @Patch(':id')
+  @CheckId(Language)
+  @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.PUT)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<LanguageInput>,
+  ): Promise<LanguageView> {
+    const { strings, points, status, ...languageData } = data;
+
+    const language = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(languageData).length > 0) {
+        await transaction.update(Language, id, languageData);
+      }
+
+      strings && await this.stringAttributeService.update<Language>(transaction, Language2String, id, strings);
+      points && await this.pointAttributeService.update<Language>(transaction, Language2Point, id, points);
+      status && await this.statusService.update<Language>(transaction, Language4Status, id, status);
 
       return transaction.findOne(Language, {
         where: { id },

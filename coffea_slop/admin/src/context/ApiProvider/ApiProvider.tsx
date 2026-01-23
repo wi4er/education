@@ -80,6 +80,23 @@ export function ApiProvider(
         return res.json();
       },
 
+      patchItem: async <T, >(path: string, id: string, data: object): Promise<T> => {
+        const res = await fetch(`${apiPath}/${path}/${id}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+          throw await res.json().catch(() => new Error('Request failed'));
+        }
+
+        return res.json();
+      },
+
       deleteItem: async <T, >(path: string, id: string): Promise<DeleteResponse<T>> => {
         const res = await fetch(`${apiPath}/${path}/${id}`, {
           method: 'DELETE',

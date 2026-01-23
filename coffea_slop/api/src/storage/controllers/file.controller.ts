@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In, Or, IsNull } from 'typeorm';
@@ -141,6 +141,35 @@ export class FileController {
       await this.stringAttributeService.update<File>(transaction, File2String, id, strings);
       await this.pointAttributeService.update<File>(transaction, File2Point, id, points);
       await this.statusService.update<File>(transaction, File4Status, id, status);
+
+      return transaction.findOne(File, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(file);
+  }
+
+  @Patch(':id')
+  @CheckId(File)
+  @CheckParentPermission(File, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<FileInput>,
+  ): Promise<FileView> {
+    const { strings, points, status, ...fileData } = data;
+
+    const file = await this.dataSource.transaction(async transaction => {
+      if (Object.keys(fileData).length > 0) {
+        await transaction.update(File, id, fileData);
+      }
+
+      strings && await this.stringAttributeService.update<File>(transaction, File2String, id, strings);
+      points && await this.pointAttributeService.update<File>(transaction, File2Point, id, points);
+      status && await this.statusService.update<File>(transaction, File4Status, id, status);
 
       return transaction.findOne(File, {
         where: { id },

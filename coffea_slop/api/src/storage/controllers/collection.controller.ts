@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
@@ -150,6 +150,37 @@ export class CollectionController {
       await this.pointAttributeService.update<Collection>(transaction, Collection2Point, id, points);
       await this.permissionService.update<Collection>(transaction, Collection4Permission, id, permissions);
       await this.statusService.update<Collection>(transaction, Collection4Status, id, status);
+
+      return transaction.findOne(Collection, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(collection);
+  }
+
+  @Patch(':id')
+  @CheckId(Collection)
+  @CheckMethodAccess(AccessEntity.COLLECTION, AccessMethod.PUT)
+  @CheckIdPermission(Collection, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<CollectionInput>,
+  ): Promise<CollectionView> {
+    const { strings, points, permissions, status, ...collectionData } = data;
+
+    const collection = await this.dataSource.transaction(async transaction => {
+      if (Object.keys(collectionData).length > 0) {
+        await transaction.update(Collection, id, collectionData);
+      }
+
+      strings && await this.stringAttributeService.update<Collection>(transaction, Collection2String, id, strings);
+      points && await this.pointAttributeService.update<Collection>(transaction, Collection2Point, id, points);
+      permissions && await this.permissionService.update<Collection>(transaction, Collection4Permission, id, permissions);
+      status && await this.statusService.update<Collection>(transaction, Collection4Status, id, status);
 
       return transaction.findOne(Collection, {
         where: { id },

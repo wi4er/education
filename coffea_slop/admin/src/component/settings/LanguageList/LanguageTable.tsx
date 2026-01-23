@@ -27,9 +27,9 @@ export function LanguageTable({
   columns: readonly Column[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onStatusChange?: (id: string, statusId: string) => void;
+  onStatusChange?: () => void;
 }) {
-  const { getList } = useContext(apiContext);
+  const { getList, patchItem } = useContext(apiContext);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
 
   const statusColumns = useMemo(() => getStatusColumns(list, statuses), [list, statuses]);
@@ -55,7 +55,14 @@ export function LanguageTable({
       ...statuses.map(status => ({
         title: getStringValue(status, 'name') || status.id,
         icon: <IconComponent name={status.icon} color={status.color}/>,
-        onClick: () => onStatusChange?.(row.id, status.id),
+        onClick: () => {
+          const currentStatuses = row.status || [];
+          const newStatuses = currentStatuses.includes(status.id)
+            ? currentStatuses.filter(s => s !== status.id)
+            : [...currentStatuses, status.id];
+          patchItem<LanguageView>('language', row.id, { status: newStatuses })
+            .then(() => onStatusChange?.());
+        },
       })),
     ];
   }

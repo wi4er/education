@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -142,6 +143,34 @@ export class PointController {
       await this.stringAttributeService.update<Point>(transaction, Point2String, id, strings);
       await this.pointAttributeService.update<Point>(transaction, Point2Point, id, points);
       await this.statusService.update<Point>(transaction, Point4Status, id, status);
+
+      return transaction.findOne(Point, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(point);
+  }
+
+  @Patch(':id')
+  @CheckId(Point)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<PointInput>,
+  ): Promise<PointView> {
+    const { strings, points, status, ...pointData } = data;
+
+    const point = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(pointData).length > 0) {
+        await transaction.update(Point, id, pointData);
+      }
+
+      strings && await this.stringAttributeService.update<Point>(transaction, Point2String, id, strings);
+      points && await this.pointAttributeService.update<Point>(transaction, Point2Point, id, points);
+      status && await this.statusService.update<Point>(transaction, Point4Status, id, status);
 
       return transaction.findOne(Point, {
         where: { id },

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -145,6 +146,36 @@ export class AttributeController {
       await this.pointAttributeService.update<Attribute>(transaction, Attribute2Point, id, points);
       await this.asPointService.update(transaction, id, asPoint);
       await this.statusService.update<Attribute>(transaction, Attribute4Status, id, status);
+
+      return transaction.findOne(Attribute, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(attribute);
+  }
+
+  @Patch(':id')
+  @CheckId(Attribute)
+  @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.PUT)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<AttributeInput>,
+  ): Promise<AttributeView> {
+    const { strings, points, asPoint, status, ...attributeData } = data;
+
+    const attribute = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(attributeData).length > 0) {
+        await transaction.update(Attribute, id, attributeData);
+      }
+
+      strings && await this.stringAttributeService.update<Attribute>(transaction, Attribute2String, id, strings);
+      points && await this.pointAttributeService.update<Attribute>(transaction, Attribute2Point, id, points);
+      asPoint !== undefined && await this.asPointService.update(transaction, id, asPoint);
+      status && await this.statusService.update<Attribute>(transaction, Attribute4Status, id, status);
 
       return transaction.findOne(Attribute, {
         where: { id },

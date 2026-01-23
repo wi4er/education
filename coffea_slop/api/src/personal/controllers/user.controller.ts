@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -221,6 +222,55 @@ export class UserController {
       await this.fileAttributeService.update<User>(transaction, User2File, id, files);
       await this.imageService.update<User>(transaction, User4Image, id, images);
       await this.statusService.update<User>(transaction, User4Status, id, status);
+
+      return transaction.findOne(User, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(user);
+  }
+
+  @Patch(':id')
+  @CheckId(User)
+  @CheckMethodAccess(AccessEntity.USER, AccessMethod.PUT)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<UserInput>,
+  ): Promise<UserView> {
+    const {
+      strings,
+      points,
+      descriptions,
+      counters,
+      files,
+      images,
+      status,
+      password,
+      ...userData
+    } = data;
+
+    const user = await this.dataSource.transaction(async (transaction) => {
+      const hashedPassword = password
+        ? await bcrypt.hash(password, 10)
+        : undefined;
+      const updateData = hashedPassword
+        ? { ...userData, password: hashedPassword }
+        : userData;
+      if (Object.keys(updateData).length > 0) {
+        await transaction.update(User, id, updateData);
+      }
+
+      strings && await this.stringAttributeService.update<User>(transaction, User2String, id, strings);
+      points && await this.pointAttributeService.update<User>(transaction, User2Point, id, points);
+      descriptions && await this.descriptionAttributeService.update<User>(transaction, User2Description, id, descriptions);
+      counters && await this.counterAttributeService.update<User>(transaction, User2Counter, id, counters);
+      files && await this.fileAttributeService.update<User>(transaction, User2File, id, files);
+      images && await this.imageService.update<User>(transaction, User4Image, id, images);
+      status && await this.statusService.update<User>(transaction, User4Status, id, status);
 
       return transaction.findOne(User, {
         where: { id },

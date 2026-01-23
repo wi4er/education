@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -147,6 +148,36 @@ export class GroupController {
       await this.pointAttributeService.update<Group>(transaction, Group2Point, id, points);
       await this.descriptionAttributeService.update<Group>(transaction, Group2Description, id, descriptions);
       await this.statusService.update<Group>(transaction, Group4Status, id, status);
+
+      return transaction.findOne(Group, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(group);
+  }
+
+  @Patch(':id')
+  @CheckId(Group)
+  @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.PUT)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<GroupInput>,
+  ): Promise<GroupView> {
+    const { strings, points, descriptions, status, ...groupData } = data;
+
+    const group = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(groupData).length > 0) {
+        await transaction.update(Group, id, groupData);
+      }
+
+      strings && await this.stringAttributeService.update<Group>(transaction, Group2String, id, strings);
+      points && await this.pointAttributeService.update<Group>(transaction, Group2Point, id, points);
+      descriptions && await this.descriptionAttributeService.update<Group>(transaction, Group2Description, id, descriptions);
+      status && await this.statusService.update<Group>(transaction, Group4Status, id, status);
 
       return transaction.findOne(Group, {
         where: { id },

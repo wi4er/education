@@ -92,6 +92,7 @@ export function ElementList({
                   refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
                 });
             }}
+            onStatusChange={() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage })}
           />
 
           <TablePagination

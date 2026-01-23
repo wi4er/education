@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -279,6 +280,53 @@ export class ElementController {
       await this.imageService.update<Element>(transaction, Element4Image, id, images);
       await this.sectionService.update(transaction, id, sections);
       await this.statusService.update<Element>(transaction, Element4Status, id, status);
+
+      return transaction.findOne(Element, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(element);
+  }
+
+  @Patch(':id')
+  @CheckId(Element)
+  @CheckMethodAccess(AccessEntity.ELEMENT, AccessMethod.PUT)
+  @CheckIdPermission(Element, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<ElementInput>,
+  ): Promise<ElementView> {
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      files,
+      images,
+      sections,
+      status,
+      ...elementData
+    } = data;
+
+    const element = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(elementData).length > 0) {
+        await transaction.update(Element, id, elementData);
+      }
+
+      strings && await this.stringAttributeService.update<Element>(transaction, Element2String, id, strings);
+      points && await this.pointAttributeService.update<Element>(transaction, Element2Point, id, points);
+      permissions && await this.permissionService.update<Element>(transaction, Element4Permission, id, permissions);
+      descriptions && await this.descriptionAttributeService.update<Element>(transaction, Element2Description, id, descriptions);
+      counters && await this.counterAttributeService.update<Element>(transaction, Element2Counter, id, counters);
+      files && await this.fileAttributeService.update<Element>(transaction, Element2File, id, files);
+      images && await this.imageService.update<Element>(transaction, Element4Image, id, images);
+      sections && await this.sectionService.update(transaction, id, sections);
+      status && await this.statusService.update<Element>(transaction, Element4Status, id, status);
 
       return transaction.findOne(Element, {
         where: { id },

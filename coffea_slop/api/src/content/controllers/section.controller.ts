@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -224,6 +225,51 @@ export class SectionController {
       await this.fileAttributeService.update<Section>(transaction, Section2File, id, files);
       await this.imageService.update<Section>(transaction, Section4Image, id, images);
       await this.statusService.update<Section>(transaction, Section4Status, id, status);
+
+      return transaction.findOne(Section, {
+        where: { id },
+        relations: this.relations,
+      });
+    });
+
+    return this.toView(section);
+  }
+
+  @Patch(':id')
+  @CheckId(Section)
+  @CheckMethodAccess(AccessEntity.SECTION, AccessMethod.PUT)
+  @CheckIdPermission(Section, PermissionMethod.WRITE)
+  async patch(
+    @Param('id')
+    id: string,
+    @Body()
+    data: Partial<SectionInput>,
+  ): Promise<SectionView> {
+    const {
+      strings,
+      points,
+      permissions,
+      descriptions,
+      counters,
+      files,
+      images,
+      status,
+      ...sectionData
+    } = data;
+
+    const section = await this.dataSource.transaction(async (transaction) => {
+      if (Object.keys(sectionData).length > 0) {
+        await transaction.update(Section, id, sectionData);
+      }
+
+      strings && await this.stringAttributeService.update<Section>(transaction, Section2String, id, strings);
+      points && await this.pointAttributeService.update<Section>(transaction, Section2Point, id, points);
+      permissions && await this.permissionService.update<Section>(transaction, Section4Permission, id, permissions);
+      descriptions && await this.descriptionAttributeService.update<Section>(transaction, Section2Description, id, descriptions);
+      counters && await this.counterAttributeService.update<Section>(transaction, Section2Counter, id, counters);
+      files && await this.fileAttributeService.update<Section>(transaction, Section2File, id, files);
+      images && await this.imageService.update<Section>(transaction, Section4Image, id, images);
+      status && await this.statusService.update<Section>(transaction, Section4Status, id, status);
 
       return transaction.findOne(Section, {
         where: { id },
