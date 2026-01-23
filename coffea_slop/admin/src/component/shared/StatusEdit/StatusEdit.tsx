@@ -32,8 +32,8 @@ export function StatusEdit(
 
   useEffect(() => {
     getList<StatusView>(ApiEntity.STATUS)
-      .then(items => {
-        setStatuses(items);
+      .then(({ data }) => {
+        setStatuses(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

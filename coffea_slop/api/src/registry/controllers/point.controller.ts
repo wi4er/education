@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -152,12 +153,23 @@ export class PointController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Point)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: PointView; deletedAt: string }> {
+    const point = await this.pointRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.pointRepository.delete(id);
+
+    return {
+      data: this.toView(point),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }

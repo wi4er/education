@@ -258,7 +258,7 @@ describe('GroupController', () => {
     it('should delete the group', async () => {
       await repo(Group).save({ id: 'group-1' });
 
-      await request(app.getHttpServer()).delete('/group/group-1').expect(200);
+      await request(app.getHttpServer()).delete('/group/group-1').expect(204);
 
       const found = await repo(Group).findOne({ where: { id: 'group-1' } });
       expect(found).toBeNull();

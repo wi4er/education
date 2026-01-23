@@ -581,7 +581,9 @@ describe('DirectoryController', () => {
       await repo(Directory).save({ id: 'dir-1' });
       await repo(Directory4Permission).save({ parentId: 'dir-1', method: PermissionMethod.DELETE });
 
-      await request(app.getHttpServer()).delete('/directory/dir-1').expect(200);
+      await request(app.getHttpServer())
+        .delete('/directory/dir-1')
+        .expect(204);
 
       const found = await repo(Directory).findOne({ where: { id: 'dir-1' } });
       expect(found).toBeNull();

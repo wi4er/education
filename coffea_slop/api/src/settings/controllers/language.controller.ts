@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -149,12 +150,23 @@ export class LanguageController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Language)
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: LanguageView; deletedAt: string }> {
+    const language = await this.languageRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.languageRepository.delete(id);
+
+    return {
+      data: this.toView(language),
+      deletedAt: new Date().toISOString(),
+    };
   }
 }

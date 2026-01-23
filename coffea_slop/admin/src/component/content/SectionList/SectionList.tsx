@@ -40,6 +40,7 @@ export function SectionList(
 ) {
   const { getList, deleteItem } = useContext(apiContext);
   const [allItems, setAllItems] = useState<Array<SectionView>>([]);
+  const [count, setCount] = useState(0);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -61,14 +62,20 @@ export function SectionList(
 
   function refreshData(pagination?: Pagination) {
     getList<SectionView>(ApiEntity.SECTION, pagination)
-      .then(data => setAllItems(data))
-      .catch(() => setAllItems([]));
+      .then(({ data, count }) => {
+        setAllItems(data);
+        setCount(count);
+      })
+      .catch(() => {
+        setAllItems([]);
+        setCount(0);
+      });
   }
 
   useEffect(() => {
     refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
     getList<StatusView>(ApiEntity.STATUS)
-      .then(data => setStatuses(data))
+      .then(({ data }) => setStatuses(data))
       .catch(() => setStatuses([]));
   }, [page, rowsPerPage]);
 
@@ -190,7 +197,7 @@ export function SectionList(
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={list.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event: unknown, newPage: number) => setPage(newPage)}

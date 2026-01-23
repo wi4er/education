@@ -39,9 +39,9 @@ export function DescriptionEdit({descriptions, onChange}: DescriptionEditProps) 
       getList<AttributeView>(ApiEntity.ATTRIBUTE),
       getList<LanguageView>(ApiEntity.LANGUAGE),
     ])
-      .then(([attrs, langs]) => {
-        setAttributes(attrs.filter(a => a.type === AttributeType.DESCRIPTION));
-        setLanguages(langs);
+      .then(([attrsRes, langsRes]) => {
+        setAttributes(attrsRes.data.filter(a => a.type === AttributeType.DESCRIPTION));
+        setLanguages(langsRes.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

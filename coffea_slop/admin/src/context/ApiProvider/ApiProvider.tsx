@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { apiContext, Pagination } from './ApiData';
+import { apiContext, ListResponse, Pagination } from './ApiData';
 import { ApiEntity } from './ApiEntity';
 
 const apiPath = process.env.API_PATH ?? '/api';
@@ -13,7 +13,7 @@ export function ApiProvider(
 ) {
   return (
     <apiContext.Provider value={{
-      getList: async <T, >(path: ApiEntity, pagination?: Pagination): Promise<Array<T>> => {
+      getList: async <T, >(path: ApiEntity, pagination?: Pagination): Promise<ListResponse<T>> => {
         const params = new URLSearchParams();
         if (pagination?.limit !== undefined) params.set('limit', String(pagination.limit));
         if (pagination?.offset !== undefined) params.set('offset', String(pagination.offset));
@@ -87,7 +87,8 @@ export function ApiProvider(
         });
 
         if (!res.ok) {
-          throw await res.json().catch(() => new Error('Request failed'));
+          const text = await res.text();
+          throw text ? JSON.parse(text) : new Error('Request failed');
         }
       },
     }}>

@@ -29,6 +29,7 @@ const baseColumns: readonly Column[] = [
 export function LanguageList() {
   const { getList, deleteItem } = useContext(apiContext);
   const [list, setList] = useState<Array<LanguageView>>([]);
+  const [count, setCount] = useState(0);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -44,14 +45,20 @@ export function LanguageList() {
 
   function refreshData(pagination?: Pagination) {
     getList<LanguageView>(ApiEntity.LANGUAGE, pagination)
-      .then(data => setList(data))
-      .catch(() => setList([]));
+      .then(({ data, count }) => {
+        setList(data);
+        setCount(count);
+      })
+      .catch(() => {
+        setList([]);
+        setCount(0);
+      });
   }
 
   useEffect(() => {
     refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
     getList<StatusView>(ApiEntity.STATUS)
-      .then(data => setStatuses(data))
+      .then(({ data }) => setStatuses(data))
       .catch(() => setStatuses([]));
   }, [page, rowsPerPage]);
 
@@ -151,7 +158,7 @@ export function LanguageList() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={list.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event: unknown, newPage: number) => setPage(newPage)}

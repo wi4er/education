@@ -39,9 +39,9 @@ export function StringEdit({strings, onChange}: StringEditProps) {
       getList<AttributeView>(ApiEntity.ATTRIBUTE),
       getList<LanguageView>(ApiEntity.LANGUAGE),
     ])
-      .then(([attrs, langs]) => {
-        setAttributes(attrs.filter(a => a.type === AttributeType.STRING));
-        setLanguages(langs);
+      .then(([attrsRes, langsRes]) => {
+        setAttributes(attrsRes.data.filter(a => a.type === AttributeType.STRING));
+        setLanguages(langsRes.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

@@ -583,7 +583,7 @@ describe('FormController', () => {
         method: PermissionMethod.DELETE,
       });
 
-      await request(app.getHttpServer()).delete('/form/form-1').expect(200);
+      await request(app.getHttpServer()).delete('/form/form-1').expect(204);
 
       const found = await repo(Form).findOne({ where: { id: 'form-1' } });
       expect(found).toBeNull();

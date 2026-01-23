@@ -42,9 +42,9 @@ export function FileEdit(
       getList<AttributeView>(ApiEntity.ATTRIBUTE),
       getList<FileView>(ApiEntity.FILE),
     ])
-      .then(([attrs, fls]) => {
-        setAttributes(attrs.filter(a => a.type === AttributeType.FILE));
-        setAllFiles(fls);
+      .then(([attrsRes, flsRes]) => {
+        setAttributes(attrsRes.data.filter(a => a.type === AttributeType.FILE));
+        setAllFiles(flsRes.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

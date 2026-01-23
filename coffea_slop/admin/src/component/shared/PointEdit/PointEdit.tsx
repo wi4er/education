@@ -42,9 +42,9 @@ export function PointEdit(
       getList<AttributeView>(ApiEntity.ATTRIBUTE),
       getList<PointView>(ApiEntity.POINT),
     ])
-      .then(([attrs, pts]) => {
-        setAttributes(attrs.filter(a => a.type === AttributeType.POINT));
-        setAllPoints(pts);
+      .then(([attrsRes, ptsRes]) => {
+        setAttributes(attrsRes.data.filter(a => a.type === AttributeType.POINT));
+        setAllPoints(ptsRes.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

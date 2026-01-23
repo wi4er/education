@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -112,6 +113,7 @@ export class DirectoryController {
       where: { id },
       relations: this.relations,
     });
+
     return this.toView(directory);
   }
 
@@ -171,14 +173,25 @@ export class DirectoryController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Directory)
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.DELETE)
   @CheckIdPermission(Directory, PermissionMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: DirectoryView; deletedAt: string }> {
+    const directory = await this.directoryRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.directoryRepository.delete(id);
+
+    return {
+      data: this.toView(directory),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }

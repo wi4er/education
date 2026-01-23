@@ -27,8 +27,8 @@ export function DirectoryEdit(
 
   useEffect(() => {
     getList<DirectoryView>(ApiEntity.DIRECTORY)
-      .then(dirs => {
-        setDirectories(dirs);
+      .then(({ data }) => {
+        setDirectories(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

@@ -262,7 +262,7 @@ describe('UserController', () => {
     it('should delete the user', async () => {
       await repo(User).save({ id: 'user-1' });
 
-      await request(app.getHttpServer()).delete('/user/user-1').expect(200);
+      await request(app.getHttpServer()).delete('/user/user-1').expect(204);
 
       const found = await repo(User).findOne({ where: { id: 'user-1' } });
       expect(found).toBeNull();

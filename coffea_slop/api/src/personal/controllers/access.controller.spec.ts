@@ -185,7 +185,7 @@ describe('AccessController', () => {
 
       await request(app.getHttpServer())
         .delete(`/access/${saved.id}`)
-        .expect(200);
+        .expect(204);
 
       const found = await repo(Access).findOne({ where: { id: saved.id } });
       expect(found).toBeNull();

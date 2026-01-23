@@ -42,16 +42,16 @@ export function MainMenu(
 
   useEffect(() => {
     getList<BlockView>(ApiEntity.BLOCK)
-      .then(data => setBlocks(data))
+      .then(({ data }) => setBlocks(data))
       .catch(() => setBlocks([]));
     getList<DirectoryView>(ApiEntity.DIRECTORY)
-      .then(data => setDirectories(data))
+      .then(({ data }) => setDirectories(data))
       .catch(() => setDirectories([]));
     getList<FormView>(ApiEntity.FORM)
-      .then(data => setForms(data))
+      .then(({ data }) => setForms(data))
       .catch(() => setForms([]));
     getList<CollectionView>(ApiEntity.COLLECTION)
-      .then(data => setCollections(data))
+      .then(({ data }) => setCollections(data))
       .catch(() => setCollections([]));
   }, []);
 

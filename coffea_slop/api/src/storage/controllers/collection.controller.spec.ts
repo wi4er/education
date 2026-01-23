@@ -327,7 +327,7 @@ describe('CollectionController', () => {
 
       await request(app.getHttpServer())
         .delete('/collection/col-1')
-        .expect(200);
+        .expect(204);
 
       const found = await repo(Collection).findOne({ where: { id: 'col-1' } });
       expect(found).toBeNull();

@@ -38,6 +38,7 @@ const baseColumns: readonly Column[] = [
 export function StatusList() {
   const { getList, deleteItem } = useContext(apiContext);
   const [list, setList] = useState<Array<StatusView>>([]);
+  const [count, setCount] = useState(0);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
@@ -52,8 +53,14 @@ export function StatusList() {
 
   function refreshData(pagination?: Pagination) {
     getList<StatusView>(ApiEntity.STATUS, pagination)
-      .then(data => setList(data))
-      .catch(() => setList([]));
+      .then(({ data, count }) => {
+        setList(data);
+        setCount(count);
+      })
+      .catch(() => {
+        setList([]);
+        setCount(0);
+      });
   }
 
   useEffect(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }), [page, rowsPerPage]);
@@ -181,7 +188,7 @@ export function StatusList() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={list.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event: unknown, newPage: number) => setPage(newPage)}

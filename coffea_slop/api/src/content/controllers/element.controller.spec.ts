@@ -1256,7 +1256,7 @@ describe('ElementController', () => {
 
       await request(app.getHttpServer())
         .delete('/element/element-1')
-        .expect(200);
+        .expect(204);
 
       const found = await repo(Element)
         .findOne({ where: { id: 'element-1' } });

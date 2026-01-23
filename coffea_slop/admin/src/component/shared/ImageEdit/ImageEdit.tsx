@@ -30,10 +30,10 @@ export function ImageEdit(
       getList<CollectionView>(ApiEntity.COLLECTION),
       getList<FileView>(ApiEntity.FILE),
     ])
-      .then(([cols, files]) => {
-        setCollections(cols);
+      .then(([colsRes, filesRes]) => {
+        setCollections(colsRes.data);
         const grouped: Record<string, FileView[]> = {};
-        for (const file of files) {
+        for (const file of filesRes.data) {
           if (!grouped[file.parentId]) grouped[file.parentId] = [];
           grouped[file.parentId].push(file);
         }

@@ -36,6 +36,7 @@ export function BlockList() {
   const navigate = useNavigate();
   const { getList, deleteItem } = useContext(apiContext);
   const [list, setList] = useState<Array<BlockView>>([]);
+  const [count, setCount] = useState(0);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -52,14 +53,20 @@ export function BlockList() {
 
   function refreshData(pagination?: Pagination) {
     getList<BlockView>(ApiEntity.BLOCK, pagination)
-      .then(data => setList(data))
-      .catch(() => setList([]));
+      .then(({ data, count }) => {
+        setList(data);
+        setCount(count);
+      })
+      .catch(() => {
+        setList([]);
+        setCount(0);
+      });
   }
 
   useEffect(() => {
     refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
     getList<StatusView>(ApiEntity.STATUS)
-      .then(data => setStatuses(data))
+      .then(({ data }) => setStatuses(data))
       .catch(() => setStatuses([]));
   }, [page, rowsPerPage]);
 
@@ -200,7 +207,7 @@ export function BlockList() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={list.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event: unknown, newPage: number) => setPage(newPage)}

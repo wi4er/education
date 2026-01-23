@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
@@ -289,14 +290,25 @@ export class ElementController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Element)
   @CheckMethodAccess(AccessEntity.ELEMENT, AccessMethod.DELETE)
   @CheckIdPermission(Element, PermissionMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: ElementView; deletedAt: string }> {
+    const element = await this.elementRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.elementRepository.delete(id);
+
+    return {
+      data: this.toView(element),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }

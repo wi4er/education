@@ -235,7 +235,7 @@ describe('AttributeController', () => {
 
       await request(app.getHttpServer())
         .delete('/attribute/attr-1')
-        .expect(200);
+        .expect(204);
 
       const found = await repo(Attribute).findOne({ where: { id: 'attr-1' } });
       expect(found).toBeNull();

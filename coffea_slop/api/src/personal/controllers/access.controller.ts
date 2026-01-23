@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -97,13 +98,23 @@ export class AccessController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Access)
   @CheckMethodAccess(AccessEntity.ACCESS, AccessMethod.DELETE)
   async remove(
     @Param('id')
     id: number,
-  ): Promise<void> {
+  ): Promise<{ data: AccessView; deletedAt: string }> {
+    const access = await this.accessRepository.findOne({
+      where: { id },
+    });
+
     await this.accessRepository.delete(id);
+
+    return {
+      data: this.toView(access),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }

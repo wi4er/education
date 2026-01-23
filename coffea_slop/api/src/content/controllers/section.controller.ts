@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -234,13 +235,24 @@ export class SectionController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Section)
   @CheckMethodAccess(AccessEntity.SECTION, AccessMethod.DELETE)
   @CheckIdPermission(Section, PermissionMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: SectionView; deletedAt: string }> {
+    const section = await this.sectionRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.sectionRepository.delete(id);
+
+    return {
+      data: this.toView(section),
+      deletedAt: new Date().toISOString(),
+    };
   }
 }

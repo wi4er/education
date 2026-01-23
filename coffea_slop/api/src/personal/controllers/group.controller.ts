@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -157,13 +158,24 @@ export class GroupController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Group)
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: GroupView; deletedAt: string }> {
+    const group = await this.groupRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.groupRepository.delete(id);
+
+    return {
+      data: this.toView(group),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }

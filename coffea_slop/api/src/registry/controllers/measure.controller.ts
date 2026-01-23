@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -142,9 +143,23 @@ export class MeasureController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(Measure)
   @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.DELETE)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(
+    @Param('id')
+    id: string,
+  ): Promise<{ data: MeasureView; deletedAt: string }> {
+    const measure = await this.measureRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.measureRepository.delete(id);
+
+    return {
+      data: this.toView(measure),
+      deletedAt: new Date().toISOString(),
+    };
   }
 }

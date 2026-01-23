@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, HttpCode } from '@nestjs/common';
 import { CheckId } from '../../common/check-id/check-id.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In, Or, IsNull } from 'typeorm';
@@ -152,13 +152,24 @@ export class FileController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @CheckId(File)
   @CheckParentPermission(File, PermissionMethod.DELETE)
   async remove(
     @Param('id')
     id: string,
-  ): Promise<void> {
+  ): Promise<{ data: FileView; deletedAt: string }> {
+    const file = await this.fileRepository.findOne({
+      where: { id },
+      relations: this.relations,
+    });
+
     await this.fileRepository.delete(id);
+
+    return {
+      data: this.toView(file),
+      deletedAt: new Date().toISOString(),
+    };
   }
 
 }
