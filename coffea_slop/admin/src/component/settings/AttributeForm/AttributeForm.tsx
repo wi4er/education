@@ -9,6 +9,7 @@ import Dialog from '@mui/material/Dialog';
 import {AttributeView} from '../view';
 import {AttributeType} from '../../common/view';
 import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -158,12 +159,16 @@ export function AttributeForm(
         </Button>
       </DialogActions>
 
-      {error ? <Snackbar
+      <Snackbar
         open={!!error}
         autoHideDuration={6000}
         message={error}
         onClose={() => setError('')}
-      /> : null}
+      >
+        <Alert severity="error" onClose={() => setError('')}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }

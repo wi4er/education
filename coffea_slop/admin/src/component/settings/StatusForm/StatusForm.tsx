@@ -8,6 +8,7 @@ import {apiContext} from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
 import {StatusView} from '../view';
 import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
 import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
 import {StatusEdit} from '../../shared/StatusEdit';
@@ -139,12 +140,16 @@ export function StatusForm(
         </Button>
       </DialogActions>
 
-      {error ? <Snackbar
+      <Snackbar
         open={!!error}
         autoHideDuration={6000}
         message={error}
         onClose={() => setError('')}
-      /> : null}
+      >
+        <Alert severity="error" onClose={() => setError('')}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }

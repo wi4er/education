@@ -3,17 +3,18 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, {useEffect, useState} from 'react';
-import {apiContext} from '../../../context/ApiProvider';
+import React, { useEffect, useState } from 'react';
+import { apiContext } from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
-import {DirectoryView} from '../view';
+import { DirectoryView } from '../view';
 import Snackbar from '@mui/material/Snackbar';
-import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
-import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
-import {StatusEdit} from '../../shared/StatusEdit';
+import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
+import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
+import { StatusEdit } from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 
 export function DirectoryForm(
   {
@@ -24,12 +25,12 @@ export function DirectoryForm(
     edit: string | null;
   },
 ) {
-  const [id, setId] = useState('');
-  const [status, setStatus] = useState<string[]>([]);
-  const [strings, setStrings] = useState<StringsByAttr>({});
-  const [points, setPoints] = useState<PointsByAttr>({});
-  const [error, setError] = useState('');
-  const [tab, setTab] = useState(0);
+  const [ id, setId ] = useState('');
+  const [ status, setStatus ] = useState<string[]>([]);
+  const [ strings, setStrings ] = useState<StringsByAttr>({});
+  const [ points, setPoints ] = useState<PointsByAttr>({});
+  const [ error, setError ] = useState('');
+  const [ tab, setTab ] = useState(0);
   const { postItem, putItem, getItem } = React.useContext(apiContext);
 
   useEffect(() => {
@@ -97,17 +98,9 @@ export function DirectoryForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
-
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
         </form>
       </DialogContent>
 
@@ -121,12 +114,16 @@ export function DirectoryForm(
         </Button>
       </DialogActions>
 
-      {error ? <Snackbar
+      <Snackbar
         open={!!error}
         autoHideDuration={6000}
         message={error}
         onClose={() => setError('')}
-      /> : null}
+      >
+        <Alert severity="error" onClose={() => setError('')}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }
