@@ -89,10 +89,10 @@ export function AttributeForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Attribute ${id}` : 'Create Attribute'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Attribute ${id}` : 'Create Attribute'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="attribute-form">
+        <DialogContent>
           <Box style={{ display: 'flex', gap: 12 }}>
             <TextField
               autoFocus
@@ -137,32 +137,20 @@ export function AttributeForm(
               <DirectoryEdit value={asPoint} onChange={setAsPoint}/>
             </Box>
           )}
+          {(showDirectoryTab ? tab === 1 : tab === 0) && <StatusEdit value={status} onChange={setStatus}/>}
+          {(showDirectoryTab ? tab === 2 : tab === 1) && <StringEdit strings={strings} onChange={setStrings}/>}
+          {(showDirectoryTab ? tab === 3 : tab === 2) && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {(showDirectoryTab ? tab === 1 : tab === 0) && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
-
-          {(showDirectoryTab ? tab === 2 : tab === 1) && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {(showDirectoryTab ? tab === 3 : tab === 2) && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="attribute-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

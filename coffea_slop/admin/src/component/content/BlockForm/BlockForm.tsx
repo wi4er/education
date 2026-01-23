@@ -3,17 +3,22 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useEffect, useState } from 'react';
-import { apiContext } from '../../../context/ApiProvider';
+import React, {useEffect, useState} from 'react';
+import {apiContext} from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
-import { BlockView } from '../view';
+import {BlockView} from '../view';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
-import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
-import { DescriptionEdit, DescriptionsByAttr, descriptionsToGrouped, groupedToDescriptions } from '../../shared/DescriptionEdit';
-import { FileEdit, FilesByAttr, filesToGrouped, groupedToFiles } from '../../shared/FileEdit';
-import { StatusEdit } from '../../shared/StatusEdit';
+import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
+import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
+import {
+  DescriptionEdit,
+  DescriptionsByAttr,
+  descriptionsToGrouped,
+  groupedToDescriptions,
+} from '../../shared/DescriptionEdit';
+import {FileEdit, FilesByAttr, filesToGrouped, groupedToFiles} from '../../shared/FileEdit';
+import {StatusEdit} from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -35,7 +40,7 @@ export function BlockForm(
   const [files, setFiles] = useState<FilesByAttr>({});
   const [error, setError] = useState('');
   const [tab, setTab] = useState(0);
-  const { postItem, putItem, getItem } = React.useContext(apiContext);
+  const {postItem, putItem, getItem} = React.useContext(apiContext);
 
   useEffect(() => {
     if (edit) {
@@ -50,14 +55,13 @@ export function BlockForm(
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edit]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     const payload = {
-      id: edit ? undefined : id,
+      id: edit ? undefined : id || undefined,
       status: status.length > 0 ? status : undefined,
       strings: groupedToStrings(strings),
       points: groupedToPoints(points),
@@ -70,7 +74,7 @@ export function BlockForm(
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {
-      postItem<BlockView>('block', { ...payload, id })
+      postItem<BlockView>('block', {...payload, id: id || undefined})
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to create'));
     }
@@ -83,24 +87,23 @@ export function BlockForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Block ${id}` : 'Create Block'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Block ${id}` : 'Create Block'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="block-form">
-          {!edit && (
-            <TextField
-              autoFocus
-              margin="dense"
-              name="id"
-              label="ID (optional)"
-              fullWidth
-              value={id}
-              variant="standard"
-              onChange={event => setId(event.target.value)}
-            />
-          )}
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="id"
+            label="ID (optional)"
+            fullWidth
+            value={id}
+            variant="standard"
+            disabled={!!edit}
+            onChange={event => setId(event.target.value)}
+          />
 
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+          <Box sx={{borderBottom: 1, borderColor: 'divider', mt: 2}}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
               <Tab label="Status"/>
               <Tab label="Strings"/>
@@ -110,39 +113,22 @@ export function BlockForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>}
+          {tab === 3 && <PointEdit points={points} onChange={setPoints}/>}
+          {tab === 4 && <FileEdit files={files} onChange={setFiles}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>
-          )}
-
-          {tab === 3 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-
-          {tab === 4 && (
-            <FileEdit files={files} onChange={setFiles}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="block-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

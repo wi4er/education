@@ -88,11 +88,11 @@ export function SectionForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Section ${id}` : 'Create Section'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Section ${id}` : 'Create Section'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="section-form">
-          {!edit && (
+        <DialogContent>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField
               autoFocus
               margin="dense"
@@ -101,18 +101,19 @@ export function SectionForm(
               fullWidth
               value={id}
               variant="standard"
+              disabled={!!edit}
               onChange={event => setId(event.target.value)}
             />
-          )}
 
-          <TextField
-            margin="dense"
-            label="Block"
-            fullWidth
-            value={parentId}
-            variant="standard"
-            disabled
-          />
+            <TextField
+              margin="dense"
+              label="Block"
+              fullWidth
+              value={parentId}
+              variant="standard"
+              disabled
+            />
+          </Box>
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
@@ -124,39 +125,22 @@ export function SectionForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>}
+          {tab === 3 && <PointEdit points={points} onChange={setPoints}/>}
+          {tab === 4 && <FileEdit files={files} onChange={setFiles}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>
-          )}
-
-          {tab === 3 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-
-          {tab === 4 && (
-            <FileEdit files={files} onChange={setFiles}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="section-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

@@ -75,22 +75,21 @@ export function CollectionForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Collection ${id}` : 'Create Collection'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Collection ${id}` : 'Create Collection'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="collection-form">
-          {!edit && (
-            <TextField
-              autoFocus
-              margin="dense"
-              name="id"
-              label="ID (optional)"
-              fullWidth
-              value={id}
-              variant="standard"
-              onChange={event => setId(event.target.value)}
-            />
-          )}
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="id"
+            label="ID (optional)"
+            fullWidth
+            value={id}
+            variant="standard"
+            disabled={!!edit}
+            onChange={event => setId(event.target.value)}
+          />
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
@@ -100,31 +99,20 @@ export function CollectionForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="collection-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

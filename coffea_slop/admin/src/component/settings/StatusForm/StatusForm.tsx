@@ -84,10 +84,10 @@ export function StatusForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Status ${id}` : 'Create Status'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Status ${id}` : 'Create Status'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="status-form">
+        <DialogContent>
           <TextField
             autoFocus
             required
@@ -115,35 +115,21 @@ export function StatusForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <IconSelect value={icon} onChange={setIcon}/>
-          )}
+          {tab === 0 && <IconSelect value={icon} onChange={setIcon}/>}
+          {tab === 1 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 2 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 3 && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
-
-          {tab === 2 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 3 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="status-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

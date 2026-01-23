@@ -84,22 +84,21 @@ export function FileForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit File ${id}` : 'Create File'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit File ${id}` : 'Create File'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="file-form">
-          {!edit && (
-            <TextField
-              autoFocus
-              margin="dense"
-              name="id"
-              label="ID (optional)"
-              fullWidth
-              value={id}
-              variant="standard"
-              onChange={event => setId(event.target.value)}
-            />
-          )}
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="id"
+            label="ID (optional)"
+            fullWidth
+            value={id}
+            variant="standard"
+            disabled={!!edit}
+            onChange={event => setId(event.target.value)}
+          />
 
           <TextField
             margin="dense"
@@ -127,31 +126,20 @@ export function FileForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="file-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

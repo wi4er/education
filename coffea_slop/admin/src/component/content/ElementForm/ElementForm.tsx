@@ -23,7 +23,6 @@ import {StatusEdit} from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import {Container} from '@mui/material';
 
 export function ElementForm(
   {
@@ -97,11 +96,11 @@ export function ElementForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Element ${id}` : 'Create Element'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Element ${id}` : 'Create Element'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="element-form">
-          <Box style={{display: 'flex', gap: 12}}>
+        <DialogContent>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField
               autoFocus
               margin="dense"
@@ -135,43 +134,23 @@ export function ElementForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>}
+          {tab === 3 && <PointEdit points={points} onChange={setPoints}/>}
+          {tab === 4 && <FileEdit files={files} onChange={setFiles}/>}
+          {tab === 5 && <ImageEdit images={images} onChange={setImages}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <DescriptionEdit descriptions={descriptions} onChange={setDescriptions}/>
-          )}
-
-          {tab === 3 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-
-          {tab === 4 && (
-            <FileEdit files={files} onChange={setFiles}/>
-          )}
-
-          {tab === 5 && (
-            <ImageEdit images={images} onChange={setImages}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="element-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

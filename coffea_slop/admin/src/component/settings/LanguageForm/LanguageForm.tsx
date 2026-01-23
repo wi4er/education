@@ -75,10 +75,10 @@ export function LanguageForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Language ${id}` : 'Create Language'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Language ${id}` : 'Create Language'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="language-form">
+        <DialogContent>
           <TextField
             autoFocus
             required
@@ -100,31 +100,20 @@ export function LanguageForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
-
-          {tab === 2 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="language-form">
-          SAVE
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit">SAVE</Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

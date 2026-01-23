@@ -27,13 +27,13 @@ export function PointForm(
     defaultDirectoryId?: string;
   },
 ) {
-  const [id, setId] = useState('');
-  const [directoryId, setDirectoryId] = useState(defaultDirectoryId || '');
-  const [status, setStatus] = useState<string[]>([]);
-  const [strings, setStrings] = useState<StringsByAttr>({});
-  const [points, setPoints] = useState<PointsByAttr>({});
-  const [error, setError] = useState('');
-  const [tab, setTab] = useState(0);
+  const [ id, setId ] = useState('');
+  const [ directoryId, setDirectoryId ] = useState(defaultDirectoryId || '');
+  const [ status, setStatus ] = useState<string[]>([]);
+  const [ strings, setStrings ] = useState<StringsByAttr>({});
+  const [ points, setPoints ] = useState<PointsByAttr>({});
+  const [ error, setError ] = useState('');
+  const [ tab, setTab ] = useState(0);
   const { postItem, putItem, getItem } = React.useContext(apiContext);
 
   useEffect(() => {
@@ -48,8 +48,7 @@ export function PointForm(
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edit]);
+  }, [ edit ]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,11 +79,11 @@ export function PointForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Point ${id}` : 'Create Point'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Point ${id}` : 'Create Point'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="point-form">
-          {!edit && (
+        <DialogContent>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField
               autoFocus
               margin="dense"
@@ -93,18 +92,19 @@ export function PointForm(
               fullWidth
               value={id}
               variant="standard"
+              disabled={!!edit}
               onChange={event => setId(event.target.value)}
             />
-          )}
 
-          <TextField
-            margin="dense"
-            label="Directory"
-            fullWidth
-            value={directoryId}
-            variant="standard"
-            disabled
-          />
+            <TextField
+              margin="dense"
+              label="Directory"
+              fullWidth
+              value={directoryId}
+              variant="standard"
+              disabled
+            />
+          </Box>
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
@@ -114,31 +114,25 @@ export function PointForm(
             </Tabs>
           </Box>
 
-          {tab === 0 && (
-            <StatusEdit value={status} onChange={setStatus}/>
-          )}
+          {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
+          {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
+          {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
+        </DialogContent>
 
-          {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
-          )}
+        <DialogActions>
+          <Button onClick={onClose}>
+            Cancel
+          </Button>
 
-          {tab === 2 && (
-            <PointEdit points={points} onChange={setPoints}/>
-          )}
-        </form>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" form="point-form">
-          SAVE
-        </Button>
-      </DialogActions>
+          <Button type="submit">
+            SAVE
+          </Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>

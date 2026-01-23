@@ -74,10 +74,10 @@ export function DirectoryForm(
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>{edit ? `Edit Directory ${id}` : 'Create Directory'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>{edit ? `Edit Directory ${id}` : 'Create Directory'}</DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit} id="directory-form">
+        <DialogContent>
           <TextField
             autoFocus
             margin="dense"
@@ -101,23 +101,22 @@ export function DirectoryForm(
           {tab === 0 && <StatusEdit value={status} onChange={setStatus}/>}
           {tab === 1 && <StringEdit strings={strings} onChange={setStrings}/>}
           {tab === 2 && <PointEdit points={points} onChange={setPoints}/>}
-        </form>
-      </DialogContent>
+        </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
+        <DialogActions>
+          <Button onClick={onClose}>
+            Cancel
+          </Button>
 
-        <Button type="submit" form="directory-form">
-          SAVE
-        </Button>
-      </DialogActions>
+          <Button type="submit">
+            SAVE
+          </Button>
+        </DialogActions>
+      </form>
 
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
-        message={error}
         onClose={() => setError('')}
       >
         <Alert severity="error" onClose={() => setError('')}>
