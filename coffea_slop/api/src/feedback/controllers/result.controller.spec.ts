@@ -154,7 +154,7 @@ describe('ResultController', () => {
       await repo(Form).save({ id: 'form-1' });
       await repo(Result).save({ id: 'result-1', formId: 'form-1' });
 
-      await request(app.getHttpServer()).delete('/result/result-1').expect(204);
+      await request(app.getHttpServer()).delete('/result/result-1').expect(200);
 
       const found = await repo(Result).findOne({ where: { id: 'result-1' } });
       expect(found).toBeNull();

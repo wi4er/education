@@ -173,7 +173,6 @@ export class DirectoryController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Directory)
   @CheckMethodAccess(AccessEntity.DIRECTORY, AccessMethod.DELETE)
   @CheckIdPermission(Directory, PermissionMethod.DELETE)

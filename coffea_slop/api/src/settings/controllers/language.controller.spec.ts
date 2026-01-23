@@ -233,7 +233,7 @@ describe('LanguageController', () => {
     it('should delete the language', async () => {
       await repo(Language).save({ id: 'lang-1' });
 
-      await request(app.getHttpServer()).delete('/language/lang-1').expect(204);
+      await request(app.getHttpServer()).delete('/language/lang-1').expect(200);
 
       const found = await repo(Language).findOne({ where: { id: 'lang-1' } });
       expect(found).toBeNull();

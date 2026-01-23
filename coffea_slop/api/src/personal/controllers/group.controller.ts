@@ -158,7 +158,6 @@ export class GroupController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Group)
   @CheckMethodAccess(AccessEntity.GROUP, AccessMethod.DELETE)
   async remove(

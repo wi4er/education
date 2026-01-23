@@ -226,7 +226,6 @@ export class FormController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Form)
   @CheckMethodAccess(AccessEntity.FORM, AccessMethod.DELETE)
   @CheckIdPermission(Form, PermissionMethod.DELETE)

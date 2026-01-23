@@ -152,7 +152,6 @@ export class StatusController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Status)
   @CheckMethodAccess(AccessEntity.STATUS, AccessMethod.DELETE)
   async remove(

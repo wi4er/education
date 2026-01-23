@@ -236,7 +236,6 @@ export class BlockController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Block)
   @CheckMethodAccess(AccessEntity.BLOCK, AccessMethod.DELETE)
   @CheckIdPermission(Block, PermissionMethod.DELETE)

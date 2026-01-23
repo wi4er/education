@@ -213,7 +213,7 @@ describe('StatusController', () => {
     it('should delete the status', async () => {
       await repo(Status).save({ id: 'status-1' });
 
-      await request(app.getHttpServer()).delete('/status/status-1').expect(204);
+      await request(app.getHttpServer()).delete('/status/status-1').expect(200);
 
       const found = await repo(Status).findOne({ where: { id: 'status-1' } });
       expect(found).toBeNull();

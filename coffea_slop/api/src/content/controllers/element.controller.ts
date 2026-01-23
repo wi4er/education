@@ -290,7 +290,6 @@ export class ElementController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Element)
   @CheckMethodAccess(AccessEntity.ELEMENT, AccessMethod.DELETE)
   @CheckIdPermission(Element, PermissionMethod.DELETE)

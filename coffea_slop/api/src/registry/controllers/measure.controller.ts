@@ -143,7 +143,6 @@ export class MeasureController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Measure)
   @CheckMethodAccess(AccessEntity.MEASURE, AccessMethod.DELETE)
   async remove(

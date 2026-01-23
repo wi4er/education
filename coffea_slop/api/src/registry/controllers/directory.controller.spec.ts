@@ -583,7 +583,7 @@ describe('DirectoryController', () => {
 
       await request(app.getHttpServer())
         .delete('/directory/dir-1')
-        .expect(204);
+        .expect(200);
 
       const found = await repo(Directory).findOne({ where: { id: 'dir-1' } });
       expect(found).toBeNull();

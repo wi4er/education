@@ -350,7 +350,7 @@ describe('FileController', () => {
 
       await request(app.getHttpServer())
         .delete('/file/file-1')
-        .expect(204);
+        .expect(200);
 
       const found = await repo(File).findOne({ where: { id: 'file-1' } });
       expect(found).toBeNull();
@@ -872,7 +872,7 @@ describe('FileController', () => {
 
         await request(app.getHttpServer())
           .delete('/file/file-1')
-          .expect(204);
+          .expect(200);
 
         const found = await repo(File).findOne({ where: { id: 'file-1' } });
         expect(found).toBeNull();
@@ -896,7 +896,7 @@ describe('FileController', () => {
         await request(app.getHttpServer())
           .delete('/file/file-1')
           .set('Cookie', [`auth_token=${token}`])
-          .expect(204);
+          .expect(200);
 
         const found = await repo(File).findOne({ where: { id: 'file-1' } });
         expect(found).toBeNull();
@@ -917,7 +917,7 @@ describe('FileController', () => {
 
         await request(app.getHttpServer())
           .delete('/file/file-1')
-          .expect(204);
+          .expect(200);
 
         const found = await repo(File).findOne({ where: { id: 'file-1' } });
         expect(found).toBeNull();

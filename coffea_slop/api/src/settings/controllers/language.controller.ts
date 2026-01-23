@@ -150,7 +150,6 @@ export class LanguageController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Language)
   @CheckMethodAccess(AccessEntity.LANGUAGE, AccessMethod.DELETE)
   async remove(

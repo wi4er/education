@@ -564,7 +564,7 @@ describe('SectionController', () => {
 
       await request(app.getHttpServer())
         .delete('/section/section-1')
-        .expect(204);
+        .expect(200);
 
       const found = await repo(Section)
         .findOne({ where: { id: 'section-1' } });

@@ -94,7 +94,6 @@ export class ResultController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Result)
   @CheckMethodAccess(AccessEntity.RESULT, AccessMethod.DELETE)
   async remove(

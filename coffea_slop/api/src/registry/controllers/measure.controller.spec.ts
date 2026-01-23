@@ -235,7 +235,7 @@ describe('MeasureController', () => {
 
       await request(app.getHttpServer())
         .delete('/measure/measure-1')
-        .expect(204);
+        .expect(200);
 
       const found = await repo(Measure).findOne({ where: { id: 'measure-1' } });
       expect(found).toBeNull();

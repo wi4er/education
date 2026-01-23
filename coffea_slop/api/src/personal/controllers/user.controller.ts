@@ -232,7 +232,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(User)
   @CheckMethodAccess(AccessEntity.USER, AccessMethod.DELETE)
   async remove(

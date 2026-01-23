@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { apiContext, ListResponse, Pagination } from './ApiData';
+import { apiContext, DeleteResponse, ListResponse, Pagination } from './ApiData';
 import { ApiEntity } from './ApiEntity';
 
 const apiPath = process.env.API_PATH ?? '/api';
@@ -80,7 +80,7 @@ export function ApiProvider(
         return res.json();
       },
 
-      deleteItem: async (path: string, id: string): Promise<void> => {
+      deleteItem: async <T, >(path: string, id: string): Promise<DeleteResponse<T>> => {
         const res = await fetch(`${apiPath}/${path}/${id}`, {
           method: 'DELETE',
           credentials: 'include',
@@ -90,6 +90,8 @@ export function ApiProvider(
           const text = await res.text();
           throw text ? JSON.parse(text) : new Error('Request failed');
         }
+
+        return res.json();
       },
     }}>
       {children}

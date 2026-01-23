@@ -259,7 +259,7 @@ describe('PointController', () => {
       await repo(Directory).save({ id: 'dir-1' });
       await repo(Point).save({ id: 'point-1', directoryId: 'dir-1' });
 
-      await request(app.getHttpServer()).delete('/point/point-1').expect(204);
+      await request(app.getHttpServer()).delete('/point/point-1').expect(200);
 
       const found = await repo(Point).findOne({ where: { id: 'point-1' } });
       expect(found).toBeNull();

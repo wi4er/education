@@ -1,7 +1,7 @@
 export { ApiProvider } from './ApiProvider';
 export { ApiEntity } from './ApiEntity';
 export { apiContext } from './ApiData';
-export type { ApiData, ListResponse, Pagination } from './ApiData';
+export type { ApiData, DeleteResponse, ListResponse, Pagination } from './ApiData';
 export { useApi } from './useApi';
 export { useGet } from './useGet';
 export { useGetItem } from './useGetItem';

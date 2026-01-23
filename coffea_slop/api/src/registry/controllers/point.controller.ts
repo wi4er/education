@@ -153,7 +153,6 @@ export class PointController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Point)
   async remove(
     @Param('id')

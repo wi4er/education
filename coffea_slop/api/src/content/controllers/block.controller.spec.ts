@@ -520,7 +520,7 @@ describe('BlockController', () => {
       await repo(Block).save({ id: 'block-1' });
       await repo(Block4Permission).save({ parentId: 'block-1', method: PermissionMethod.DELETE });
 
-      await request(app.getHttpServer()).delete('/block/block-1').expect(204);
+      await request(app.getHttpServer()).delete('/block/block-1').expect(200);
 
       const found = await repo(Block)
         .findOne({ where: { id: 'block-1' } });

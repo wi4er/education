@@ -156,7 +156,6 @@ export class AttributeController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Attribute)
   @CheckMethodAccess(AccessEntity.ATTRIBUTE, AccessMethod.DELETE)
   async remove(

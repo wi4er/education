@@ -235,7 +235,6 @@ export class SectionController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Section)
   @CheckMethodAccess(AccessEntity.SECTION, AccessMethod.DELETE)
   @CheckIdPermission(Section, PermissionMethod.DELETE)

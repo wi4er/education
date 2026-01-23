@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
 import { AccessMethod } from '../../personal/entities/access/access-method.enum';
@@ -161,7 +161,6 @@ export class CollectionController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @CheckId(Collection)
   @CheckMethodAccess(AccessEntity.COLLECTION, AccessMethod.DELETE)
   @CheckIdPermission(Collection, PermissionMethod.DELETE)
