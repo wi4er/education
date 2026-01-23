@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { AttributeView, StatusView } from '../view';
-import { apiContext } from '../../../context/ApiProvider';
-import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
-import { getPointValue, getPointColumns } from '../../../service/point.service';
-import { getStatusValue, getStatusColumns, StatusColumn } from '../../../service/status.service';
-import { AttributeForm } from '../AttributeForm';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import {AttributeView, StatusView} from '../view';
+import {apiContext} from '../../../context/ApiProvider';
+import {getStringValue, getStringColumns, Column} from '../../../service/string.service';
+import {getPointValue, getPointColumns} from '../../../service/point.service';
+import {getStatusColumns} from '../../../service/status.service';
+import {AttributeForm} from '../AttributeForm';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,14 +19,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { Actions } from '../../common/Actions';
-import * as Icons from '@mui/icons-material';
-
-const IconComponent = ({ name, color }: { name: string | null; color?: string | null }) => {
-  if (!name) return null;
-  const Icon = (Icons as Record<string, React.ComponentType<{ sx?: object }>>)[name];
-  return Icon ? <Icon sx={color ? { color } : undefined} /> : null;
-};
+import {Actions} from '../../common/Actions';
+import {StatusHeaderCell, StatusCell} from '../../common/StatusCell';
 
 const baseColumns: readonly Column[] = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -34,7 +28,7 @@ const baseColumns: readonly Column[] = [
 ];
 
 export function AttributeList() {
-  const {getList, deleteItem} = useContext(apiContext);
+  const { getList, deleteItem } = useContext(apiContext);
   const [list, setList] = useState<Array<AttributeView>>([]);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
@@ -45,10 +39,9 @@ export function AttributeList() {
 
   const columns = useMemo(() => [
     ...baseColumns,
-    ...statusColumns,
     ...getStringColumns(list),
     ...getPointColumns(list),
-  ], [list, statuses, statusColumns]);
+  ], [list]);
 
   function refreshData() {
     getList<AttributeView>('attribute')
@@ -73,7 +66,7 @@ export function AttributeList() {
           Attributes
         </Typography>
 
-        <Box sx={{flex: 1}}/>
+        <Box sx={{ flex: 1 }}/>
 
         <IconButton
           color="inherit"
@@ -91,14 +84,15 @@ export function AttributeList() {
             <TableRow>
               <TableCell
                 key={'actions'}
-                style={{width: 12}}
+                style={{ width: 12 }}
               />
+              <StatusHeaderCell statusColumns={statusColumns}/>
 
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{minWidth: column.minWidth}}
+                  style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -125,21 +119,9 @@ export function AttributeList() {
                     }]}/>
                   </TableCell>
 
-                  {columns.map(column => {
-                    if (column.id.startsWith('sts:')) {
-                      const statusId = column.id.slice(4);
-                      const hasStatus = getStatusValue(row, statusId);
-                      const statusCol = statusColumns.find(c => c.id === column.id);
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {hasStatus && (statusCol?.icon
-                            ? <IconComponent name={statusCol.icon} color={statusCol.color} />
-                            : <Box component="span" sx={statusCol?.color ? { color: statusCol.color } : undefined}>✓</Box>
-                          )}
-                        </TableCell>
-                      );
-                    }
+                  <StatusCell statusColumns={statusColumns} row={row}/>
 
+                  {columns.map(column => {
                     let displayValue: string;
                     if (column.id.startsWith('str:')) {
                       displayValue = getStringValue(row, column.id.slice(4));

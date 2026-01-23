@@ -40,9 +40,7 @@ JWT_SECRET=your_secret
 ADMIN_GROUP=admin
 ```
 
-**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension and seeds admin user/group when the database container starts. PostgreSQL data persists in `data/postgres/`, file storage in `data/storage/`, uploads in `data/upload/`.
-
-**Default admin credentials:** login `admin`, password `qwerty`
+**First-time setup:** The `init/init.sql` script automatically creates the `uuid-ossp` PostgreSQL extension when the database container starts. PostgreSQL data persists in `data/postgres/`, file storage in `data/storage/`, uploads in `data/upload/`. Admin user/group must be created manually via the API after first startup.
 
 ## Commands by App
 

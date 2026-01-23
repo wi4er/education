@@ -3,20 +3,26 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useEffect, useState } from 'react';
-import { apiContext } from '../../../context/ApiProvider';
+import React, {useEffect, useState} from 'react';
+import {apiContext} from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
-import { ElementView } from '../view';
+import {ElementView} from '../view';
 import Snackbar from '@mui/material/Snackbar';
-import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
-import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
-import { DescriptionEdit, DescriptionsByAttr, descriptionsToGrouped, groupedToDescriptions } from '../../shared/DescriptionEdit';
-import { FileEdit, FilesByAttr, filesToGrouped, groupedToFiles } from '../../shared/FileEdit';
-import { ImageEdit } from '../../shared/ImageEdit';
-import { StatusEdit } from '../../shared/StatusEdit';
+import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
+import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
+import {
+  DescriptionEdit,
+  DescriptionsByAttr,
+  descriptionsToGrouped,
+  groupedToDescriptions,
+} from '../../shared/DescriptionEdit';
+import {FileEdit, FilesByAttr, filesToGrouped, groupedToFiles} from '../../shared/FileEdit';
+import {ImageEdit} from '../../shared/ImageEdit';
+import {StatusEdit} from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import {Container} from '@mui/material';
 
 export function ElementForm(
   {
@@ -56,7 +62,6 @@ export function ElementForm(
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edit]);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -95,7 +100,7 @@ export function ElementForm(
 
       <DialogContent>
         <form onSubmit={handleSubmit} id="element-form">
-          {!edit && (
+          <Box style={{display: 'flex', gap: 12}}>
             <TextField
               autoFocus
               margin="dense"
@@ -104,18 +109,19 @@ export function ElementForm(
               fullWidth
               value={id}
               variant="standard"
+              disabled={!!edit}
               onChange={event => setId(event.target.value)}
             />
-          )}
 
-          <TextField
-            margin="dense"
-            label="Block"
-            fullWidth
-            value={parentId}
-            variant="standard"
-            disabled
-          />
+            <TextField
+              margin="dense"
+              label="Block"
+              fullWidth
+              value={parentId}
+              variant="standard"
+              disabled
+            />
+          </Box>
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
@@ -129,9 +135,7 @@ export function ElementForm(
           </Box>
 
           {tab === 0 && (
-            <Box sx={{ mt: 2 }}>
-              <StatusEdit value={status} onChange={setStatus}/>
-            </Box>
+            <StatusEdit value={status} onChange={setStatus}/>
           )}
 
           {tab === 1 && (

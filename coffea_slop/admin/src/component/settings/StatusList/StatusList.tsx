@@ -3,6 +3,7 @@ import { StatusView } from '../view';
 import { apiContext } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
+import { getStatusColumns } from '../../../service/status.service';
 import { StatusForm } from '../StatusForm';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +20,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Actions } from '../../common/Actions';
+import { StatusHeaderCell, StatusCell } from '../../common/StatusCell';
 import * as Icons from '@mui/icons-material';
 
 const IconComponent = ({ name, color }: { name: string | null; color?: string | null }) => {
@@ -39,6 +41,8 @@ export function StatusList() {
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
+
+  const statusColumns = useMemo(() => getStatusColumns(list, list), [list]);
 
   const columns = useMemo(() => [
     ...baseColumns,
@@ -84,6 +88,7 @@ export function StatusList() {
                 key={'actions'}
                 style={{ width: 12 }}
               />
+              <StatusHeaderCell statusColumns={statusColumns}/>
 
               {columns.map(column => (
                 <TableCell
@@ -115,6 +120,8 @@ export function StatusList() {
                       },
                     }]}/>
                   </TableCell>
+
+                  <StatusCell statusColumns={statusColumns} row={row}/>
 
                   {columns.map(column => {
                     if (column.id === 'color') {

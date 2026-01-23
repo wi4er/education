@@ -3,14 +3,14 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useEffect, useState } from 'react';
-import { apiContext } from '../../../context/ApiProvider';
+import React, {useEffect, useState} from 'react';
+import {apiContext} from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
-import { DirectoryView } from '../view';
+import {DirectoryView} from '../view';
 import Snackbar from '@mui/material/Snackbar';
-import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
-import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
-import { StatusEdit } from '../../shared/StatusEdit';
+import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
+import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
+import {StatusEdit} from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -43,7 +43,6 @@ export function DirectoryForm(
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edit]);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -78,18 +77,17 @@ export function DirectoryForm(
 
       <DialogContent>
         <form onSubmit={handleSubmit} id="directory-form">
-          {!edit && (
-            <TextField
-              autoFocus
-              margin="dense"
-              name="id"
-              label="ID (optional)"
-              fullWidth
-              value={id}
-              variant="standard"
-              onChange={event => setId(event.target.value)}
-            />
-          )}
+          <TextField
+            autoFocus
+            margin="dense"
+            name="id"
+            label="ID (optional)"
+            fullWidth
+            value={id}
+            disabled={!!edit}
+            variant="standard"
+            onChange={event => setId(event.target.value)}
+          />
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
@@ -100,9 +98,7 @@ export function DirectoryForm(
           </Box>
 
           {tab === 0 && (
-            <Box sx={{ mt: 2 }}>
-              <StatusEdit value={status} onChange={setStatus}/>
-            </Box>
+            <StatusEdit value={status} onChange={setStatus}/>
           )}
 
           {tab === 1 && (

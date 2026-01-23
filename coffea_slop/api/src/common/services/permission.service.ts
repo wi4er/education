@@ -28,12 +28,12 @@ export class PermissionService {
   async create<T>(
     transaction: EntityManager,
     permissionClass: EntityTarget<CommonPermissionEntity<T>>,
+    parentId: string,
     permissions: CommonPermissionInput[] = [],
-    parentId?: string,
   ): Promise<Array<CommonPermissionEntity<T>>> {
     const permissionsWithAdmin = this.ensureAdminPermission(
       permissions,
-      parentId || permissions[0]?.parentId,
+      parentId,
     );
 
     const permissionEntities = permissionsWithAdmin.map((perm) =>

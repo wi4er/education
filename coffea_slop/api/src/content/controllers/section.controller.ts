@@ -170,7 +170,7 @@ export class SectionController {
 
       await this.stringAttributeService.create<Section>(transaction, Section2String, saved.id, strings);
       await this.pointAttributeService.create<Section>(transaction, Section2Point, saved.id, points);
-      await this.permissionService.create<Section>(transaction, Section4Permission, permissions, saved.id);
+      await this.permissionService.create<Section>(transaction, Section4Permission, saved.id, permissions);
       await this.descriptionAttributeService.create<Section>(transaction, Section2Description, saved.id, descriptions);
       await this.counterAttributeService.create<Section>(transaction, Section2Counter, saved.id, counters);
       await this.fileAttributeService.create<Section>(transaction, Section2File, saved.id, files);

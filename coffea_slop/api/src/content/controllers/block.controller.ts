@@ -170,7 +170,7 @@ export class BlockController {
 
       await this.stringAttributeService.create<Block>(transaction, Block2String, saved.id, strings);
       await this.pointAttributeService.create<Block>(transaction, Block2Point, saved.id, points);
-      await this.permissionService.create<Block>(transaction, Block4Permission, permissions, saved.id);
+      await this.permissionService.create<Block>(transaction, Block4Permission, saved.id, permissions);
       await this.descriptionAttributeService.create<Block>(transaction, Block2Description, saved.id, descriptions);
       await this.counterAttributeService.create<Block>(transaction, Block2Counter, saved.id, counters);
       await this.fileAttributeService.create<Block>(transaction, Block2File, saved.id, files);

@@ -116,7 +116,7 @@ export class CollectionController {
 
       await this.stringAttributeService.create<Collection>(transaction, Collection2String, saved.id, strings);
       await this.pointAttributeService.create<Collection>(transaction, Collection2Point, saved.id, points);
-      await this.permissionService.create<Collection>(transaction, Collection4Permission, permissions, saved.id);
+      await this.permissionService.create<Collection>(transaction, Collection4Permission, saved.id, permissions);
       await this.statusService.create<Collection>(transaction, Collection4Status, saved.id, status);
 
       return transaction.findOne(Collection, {

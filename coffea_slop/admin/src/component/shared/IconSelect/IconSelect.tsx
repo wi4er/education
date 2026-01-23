@@ -46,7 +46,7 @@ export function IconSelect(
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
         <TextField
           size="small"

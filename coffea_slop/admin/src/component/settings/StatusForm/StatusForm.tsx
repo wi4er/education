@@ -3,15 +3,16 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useEffect, useState } from 'react';
-import { apiContext } from '../../../context/ApiProvider';
+import React, {useEffect, useState} from 'react';
+import {apiContext} from '../../../context/ApiProvider';
 import Dialog from '@mui/material/Dialog';
-import { StatusView } from '../view';
+import {StatusView} from '../view';
 import Snackbar from '@mui/material/Snackbar';
-import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
-import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
-import { IconSelect } from '../../shared/IconSelect';
-import { ColorPicker } from '../../shared/ColorPicker';
+import {StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings} from '../../shared/StringEdit';
+import {PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints} from '../../shared/PointEdit';
+import {StatusEdit} from '../../shared/StatusEdit';
+import {IconSelect} from '../../shared/IconSelect';
+import {ColorPicker} from '../../shared/ColorPicker';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -29,6 +30,7 @@ export function StatusForm(
   const [id, setId] = useState('');
   const [icon, setIcon] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
+  const [status, setStatus] = useState<string[]>([]);
   const [strings, setStrings] = useState<StringsByAttr>({});
   const [points, setPoints] = useState<PointsByAttr>({});
   const [error, setError] = useState('');
@@ -42,6 +44,7 @@ export function StatusForm(
           setId(data.id);
           setIcon(data.icon);
           setColor(data.color);
+          setStatus(data?.status || []);
           setStrings(stringsToGrouped(data.attributes?.strings || []));
           setPoints(pointsToGrouped(data.attributes?.points || []));
         })
@@ -57,6 +60,7 @@ export function StatusForm(
       id,
       icon,
       color,
+      status: status.length > 0 ? status : undefined,
       strings: groupedToStrings(strings),
       points: groupedToPoints(points),
     };
@@ -104,22 +108,25 @@ export function StatusForm(
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
               <Tab label="Icon"/>
+              <Tab label="Status"/>
               <Tab label="Strings"/>
               <Tab label="Points"/>
             </Tabs>
           </Box>
 
           {tab === 0 && (
-            <Box sx={{ mt: 2 }}>
-              <IconSelect value={icon} onChange={setIcon}/>
-            </Box>
+            <IconSelect value={icon} onChange={setIcon}/>
           )}
 
           {tab === 1 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
+            <StatusEdit value={status} onChange={setStatus}/>
           )}
 
           {tab === 2 && (
+            <StringEdit strings={strings} onChange={setStrings}/>
+          )}
+
+          {tab === 3 && (
             <PointEdit points={points} onChange={setPoints}/>
           )}
         </form>

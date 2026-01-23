@@ -121,15 +121,15 @@ export class DirectoryController {
 
     const directory = await this.dataSource.transaction(async (transaction) => {
       const dir = transaction.create(Directory, directoryData);
-      const savedDirectory = await transaction.save(dir);
+      const saved = await transaction.save(dir);
 
-      await this.stringAttributeService.create<Directory>(transaction, Directory2String, savedDirectory.id, strings);
-      await this.pointAttributeService.create<Directory>(transaction, Directory2Point, savedDirectory.id, points);
-      await this.permissionService.create<Directory>(transaction, Directory4Permission, permissions, savedDirectory.id);
-      await this.statusService.create<Directory>(transaction, Directory4Status, savedDirectory.id, status);
+      await this.stringAttributeService.create<Directory>(transaction, Directory2String, saved.id, strings);
+      await this.pointAttributeService.create<Directory>(transaction, Directory2Point, saved.id, points);
+      await this.permissionService.create<Directory>(transaction, Directory4Permission, saved.id, permissions);
+      await this.statusService.create<Directory>(transaction, Directory4Status, saved.id, status);
 
       return transaction.findOne(Directory, {
-        where: { id: savedDirectory.id },
+        where: { id: saved.id },
         relations: this.relations,
       });
     });

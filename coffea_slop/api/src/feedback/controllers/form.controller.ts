@@ -163,7 +163,7 @@ export class FormController {
 
       await this.stringAttributeService.create<Form>(transaction, Form2String, saved.id, strings);
       await this.pointAttributeService.create<Form>(transaction, Form2Point, saved.id, points);
-      await this.permissionService.create<Form>(transaction, Form4Permission, permissions, saved.id);
+      await this.permissionService.create<Form>(transaction, Form4Permission, saved.id, permissions);
       await this.descriptionAttributeService.create<Form>(transaction, Form2Description, saved.id, descriptions);
       await this.counterAttributeService.create<Form>(transaction, Form2Counter, saved.id, counters);
       await this.fileAttributeService.create<Form>(transaction, Form2File, saved.id, files);

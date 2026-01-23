@@ -10,6 +10,7 @@ import { LanguageView } from '../view';
 import Snackbar from '@mui/material/Snackbar';
 import { StringEdit, StringsByAttr, stringsToGrouped, groupedToStrings } from '../../shared/StringEdit';
 import { PointEdit, PointsByAttr, pointsToGrouped, groupedToPoints } from '../../shared/PointEdit';
+import { StatusEdit } from '../../shared/StatusEdit';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -24,6 +25,7 @@ export function LanguageForm(
   },
 ) {
   const [id, setId] = useState('');
+  const [status, setStatus] = useState<string[]>([]);
   const [strings, setStrings] = useState<StringsByAttr>({});
   const [points, setPoints] = useState<PointsByAttr>({});
   const [error, setError] = useState('');
@@ -35,6 +37,7 @@ export function LanguageForm(
       getItem<LanguageView>(`language/${edit}`)
         .then(data => {
           setId(data.id);
+          setStatus(data?.status || []);
           setStrings(stringsToGrouped(data.attributes?.strings || []));
           setPoints(pointsToGrouped(data.attributes?.points || []));
         })
@@ -48,6 +51,7 @@ export function LanguageForm(
 
     const payload = {
       id,
+      status: status.length > 0 ? status : undefined,
       strings: groupedToStrings(strings),
       points: groupedToPoints(points),
     };
@@ -89,16 +93,21 @@ export function LanguageForm(
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
+              <Tab label="Status"/>
               <Tab label="Strings"/>
               <Tab label="Points"/>
             </Tabs>
           </Box>
 
           {tab === 0 && (
-            <StringEdit strings={strings} onChange={setStrings}/>
+            <StatusEdit value={status} onChange={setStatus}/>
           )}
 
           {tab === 1 && (
+            <StringEdit strings={strings} onChange={setStrings}/>
+          )}
+
+          {tab === 2 && (
             <PointEdit points={points} onChange={setPoints}/>
           )}
         </form>

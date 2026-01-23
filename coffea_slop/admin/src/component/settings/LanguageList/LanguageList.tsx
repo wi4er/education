@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { LanguageView } from '../view';
+import { LanguageView, StatusView } from '../view';
 import { apiContext } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
+import { getStatusColumns } from '../../../service/status.service';
 import { LanguageForm } from '../LanguageForm';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +20,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Actions } from '../../common/Actions';
+import { StatusHeaderCell, StatusCell } from '../../common/StatusCell';
 
 const baseColumns: readonly Column[] = [
   { id: 'id', label: 'ID', minWidth: 170 },
@@ -27,9 +29,12 @@ const baseColumns: readonly Column[] = [
 export function LanguageList() {
   const { getList, deleteItem } = useContext(apiContext);
   const [list, setList] = useState<Array<LanguageView>>([]);
+  const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
+
+  const statusColumns = useMemo(() => getStatusColumns(list, statuses), [list, statuses]);
 
   const columns = useMemo(() => [
     ...baseColumns,
@@ -43,7 +48,12 @@ export function LanguageList() {
       .catch(() => setList([]));
   }
 
-  useEffect(() => refreshData(), []);
+  useEffect(() => {
+    refreshData();
+    getList<StatusView>('status')
+      .then(data => setStatuses(data))
+      .catch(() => setStatuses([]));
+  }, []);
 
   return (
     <div>
@@ -75,6 +85,7 @@ export function LanguageList() {
                 key={'actions'}
                 style={{ width: 12 }}
               />
+              <StatusHeaderCell statusColumns={statusColumns}/>
 
               {columns.map(column => (
                 <TableCell
@@ -106,6 +117,8 @@ export function LanguageList() {
                       },
                     }]}/>
                   </TableCell>
+
+                  <StatusCell statusColumns={statusColumns} row={row}/>
 
                   {columns.map(column => {
                     let displayValue: string;

@@ -85,7 +85,7 @@ export function ElementList(
 
   if (list.length === 0) {
     return (
-      <div>
+      <Box>
         <Toolbar>
           <Box sx={{ flex: 1 }}/>
 
@@ -111,12 +111,12 @@ export function ElementList(
             }}
           />
         )}
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div>
+    <Box>
       <Toolbar>
         <Box sx={{ flex: 1 }}/>
 
@@ -219,6 +219,6 @@ export function ElementList(
           setEdit(null);
         }}
       /> : null}
-    </div>
+    </Box>
   );
 }

@@ -222,7 +222,7 @@ export class ElementController {
 
       await this.stringAttributeService.create<Element>(transaction, Element2String, id, strings);
       await this.pointAttributeService.create<Element>(transaction, Element2Point, id, points);
-      await this.permissionService.create<Element>(transaction, Element4Permission, permissions, id);
+      await this.permissionService.create<Element>(transaction, Element4Permission, id, permissions);
       await this.descriptionAttributeService.create<Element>(transaction, Element2Description, id, descriptions);
       await this.counterAttributeService.create<Element>(transaction, Element2Counter, id, counters);
       await this.fileAttributeService.create<Element>(transaction, Element2File, id, files);

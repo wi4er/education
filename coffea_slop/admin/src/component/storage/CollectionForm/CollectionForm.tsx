@@ -100,9 +100,7 @@ export function CollectionForm(
           </Box>
 
           {tab === 0 && (
-            <Box sx={{ mt: 2 }}>
-              <StatusEdit value={status} onChange={setStatus}/>
-            </Box>
+            <StatusEdit value={status} onChange={setStatus}/>
           )}
 
           {tab === 1 && (

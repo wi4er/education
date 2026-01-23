@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ResultView } from '../view';
+import { StatusView } from '../../settings/view';
 import { apiContext } from '../../../context/ApiProvider';
 import { Column } from '../../../service/string.service';
 import { ResultForm } from '../ResultForm';
@@ -46,6 +47,7 @@ export function ResultList(
 ) {
   const { getList, deleteItem } = useContext(apiContext);
   const [allItems, setAllItems] = useState<Array<ResultView>>([]);
+  const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
@@ -63,6 +65,9 @@ export function ResultList(
 
   useEffect(() => {
     refreshData();
+    getList<StatusView>('status')
+      .then(data => setStatuses(data))
+      .catch(() => setStatuses([]));
   }, []);
 
   if (list.length === 0) {
