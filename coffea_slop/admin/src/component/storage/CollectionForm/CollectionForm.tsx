@@ -34,7 +34,7 @@ export function CollectionForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<CollectionView>(`collection/${edit}`)
+      getItem<CollectionView>('collection', edit)
         .then(data => {
           setId(data.id);
           setStatus(data?.status || []);
@@ -57,7 +57,7 @@ export function CollectionForm(
     };
 
     if (edit) {
-      putItem<CollectionView>(`collection/${edit}`, payload)
+      putItem<CollectionView>('collection', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

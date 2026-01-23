@@ -38,7 +38,7 @@ export function FileForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<FileView>(`file/${edit}`)
+      getItem<FileView>('file', edit)
         .then(data => {
           setId(data.id);
           setPath(data.path || '');
@@ -66,7 +66,7 @@ export function FileForm(
     };
 
     if (edit) {
-      putItem<FileView>(`file/${edit}`, payload)
+      putItem<FileView>('file', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

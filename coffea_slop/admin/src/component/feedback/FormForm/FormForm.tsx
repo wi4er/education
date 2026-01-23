@@ -38,7 +38,7 @@ export function FormForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<FormView>(`form/${edit}`)
+      getItem<FormView>('form', edit)
         .then(data => {
           setId(data.id);
           setStatus(data?.status || []);
@@ -65,7 +65,7 @@ export function FormForm(
     };
 
     if (edit) {
-      putItem<FormView>(`form/${edit}`, payload)
+      putItem<FormView>('form', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

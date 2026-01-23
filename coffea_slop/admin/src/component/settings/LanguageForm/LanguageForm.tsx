@@ -34,7 +34,7 @@ export function LanguageForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<LanguageView>(`language/${edit}`)
+      getItem<LanguageView>('language', edit)
         .then(data => {
           setId(data.id);
           setStatus(data?.status || []);
@@ -57,7 +57,7 @@ export function LanguageForm(
     };
 
     if (edit) {
-      putItem<LanguageView>(`language/${edit}`, payload)
+      putItem<LanguageView>('language', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

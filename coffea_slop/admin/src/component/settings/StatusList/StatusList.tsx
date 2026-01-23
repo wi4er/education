@@ -115,7 +115,7 @@ export function StatusList() {
                       title: 'Delete',
                       icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
-                        deleteItem(`status/${row.id}`)
+                        deleteItem('status', row.id)
                           .then(() => refreshData());
                       },
                     }]}/>

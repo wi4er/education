@@ -42,7 +42,7 @@ export function AttributeForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<AttributeView>(`attribute/${edit}`)
+      getItem<AttributeView>('attribute', edit)
         .then(data => {
           setId(data.id);
           setType(data.type || AttributeType.STRING);
@@ -71,7 +71,7 @@ export function AttributeForm(
     };
 
     if (edit) {
-      putItem<AttributeView>(`attribute/${edit}`, payload)
+      putItem<AttributeView>('attribute', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

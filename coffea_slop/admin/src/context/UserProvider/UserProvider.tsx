@@ -14,7 +14,7 @@ export function UserProvider(
   const [user, setUser] = useState<SignInEntity | null | undefined>(undefined);
 
   useEffect(() => {
-    getItem<SignInEntity>('sign-in')
+    getItem<SignInEntity>('sign-in', '')
       .then(data => setUser(data))
       .catch(() => setUser(null));
   }, []);
@@ -34,7 +34,7 @@ export function UserProvider(
           });
       },
       logOut: () => {
-        return deleteItem('sign-in')
+        return deleteItem('sign-in', '')
           .then(() => setUser(null));
       },
     }}>

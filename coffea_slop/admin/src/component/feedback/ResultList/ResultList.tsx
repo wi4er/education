@@ -147,7 +147,7 @@ export function ResultList(
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`result/${row.id}`)
+                      deleteItem('result', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

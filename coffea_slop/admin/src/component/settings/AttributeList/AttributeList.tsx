@@ -113,7 +113,7 @@ export function AttributeList() {
                       title: 'Delete',
                       icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
-                        deleteItem(`attribute/${row.id}`)
+                        deleteItem('attribute', row.id)
                           .then(() => refreshData());
                       },
                     }]}/>

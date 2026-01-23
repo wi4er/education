@@ -41,7 +41,7 @@ export function SectionForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<SectionView>(`section/${edit}`)
+      getItem<SectionView>('section', edit)
         .then(data => {
           setId(data.id);
           setParentId(data.parentId || '');
@@ -70,7 +70,7 @@ export function SectionForm(
     };
 
     if (edit) {
-      putItem<SectionView>(`section/${edit}`, payload)
+      putItem<SectionView>('section', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

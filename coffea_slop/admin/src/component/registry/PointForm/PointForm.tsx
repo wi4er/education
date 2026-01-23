@@ -37,7 +37,7 @@ export function PointForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<PointView>(`point/${edit}`)
+      getItem<PointView>('point', edit)
         .then(data => {
           setId(data.id);
           setDirectoryId(data.directoryId || '');
@@ -62,7 +62,7 @@ export function PointForm(
     };
 
     if (edit) {
-      putItem<PointView>(`point/${edit}`, payload)
+      putItem<PointView>('point', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

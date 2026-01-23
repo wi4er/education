@@ -38,7 +38,7 @@ export function BlockForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<BlockView>(`block/${edit}`)
+      getItem<BlockView>('block', edit)
         .then(data => {
           setId(data.id);
           setStatus(data?.status || []);
@@ -65,7 +65,7 @@ export function BlockForm(
     };
 
     if (edit) {
-      putItem<BlockView>(`block/${edit}`, payload)
+      putItem<BlockView>('block', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

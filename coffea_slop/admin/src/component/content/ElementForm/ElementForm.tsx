@@ -49,7 +49,7 @@ export function ElementForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<ElementView>(`element/${edit}`)
+      getItem<ElementView>('element', edit)
         .then(data => {
           setId(data.id);
           setParentId(data.parentId || '');
@@ -79,7 +79,7 @@ export function ElementForm(
     };
 
     if (edit) {
-      putItem<ElementView>(`element/${edit}`, payload)
+      putItem<ElementView>('element', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

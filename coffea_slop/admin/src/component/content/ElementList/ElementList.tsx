@@ -161,7 +161,7 @@ export function ElementList(
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`element/${row.id}`)
+                      deleteItem('element', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

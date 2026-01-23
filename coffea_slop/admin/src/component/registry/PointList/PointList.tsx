@@ -159,7 +159,7 @@ export function PointList(
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`point/${row.id}`)
+                      deleteItem('point', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

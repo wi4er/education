@@ -150,7 +150,7 @@ export function SectionList(
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`section/${row.id}`)
+                      deleteItem('section', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

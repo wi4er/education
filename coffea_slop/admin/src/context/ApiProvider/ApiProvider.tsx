@@ -25,8 +25,9 @@ export function ApiProvider(
         return res.json();
       },
 
-      getItem: async <T,>(path: string): Promise<T> => {
-        const res = await fetch(`${apiPath}/${path}`, {
+      getItem: async <T,>(path: string, id: string): Promise<T> => {
+        const url = id ? `${apiPath}/${path}/${id}` : `${apiPath}/${path}`;
+        const res = await fetch(url, {
           method: 'GET',
           credentials: 'include',
         });
@@ -55,8 +56,8 @@ export function ApiProvider(
         return res.json();
       },
 
-      putItem: async <T,>(path: string, data: object): Promise<T> => {
-        const res = await fetch(`${apiPath}/${path}`, {
+      putItem: async <T,>(path: string, id: string, data: object): Promise<T> => {
+        const res = await fetch(`${apiPath}/${path}/${id}`, {
           method: 'PUT',
           credentials: 'include',
           headers: {
@@ -72,8 +73,8 @@ export function ApiProvider(
         return res.json();
       },
 
-      deleteItem: async (path: string): Promise<void> => {
-        const res = await fetch(`${apiPath}/${path}`, {
+      deleteItem: async (path: string, id: string): Promise<void> => {
+        const res = await fetch(`${apiPath}/${path}/${id}`, {
           method: 'DELETE',
           credentials: 'include',
         });

@@ -147,7 +147,7 @@ export function CollectionList() {
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`collection/${row.id}`)
+                      deleteItem('collection', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

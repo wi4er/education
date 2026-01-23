@@ -21,7 +21,7 @@ export function CollectionDetail() {
 
   useEffect(() => {
     if (id) {
-      getItem<CollectionView>(`collection/${id}`)
+      getItem<CollectionView>('collection', id)
         .then(data => setCollection(data))
         .catch(() => setCollection(null));
     }

@@ -21,7 +21,7 @@ export function DirectoryDetail() {
 
   useEffect(() => {
     if (id) {
-      getItem<DirectoryView>(`directory/${id}`)
+      getItem<DirectoryView>('directory', id)
         .then(data => setDirectory(data))
         .catch(() => setDirectory(null));
     }

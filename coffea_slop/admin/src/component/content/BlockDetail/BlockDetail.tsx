@@ -22,7 +22,7 @@ export function BlockDetail() {
 
   useEffect(() => {
     if (id) {
-      getItem<BlockView>(`block/${id}`)
+      getItem<BlockView>('block', id)
         .then(data => setBlock(data))
         .catch(() => setBlock(null));
     }

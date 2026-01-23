@@ -112,7 +112,7 @@ export function LanguageList() {
                       title: 'Delete',
                       icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
-                        deleteItem(`language/${row.id}`)
+                        deleteItem('language', row.id)
                           .then(() => refreshData());
                       },
                     }]}/>

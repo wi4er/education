@@ -34,7 +34,7 @@ export function DirectoryForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<DirectoryView>(`directory/${edit}`)
+      getItem<DirectoryView>('directory', edit)
         .then(data => {
           setId(data.id);
           setStatus(data?.status || []);
@@ -43,7 +43,7 @@ export function DirectoryForm(
         })
         .catch(err => setError(err?.message || 'Failed to load'));
     }
-  }, [edit]);
+  }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -56,7 +56,7 @@ export function DirectoryForm(
     };
 
     if (edit) {
-      putItem<DirectoryView>(`directory/${edit}`, payload)
+      putItem<DirectoryView>('directory', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {
@@ -112,7 +112,10 @@ export function DirectoryForm(
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>
+          Cancel
+        </Button>
+
         <Button type="submit" form="directory-form">
           SAVE
         </Button>

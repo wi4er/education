@@ -39,7 +39,7 @@ export function StatusForm(
 
   useEffect(() => {
     if (edit) {
-      getItem<StatusView>(`status/${edit}`)
+      getItem<StatusView>('status', edit)
         .then(data => {
           setId(data.id);
           setIcon(data.icon);
@@ -66,7 +66,7 @@ export function StatusForm(
     };
 
     if (edit) {
-      putItem<StatusView>(`status/${edit}`, payload)
+      putItem<StatusView>('status', edit, payload)
         .then(() => onClose())
         .catch(err => setError(err?.message || 'Failed to save'));
     } else {

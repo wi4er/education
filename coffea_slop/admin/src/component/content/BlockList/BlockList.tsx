@@ -149,7 +149,7 @@ export function BlockList() {
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`block/${row.id}`)
+                      deleteItem('block', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

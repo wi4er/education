@@ -21,7 +21,7 @@ export function FormDetail() {
 
   useEffect(() => {
     if (id) {
-      getItem<FormView>(`form/${id}`)
+      getItem<FormView>('form', id)
         .then(data => setForm(data))
         .catch(() => setForm(null));
     }

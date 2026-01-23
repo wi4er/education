@@ -160,7 +160,7 @@ export function FormList() {
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`form/${row.id}`)
+                      deleteItem('form', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

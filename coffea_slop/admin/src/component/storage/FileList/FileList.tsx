@@ -156,7 +156,7 @@ export function FileList(
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`file/${row.id}`)
+                      deleteItem('file', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>

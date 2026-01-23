@@ -147,7 +147,7 @@ export function DirectoryList() {
                     title: 'Delete',
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
-                      deleteItem(`directory/${row.id}`)
+                      deleteItem('directory', row.id)
                         .then(() => refreshData());
                     },
                   }]}/>
