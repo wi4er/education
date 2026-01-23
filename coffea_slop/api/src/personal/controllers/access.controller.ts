@@ -19,6 +19,7 @@ import {AccessInput} from '../inputs/access.input';
 
 @Controller('access')
 export class AccessController {
+
   constructor(
     @InjectRepository(Access)
     private readonly accessRepository: Repository<Access>,
@@ -93,4 +94,5 @@ export class AccessController {
   ): Promise<void> {
     await this.accessRepository.delete(id);
   }
+
 }

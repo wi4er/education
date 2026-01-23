@@ -13,7 +13,7 @@ export function ApiProvider(
 ) {
   return (
     <apiContext.Provider value={{
-      getList: async <T,>(path: ApiEntity, pagination?: Pagination): Promise<Array<T>> => {
+      getList: async <T, >(path: ApiEntity, pagination?: Pagination): Promise<Array<T>> => {
         const params = new URLSearchParams();
         if (pagination?.limit !== undefined) params.set('limit', String(pagination.limit));
         if (pagination?.offset !== undefined) params.set('offset', String(pagination.offset));
@@ -32,7 +32,7 @@ export function ApiProvider(
         return res.json();
       },
 
-      getItem: async <T,>(path: string, id: string): Promise<T> => {
+      getItem: async <T, >(path: string, id: string): Promise<T> => {
         const url = id ? `${apiPath}/${path}/${id}` : `${apiPath}/${path}`;
         const res = await fetch(url, {
           method: 'GET',
@@ -46,7 +46,7 @@ export function ApiProvider(
         return res.json();
       },
 
-      postItem: async <T,>(path: string, data: object): Promise<T> => {
+      postItem: async <T, >(path: string, data: object): Promise<T> => {
         const res = await fetch(`${apiPath}/${path}`, {
           method: 'POST',
           credentials: 'include',
@@ -63,7 +63,7 @@ export function ApiProvider(
         return res.json();
       },
 
-      putItem: async <T,>(path: string, id: string, data: object): Promise<T> => {
+      putItem: async <T, >(path: string, id: string, data: object): Promise<T> => {
         const res = await fetch(`${apiPath}/${path}/${id}`, {
           method: 'PUT',
           credentials: 'include',

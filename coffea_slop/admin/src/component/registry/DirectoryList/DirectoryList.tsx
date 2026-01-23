@@ -34,19 +34,19 @@ const baseColumns: readonly Column[] = [
 export function DirectoryList() {
   const navigate = useNavigate();
   const { getList, deleteItem } = useContext(apiContext);
-  const [list, setList] = useState<Array<DirectoryView>>([]);
-  const [statuses, setStatuses] = useState<Array<StatusView>>([]);
-  const [edit, setEdit] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(50);
+  const [ list, setList ] = useState<Array<DirectoryView>>([]);
+  const [ statuses, setStatuses ] = useState<Array<StatusView>>([]);
+  const [ edit, setEdit ] = useState<string | null>(null);
+  const [ page, setPage ] = useState(0);
+  const [ rowsPerPage, setRowsPerPage ] = useState(50);
 
-  const statusColumns = useMemo(() => getStatusColumns(list, statuses), [list, statuses]);
+  const statusColumns = useMemo(() => getStatusColumns(list, statuses), [ list, statuses ]);
 
   const columns = useMemo(() => [
     ...baseColumns,
     ...getStringColumns(list),
     ...getPointColumns(list),
-  ], [list]);
+  ], [ list ]);
 
   function refreshData(pagination?: Pagination) {
     getList<DirectoryView>(ApiEntity.DIRECTORY, pagination)
@@ -59,7 +59,7 @@ export function DirectoryList() {
     getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, [page, rowsPerPage]);
+  }, [ page, rowsPerPage ]);
 
   if (list.length === 0) {
     return (
@@ -139,7 +139,7 @@ export function DirectoryList() {
             {list.map(row => (
               <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                 <TableCell key={'actions'}>
-                  <Actions list={[{
+                  <Actions list={[ {
                     title: 'Edit',
                     icon: <EditIcon fontSize="small"/>,
                     onClick: () => setEdit(row.id),
@@ -150,7 +150,7 @@ export function DirectoryList() {
                       deleteItem('directory', row.id)
                         .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                     },
-                  }]}/>
+                  } ]}/>
                 </TableCell>
 
                 <TableCell key={'view'}>
@@ -194,7 +194,7 @@ export function DirectoryList() {
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
+        rowsPerPageOptions={[ 10, 25, 50, 100 ]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}

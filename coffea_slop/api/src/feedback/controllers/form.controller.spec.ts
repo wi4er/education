@@ -2,7 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {JwtModule, JwtService} from '@nestjs/jwt';
-import {DataSource} from 'typeorm';
+import {DataSource, Repository, EntityTarget} from 'typeorm';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
 import {FormController} from './form.controller';
@@ -21,7 +21,7 @@ describe('FormController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let jwtService: JwtService;
-  let repo;
+  let repo: <T>(target: EntityTarget<T>) => Repository<T>;
 
   beforeAll(() => {
     process.env.JWT_SECRET = JWT_SECRET;

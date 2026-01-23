@@ -33,11 +33,11 @@ src/
 
 Provider hierarchy in `App.tsx`: `ApiProvider` → `UserProvider` → `BrowserRouter`
 
-**ApiProvider** (`context/ApiProvider/`): Modular structure with separate hooks:
-- `useGet`, `useGetItem`, `usePost`, `usePut`, `useDelete` - Individual API operation hooks
-- `useApi` - Combines all hooks
-- `ApiData` interface: `getList<T>`, `getItem<T>`, `postItem<T>`, `putItem<T>`, `deleteItem`
-- All API calls go to `/api/*` endpoints
+**ApiProvider** (`context/ApiProvider/`): Modular structure:
+- `ApiEntity` enum - Type-safe API endpoint identifiers (ATTRIBUTE, LANGUAGE, STATUS, DIRECTORY, POINT, BLOCK, ELEMENT, SECTION, FORM, RESULT, COLLECTION, FILE, etc.)
+- `Pagination` interface - `{ limit?: number; offset?: number }` for server-side pagination
+- `ApiData` interface: `getList<T>(path: ApiEntity, pagination?: Pagination)`, `getItem<T>`, `postItem<T>`, `putItem<T>`, `deleteItem`
+- All API calls go to `/api/*` endpoints (configurable via `API_PATH` env var)
 
 **UserProvider** (`context/UserProvider/`): Auth state management:
 - `useUser` - Current user state
@@ -68,10 +68,10 @@ Helper functions in `src/service/` for dynamic column generation and value extra
 
 - Named exports from `index.tsx` files: `export { ComponentName } from './ComponentName'`
 - Context providers export both the provider component and the context object
-- API calls via `useContext(apiContext)` with typed generic methods
+- API calls via `useContext(apiContext)` with `ApiEntity` enum: `getList<T>(ApiEntity.DIRECTORY, { limit: 50, offset: 0 })`
 - View interfaces in `model/` follow `*View` naming (e.g., `AttributeView`, `StringsByAttr`)
 - Form components use controlled inputs with `useState` for each field
-- List components follow pattern: fetch data in `useEffect`, store in state, render with Material-UI Table
+- List components follow pattern: fetch data in `useEffect` with pagination `{ limit: rowsPerPage, offset: page * rowsPerPage }`, store in state, render with Material-UI Table
 - Reusable editing components (like `StringEdit`) export both the component and helper functions (`stringsToGrouped`, `groupedToStrings`)
 
 ## Component Conventions

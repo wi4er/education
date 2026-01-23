@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {DataSource} from 'typeorm';
+import {DataSource, Repository, EntityTarget} from 'typeorm';
 import * as request from 'supertest';
 import {ResultController} from './result.controller';
 import {Result} from '../entities/result/result.entity';
@@ -13,7 +13,7 @@ import {CommonModule} from '../../common/common.module';
 describe('ResultController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-  let repo;
+  let repo: <T>(target: EntityTarget<T>) => Repository<T>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

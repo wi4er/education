@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {DataSource} from 'typeorm';
+import {DataSource, Repository, EntityTarget} from 'typeorm';
 import * as request from 'supertest';
 import {AccessController} from './access.controller';
 import {Access} from '../entities/access/access.entity';
@@ -15,7 +15,7 @@ import {CommonModule} from '../../common/common.module';
 describe('AccessController', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-  let repo;
+  let repo: <T>(target: EntityTarget<T>) => Repository<T>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
