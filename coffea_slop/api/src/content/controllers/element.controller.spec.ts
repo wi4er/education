@@ -70,7 +70,7 @@ describe('ElementController', () => {
         .get('/element')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of elements with relations', async () => {
@@ -82,18 +82,18 @@ describe('ElementController', () => {
         .get('/element')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('element-1');
-      expect(response.body[0].parentId).toBe('block-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('element-1');
+      expect(response.body.data[0].parentId).toBe('block-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
         descriptions: [],
         counters: [],
         files: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
-      expect(response.body[0].sections).toEqual([]);
+      expect(response.body.data[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].sections).toEqual([]);
     });
 
     it('should filter out elements without READ permission', async () => {
@@ -108,8 +108,8 @@ describe('ElementController', () => {
         .get('/element')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual([
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual([
         'element-1',
         'element-3',
       ]);
@@ -134,8 +134,8 @@ describe('ElementController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual([
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual([
         'element-1',
         'element-2',
       ]);
@@ -160,8 +160,8 @@ describe('ElementController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('element-2');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('element-2');
     });
   });
 
@@ -179,7 +179,7 @@ describe('ElementController', () => {
         .get('/element?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip elements when offset is provided', async () => {
@@ -195,7 +195,7 @@ describe('ElementController', () => {
         .get('/element?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated elements when both limit and offset are provided', async () => {
@@ -213,7 +213,7 @@ describe('ElementController', () => {
         .get('/element?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total elements', async () => {
@@ -225,7 +225,7 @@ describe('ElementController', () => {
         .get('/element?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 
@@ -244,8 +244,8 @@ describe('ElementController', () => {
         .get('/element?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual(['element-1', 'element-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual(['element-1', 'element-3']);
     });
 
     it('should apply offset after permission filtering', async () => {
@@ -262,8 +262,8 @@ describe('ElementController', () => {
         .get('/element?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual(['element-3', 'element-4']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual(['element-3', 'element-4']);
     });
 
     it('should apply both limit and offset after permission filtering', async () => {
@@ -282,8 +282,8 @@ describe('ElementController', () => {
         .get('/element?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual(['element-3', 'element-4']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual(['element-3', 'element-4']);
     });
 
     it('should paginate with group permission filtering', async () => {
@@ -302,8 +302,8 @@ describe('ElementController', () => {
         .get('/element?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual(['element-1', 'element-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual(['element-1', 'element-3']);
     });
 
     it('should paginate with group permission when user has matching group', async () => {
@@ -325,8 +325,8 @@ describe('ElementController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((e) => e.id)).toEqual(['element-2', 'element-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((e) => e.id)).toEqual(['element-2', 'element-3']);
     });
 
     it('should return empty when offset exceeds filtered results', async () => {
@@ -340,7 +340,7 @@ describe('ElementController', () => {
         .get('/element?offset=5')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 
@@ -375,8 +375,8 @@ describe('ElementController', () => {
           .query({ 'string[0][attr]': 'name', 'string[0][value]': 'Latte' })
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('element-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('element-1');
       });
 
       it('should filter by string attribute with like pattern', async () => {
@@ -403,8 +403,8 @@ describe('ElementController', () => {
           .query({ 'string[0][attr]': 'name', 'string[0][like]': 'Latte' })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id).sort()).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id).sort()).toEqual([
           'element-1',
           'element-2',
         ]);
@@ -443,8 +443,8 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('element-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('element-1');
       });
     });
 
@@ -465,8 +465,8 @@ describe('ElementController', () => {
           .query({ 'point[0][attr]': 'category', 'point[0][point]': 'coffee' })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id).sort()).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id).sort()).toEqual([
           'element-1',
           'element-3',
         ]);
@@ -487,8 +487,8 @@ describe('ElementController', () => {
           .query({ 'counter[0][attr]': 'price', 'counter[0][eq]': '5' })
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('element-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('element-1');
       });
 
       it('should filter by counter with min value', async () => {
@@ -507,8 +507,8 @@ describe('ElementController', () => {
           .query({ 'counter[0][attr]': 'price', 'counter[0][min]': '10' })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id).sort()).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id).sort()).toEqual([
           'element-2',
           'element-3',
         ]);
@@ -530,8 +530,8 @@ describe('ElementController', () => {
           .query({ 'counter[0][attr]': 'price', 'counter[0][max]': '10' })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id).sort()).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id).sort()).toEqual([
           'element-1',
           'element-2',
         ]);
@@ -560,8 +560,8 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id).sort()).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id).sort()).toEqual([
           'element-2',
           'element-3',
         ]);
@@ -593,8 +593,8 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('element-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('element-1');
       });
 
       it('should filter by string, point, and counter', async () => {
@@ -621,8 +621,8 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('element-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('element-1');
       });
 
       it('should return empty array when no elements match all filters', async () => {
@@ -641,7 +641,7 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toEqual([]);
+        expect(response.body).toEqual({ data: [], count: 0 });
       });
     });
   });
@@ -667,8 +667,8 @@ describe('ElementController', () => {
           .get('/element?order=createdAt&orderDir=ASC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-1',
           'element-2',
           'element-3',
@@ -699,8 +699,8 @@ describe('ElementController', () => {
           .get('/element?order=createdAt&orderDir=DESC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-3',
           'element-2',
           'element-1',
@@ -731,8 +731,8 @@ describe('ElementController', () => {
           .get('/element?order=updatedAt&orderDir=ASC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-1',
           'element-2',
           'element-3',
@@ -763,8 +763,8 @@ describe('ElementController', () => {
           .get('/element?order=updatedAt&orderDir=DESC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-3',
           'element-2',
           'element-1',
@@ -789,8 +789,8 @@ describe('ElementController', () => {
           .get('/element?order=createdAt')
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-1',
           'element-2',
         ]);
@@ -813,8 +813,8 @@ describe('ElementController', () => {
           .get('/element?order=string:name&orderDir=ASC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-2',
           'element-1',
           'element-3',
@@ -836,8 +836,8 @@ describe('ElementController', () => {
           .get('/element?order=string:name&orderDir=DESC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-3',
           'element-1',
           'element-2',
@@ -892,8 +892,8 @@ describe('ElementController', () => {
           .get('/element?order=string:name:en&orderDir=ASC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(3);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-2',
           'element-1',
           'element-3',
@@ -914,8 +914,8 @@ describe('ElementController', () => {
           .get('/element?order=string:name&orderDir=ASC')
           .expect(200);
 
-        expect(response.body).toHaveLength(3);
-        const ids = response.body.map((e) => e.id);
+        expect(response.body.data).toHaveLength(3);
+        const ids = response.body.data.map((e) => e.id);
         expect(ids).toContain('element-1');
         expect(ids).toContain('element-2');
         expect(ids).toContain('element-3');
@@ -970,8 +970,8 @@ describe('ElementController', () => {
           })
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-2',
           'element-1',
         ]);
@@ -1009,8 +1009,8 @@ describe('ElementController', () => {
           .get('/element?order=createdAt&orderDir=DESC&limit=2&offset=1')
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map((e) => e.id)).toEqual([
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map((e) => e.id)).toEqual([
           'element-3',
           'element-2',
         ]);

@@ -60,7 +60,7 @@ describe('BlockController', () => {
         .get('/block')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of blocks with relations', async () => {
@@ -71,16 +71,16 @@ describe('BlockController', () => {
         .get('/block')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('block-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('block-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
         descriptions: [],
         counters: [],
         files: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].permissions).toHaveLength(1);
     });
 
     it('should filter out blocks without READ permission', async () => {
@@ -94,8 +94,8 @@ describe('BlockController', () => {
         .get('/block')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((b) => b.id)).toEqual(['block-1', 'block-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((b) => b.id)).toEqual(['block-1', 'block-3']);
     });
 
     it('should return blocks with group permission when user has matching group in token', async () => {
@@ -116,8 +116,8 @@ describe('BlockController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((b) => b.id)).toEqual(['block-1', 'block-2']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((b) => b.id)).toEqual(['block-1', 'block-2']);
     });
 
     it('should not return blocks with group permission when user lacks that group', async () => {
@@ -138,8 +138,8 @@ describe('BlockController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('block-2');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('block-2');
     });
   });
 
@@ -156,7 +156,7 @@ describe('BlockController', () => {
         .get('/block?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip blocks when offset is provided', async () => {
@@ -171,7 +171,7 @@ describe('BlockController', () => {
         .get('/block?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated blocks when both limit and offset are provided', async () => {
@@ -188,7 +188,7 @@ describe('BlockController', () => {
         .get('/block?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total blocks', async () => {
@@ -199,7 +199,7 @@ describe('BlockController', () => {
         .get('/block?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 

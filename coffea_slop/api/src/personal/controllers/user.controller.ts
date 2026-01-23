@@ -110,14 +110,17 @@ export class UserController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<UserView[]> {
-    const users = await this.userRepository.find({
+  ): Promise<{ data: UserView[]; count: number }> {
+    const [users, count] = await this.userRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
 
-    return users.map((u) => this.toView(u));
+    return {
+      data: users.map((u) => this.toView(u)),
+      count,
+    };
   }
 
   @Get(':id')

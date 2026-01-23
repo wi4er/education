@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CheckMethodAccess } from '../../common/access/check-method-access.guard';
 import { AccessEntity } from '../../common/access/access-entity.enum';
@@ -36,10 +37,20 @@ export class AccessController {
 
   @Get()
   @CheckMethodAccess(AccessEntity.ACCESS, AccessMethod.GET)
-  async findAll(): Promise<AccessView[]> {
-    const accesses = await this.accessRepository.find();
-
-    return accesses.map((a) => this.toView(a));
+  async findAll(
+    @Query('limit')
+    limit?: number,
+    @Query('offset')
+    offset?: number,
+  ): Promise<{ data: AccessView[]; count: number }> {
+    const [accesses, count] = await this.accessRepository.findAndCount({
+      take: limit,
+      skip: offset,
+    });
+    return {
+      data: accesses.map((a) => this.toView(a)),
+      count,
+    };
   }
 
   @Get(':id')

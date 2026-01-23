@@ -62,7 +62,7 @@ describe('DirectoryController', () => {
         .get('/directory')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of directories with relations', async () => {
@@ -73,13 +73,14 @@ describe('DirectoryController', () => {
         .get('/directory')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('dir-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.count).toBe(1);
+      expect(response.body.data[0].id).toBe('dir-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].permissions).toHaveLength(1);
     });
 
     it('should filter out directories without READ permission', async () => {
@@ -93,8 +94,9 @@ describe('DirectoryController', () => {
         .get('/directory')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map(d => d.id)).toEqual([ 'dir-1', 'dir-3' ]);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.count).toBe(2);
+      expect(response.body.data.map(d => d.id)).toEqual([ 'dir-1', 'dir-3' ]);
     });
 
     it('should return directories with group permission when user has matching group in token', async () => {
@@ -115,8 +117,9 @@ describe('DirectoryController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map(d => d.id)).toEqual([ 'dir-1', 'dir-2' ]);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.count).toBe(2);
+      expect(response.body.data.map(d => d.id)).toEqual([ 'dir-1', 'dir-2' ]);
     });
 
     it('should not return directories with group permission when user lacks that group', async () => {
@@ -137,8 +140,9 @@ describe('DirectoryController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('dir-2');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.count).toBe(1);
+      expect(response.body.data[0].id).toBe('dir-2');
     });
   });
 
@@ -155,7 +159,8 @@ describe('DirectoryController', () => {
         .get('/directory?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.count).toBe(3);
     });
 
     it('should skip directories when offset is provided', async () => {
@@ -170,7 +175,8 @@ describe('DirectoryController', () => {
         .get('/directory?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.count).toBe(3);
     });
 
     it('should return paginated directories when both limit and offset are provided', async () => {
@@ -187,7 +193,8 @@ describe('DirectoryController', () => {
         .get('/directory?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.count).toBe(4);
     });
 
     it('should return empty array when offset exceeds total directories', async () => {
@@ -198,7 +205,8 @@ describe('DirectoryController', () => {
         .get('/directory?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
+      expect(response.body.count).toBe(1);
     });
   });
 

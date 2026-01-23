@@ -72,8 +72,8 @@ export class CollectionController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<CollectionView[]> {
-    const collections = await this.collectionRepository.find({
+  ): Promise<{ data: CollectionView[]; count: number }> {
+    const [collections, count] = await this.collectionRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
@@ -84,7 +84,10 @@ export class CollectionController {
       take: limit,
       skip: offset,
     });
-    return collections.map(col => this.toView(col));
+    return {
+      data: collections.map(col => this.toView(col)),
+      count,
+    };
   }
 
   @Get(':id')

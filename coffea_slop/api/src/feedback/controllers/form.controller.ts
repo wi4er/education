@@ -110,8 +110,8 @@ export class FormController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<FormView[]> {
-    const forms = await this.formRepository.find({
+  ): Promise<{ data: FormView[]; count: number }> {
+    const [forms, count] = await this.formRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
@@ -122,7 +122,11 @@ export class FormController {
       take: limit,
       skip: offset,
     });
-    return forms.map((form) => this.toView(form));
+
+    return {
+      data: forms.map((form) => this.toView(form)),
+      count,
+    };
   }
 
   @Get(':id')
@@ -137,6 +141,7 @@ export class FormController {
       where: { id },
       relations: this.relations,
     });
+
     return this.toView(form);
   }
 

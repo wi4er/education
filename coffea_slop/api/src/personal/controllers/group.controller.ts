@@ -76,13 +76,16 @@ export class GroupController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<GroupView[]> {
-    const groups = await this.groupRepository.find({
+  ): Promise<{ data: GroupView[]; count: number }> {
+    const [groups, count] = await this.groupRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
-    return groups.map((g) => this.toView(g));
+    return {
+      data: groups.map((g) => this.toView(g)),
+      count,
+    };
   }
 
   @Get(':id')

@@ -64,8 +64,8 @@ export class FileController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<FileView[]> {
-    const files = await this.fileRepository.find({
+  ): Promise<{ data: FileView[]; count: number }> {
+    const [files, count] = await this.fileRepository.findAndCount({
       where: {
         parent: {
           permissions: {
@@ -79,7 +79,10 @@ export class FileController {
       skip: offset,
     });
 
-    return files.map(file => this.toView(file));
+    return {
+      data: files.map(file => this.toView(file)),
+      count,
+    };
   }
 
   @Get(':id')

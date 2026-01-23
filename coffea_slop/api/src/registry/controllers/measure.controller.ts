@@ -68,13 +68,16 @@ export class MeasureController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<MeasureView[]> {
-    const measures = await this.measureRepository.find({
+  ): Promise<{ data: MeasureView[]; count: number }> {
+    const [measures, count] = await this.measureRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
-    return measures.map((m) => this.toView(m));
+    return {
+      data: measures.map((m) => this.toView(m)),
+      count,
+    };
   }
 
   @Get(':id')

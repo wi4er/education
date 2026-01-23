@@ -32,7 +32,7 @@ import { StatusService } from '../../common/services/status.service';
 @Controller('directory')
 export class DirectoryController {
 
-  private readonly relations = ['strings', 'points', 'permissions', 'statuses'];
+  private readonly relations = [ 'strings', 'points', 'permissions', 'statuses' ];
 
   constructor(
     @InjectRepository(Directory)
@@ -81,19 +81,23 @@ export class DirectoryController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<DirectoryView[]> {
-    const directories = await this.directoryRepository.find({
+  ): Promise<{ data: DirectoryView[]; count: number }> {
+    const [directories, count] = await this.directoryRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
-          method: In([PermissionMethod.READ, PermissionMethod.ALL]),
+          method: In([ PermissionMethod.READ, PermissionMethod.ALL ]),
         },
       },
       relations: this.relations,
       take: limit,
       skip: offset,
     });
-    return directories.map((dir) => this.toView(dir));
+
+    return {
+      data: directories.map((dir) => this.toView(dir)),
+      count,
+    };
   }
 
   @Get(':id')

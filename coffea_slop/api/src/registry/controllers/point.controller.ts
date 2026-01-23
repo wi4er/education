@@ -68,8 +68,8 @@ export class PointController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<PointView[]> {
-    const points = await this.pointRepository.find({
+  ): Promise<{ data: PointView[]; count: number }> {
+    const [points, count] = await this.pointRepository.findAndCount({
       where: {
         directory: {
           permissions: {
@@ -82,7 +82,10 @@ export class PointController {
       take: limit,
       skip: offset,
     });
-    return points.map((pnt) => this.toView(pnt));
+    return {
+      data: points.map((pnt) => this.toView(pnt)),
+      count,
+    };
   }
 
   @Get(':id')

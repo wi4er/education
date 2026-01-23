@@ -43,7 +43,7 @@ describe('AccessController', () => {
         .get('/access')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of access entries', async () => {
@@ -58,10 +58,10 @@ describe('AccessController', () => {
         .get('/access')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].group).toBe('admins');
-      expect(response.body[0].entity).toBe(AccessEntity.USER);
-      expect(response.body[0].method).toBe(AccessMethod.GET);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].group).toBe('admins');
+      expect(response.body.data[0].entity).toBe(AccessEntity.USER);
+      expect(response.body.data[0].method).toBe(AccessMethod.GET);
     });
   });
 

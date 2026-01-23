@@ -70,14 +70,17 @@ export class StatusController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<StatusView[]> {
-    const statuses = await this.statusRepository.find({
+  ): Promise<{ data: StatusView[]; count: number }> {
+    const [statuses, count] = await this.statusRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
 
-    return statuses.map((status) => this.toView(status));
+    return {
+      data: statuses.map((status) => this.toView(status)),
+      count,
+    };
   }
 
   @Get(':id')

@@ -59,7 +59,7 @@ describe('CollectionController', () => {
         .get('/collection')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of collections with relations', async () => {
@@ -70,14 +70,14 @@ describe('CollectionController', () => {
         .get('/collection')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('col-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('col-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
-      expect(response.body[0].status).toEqual([]);
+      expect(response.body.data[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].status).toEqual([]);
     });
 
     it('should filter out collections without READ permission', async () => {
@@ -91,8 +91,8 @@ describe('CollectionController', () => {
         .get('/collection')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map(c => c.id)).toEqual(['col-1', 'col-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map(c => c.id)).toEqual(['col-1', 'col-3']);
     });
   });
 
@@ -109,7 +109,7 @@ describe('CollectionController', () => {
         .get('/collection?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip collections when offset is provided', async () => {
@@ -124,7 +124,7 @@ describe('CollectionController', () => {
         .get('/collection?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated collections when both limit and offset are provided', async () => {
@@ -141,7 +141,7 @@ describe('CollectionController', () => {
         .get('/collection?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total collections', async () => {
@@ -152,7 +152,7 @@ describe('CollectionController', () => {
         .get('/collection?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 

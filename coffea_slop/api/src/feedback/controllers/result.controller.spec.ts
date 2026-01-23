@@ -42,7 +42,7 @@ describe('ResultController', () => {
         .get('/result')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of results', async () => {
@@ -53,9 +53,9 @@ describe('ResultController', () => {
         .get('/result')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('result-1');
-      expect(response.body[0].formId).toBe('form-1');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('result-1');
+      expect(response.body.data[0].formId).toBe('form-1');
     });
   });
 

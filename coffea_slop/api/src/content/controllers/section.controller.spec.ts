@@ -61,7 +61,7 @@ describe('SectionController', () => {
         .get('/section')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of sections with relations', async () => {
@@ -73,17 +73,17 @@ describe('SectionController', () => {
         .get('/section')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('section-1');
-      expect(response.body[0].parentId).toBe('block-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('section-1');
+      expect(response.body.data[0].parentId).toBe('block-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
         descriptions: [],
         counters: [],
         files: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].permissions).toHaveLength(1);
     });
 
     it('should filter out sections without READ permission', async () => {
@@ -98,8 +98,8 @@ describe('SectionController', () => {
         .get('/section')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((s) => s.id)).toEqual([
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((s) => s.id)).toEqual([
         'section-1',
         'section-3',
       ]);
@@ -124,8 +124,8 @@ describe('SectionController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((s) => s.id)).toEqual([
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((s) => s.id)).toEqual([
         'section-1',
         'section-2',
       ]);
@@ -150,8 +150,8 @@ describe('SectionController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('section-2');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('section-2');
     });
   });
 
@@ -169,7 +169,7 @@ describe('SectionController', () => {
         .get('/section?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip sections when offset is provided', async () => {
@@ -185,7 +185,7 @@ describe('SectionController', () => {
         .get('/section?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated sections when both limit and offset are provided', async () => {
@@ -203,7 +203,7 @@ describe('SectionController', () => {
         .get('/section?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total sections', async () => {
@@ -215,7 +215,7 @@ describe('SectionController', () => {
         .get('/section?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 

@@ -153,7 +153,7 @@ React with Create React App, Material-UI, React Router (basename `/admin/`):
     extends BaseEntity
     implements WithStrings<Directory> {
   ```
-- Import destructuring without spaces: `import {Repository, DataSource} from 'typeorm'`
+- Import destructuring with spaces: `import { Repository, DataSource } from 'typeorm'`
 - Arrow functions: no brackets for single untyped parameter (`s =>` not `(s) =>`)
 - `@ManyToOne`/`@OneToMany` decorators with each argument on new line
 - Controllers use `*View` interfaces for responses, `*Input` for request bodies

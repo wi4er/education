@@ -60,7 +60,7 @@ describe('FormController', () => {
         .get('/form')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of forms with relations', async () => {
@@ -74,16 +74,16 @@ describe('FormController', () => {
         .get('/form')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('form-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('form-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
         descriptions: [],
         files: [],
         counters: [],
       });
-      expect(response.body[0].permissions).toHaveLength(1);
+      expect(response.body.data[0].permissions).toHaveLength(1);
     });
 
     it('should filter out forms without READ permission', async () => {
@@ -103,8 +103,8 @@ describe('FormController', () => {
         .get('/form')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((f) => f.id)).toEqual(['form-1', 'form-3']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((f) => f.id)).toEqual(['form-1', 'form-3']);
     });
 
     it('should return forms with group permission when user has matching group in token', async () => {
@@ -128,8 +128,8 @@ describe('FormController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body.map((f) => f.id)).toEqual(['form-1', 'form-2']);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.map((f) => f.id)).toEqual(['form-1', 'form-2']);
     });
 
     it('should not return forms with group permission when user lacks that group', async () => {
@@ -153,8 +153,8 @@ describe('FormController', () => {
         .set('Cookie', `auth_token=${token}`)
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('form-2');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('form-2');
     });
   });
 
@@ -180,7 +180,7 @@ describe('FormController', () => {
         .get('/form?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip forms when offset is provided', async () => {
@@ -204,7 +204,7 @@ describe('FormController', () => {
         .get('/form?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated forms when both limit and offset are provided', async () => {
@@ -233,7 +233,7 @@ describe('FormController', () => {
         .get('/form?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total forms', async () => {
@@ -247,7 +247,7 @@ describe('FormController', () => {
         .get('/form?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 

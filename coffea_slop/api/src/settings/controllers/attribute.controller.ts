@@ -72,14 +72,17 @@ export class AttributeController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<AttributeView[]> {
-    const attributes = await this.attributeRepository.find({
+  ): Promise<{ data: AttributeView[]; count: number }> {
+    const [attributes, count] = await this.attributeRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
 
-    return attributes.map((attr) => this.toView(attr));
+    return {
+      data: attributes.map((attr) => this.toView(attr)),
+      count,
+    };
   }
 
   @Get(':id')

@@ -66,7 +66,7 @@ describe('FileController', () => {
         .get('/file')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of files with relations', async () => {
@@ -81,16 +81,16 @@ describe('FileController', () => {
         .get('/file')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('file-1');
-      expect(response.body[0].parentId).toBe('default-col');
-      expect(response.body[0].path).toBe('/storage/file1.jpg');
-      expect(response.body[0].original).toBe('photo.jpg');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('file-1');
+      expect(response.body.data[0].parentId).toBe('default-col');
+      expect(response.body.data[0].path).toBe('/storage/file1.jpg');
+      expect(response.body.data[0].original).toBe('photo.jpg');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
       });
-      expect(response.body[0].status).toEqual([]);
+      expect(response.body.data[0].status).toEqual([]);
     });
 
     it('should filter files by parentId', async () => {
@@ -117,8 +117,8 @@ describe('FileController', () => {
         .get('/file?parentId=default-col')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('file-1');
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('file-1');
     });
   });
 
@@ -132,7 +132,7 @@ describe('FileController', () => {
         .get('/file?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip files when offset is provided', async () => {
@@ -144,7 +144,7 @@ describe('FileController', () => {
         .get('/file?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated files when both limit and offset are provided', async () => {
@@ -157,7 +157,7 @@ describe('FileController', () => {
         .get('/file?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total files', async () => {
@@ -167,7 +167,7 @@ describe('FileController', () => {
         .get('/file?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 
@@ -395,8 +395,8 @@ describe('FileController', () => {
           .get('/file')
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('file-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('file-1');
       });
 
       it('should return files when user has group READ permission on parent collection', async () => {
@@ -419,8 +419,8 @@ describe('FileController', () => {
           .set('Cookie', [`auth_token=${token}`])
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('file-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('file-1');
       });
 
       it('should return files when parent collection has ALL permission', async () => {
@@ -440,8 +440,8 @@ describe('FileController', () => {
           .get('/file')
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('file-1');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('file-1');
       });
 
       it('should return empty array when parent collection has no READ permission', async () => {
@@ -456,7 +456,7 @@ describe('FileController', () => {
           .get('/file')
           .expect(200);
 
-        expect(response.body).toEqual([]);
+        expect(response.body).toEqual({ data: [], count: 0 });
       });
 
       it('should return empty array when user group does not match permission group', async () => {
@@ -479,7 +479,7 @@ describe('FileController', () => {
           .set('Cookie', [`auth_token=${token}`])
           .expect(200);
 
-        expect(response.body).toEqual([]);
+        expect(response.body).toEqual({ data: [], count: 0 });
       });
 
       it('should not return files from collections with only WRITE permission', async () => {
@@ -499,7 +499,7 @@ describe('FileController', () => {
           .get('/file')
           .expect(200);
 
-        expect(response.body).toEqual([]);
+        expect(response.body).toEqual({ data: [], count: 0 });
       });
 
       it('should return files from multiple collections with permission', async () => {
@@ -531,9 +531,9 @@ describe('FileController', () => {
           .get('/file')
           .expect(200);
 
-        expect(response.body).toHaveLength(2);
-        expect(response.body.map(f => f.id)).toContain('file-1');
-        expect(response.body.map(f => f.id)).toContain('file-2');
+        expect(response.body.data).toHaveLength(2);
+        expect(response.body.data.map(f => f.id)).toContain('file-1');
+        expect(response.body.data.map(f => f.id)).toContain('file-2');
       });
 
       it('should only return files from collections user has access to', async () => {
@@ -569,8 +569,8 @@ describe('FileController', () => {
           .set('Cookie', [`auth_token=${token}`])
           .expect(200);
 
-        expect(response.body).toHaveLength(1);
-        expect(response.body[0].id).toBe('file-2');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0].id).toBe('file-2');
       });
     });
 

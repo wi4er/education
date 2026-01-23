@@ -145,7 +145,7 @@ export class ElementController {
     pointFilters?: PointFilter[],
     @Query('counter')
     counterFilters?: CounterFilter[],
-  ): Promise<ElementView[]> {
+  ): Promise<{ data: ElementView[]; count: number }> {
     const qb = this.elementRepository
       .createQueryBuilder('element')
       .leftJoinAndSelect('element.strings', 'strings')
@@ -177,8 +177,12 @@ export class ElementController {
     if (limit) qb.take(limit);
     if (offset) qb.skip(offset);
 
-    const elements = await qb.getMany();
-    return elements.map((el) => this.toView(el));
+    const [elements, count] = await qb.getManyAndCount();
+
+    return {
+      data: elements.map((el) => this.toView(el)),
+      count,
+    };
   }
 
   @Get(':id')

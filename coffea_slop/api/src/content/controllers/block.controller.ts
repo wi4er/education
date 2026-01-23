@@ -116,8 +116,8 @@ export class BlockController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<BlockView[]> {
-    const blocks = await this.blockRepository.find({
+  ): Promise<{ data: BlockView[]; count: number }> {
+    const [blocks, count] = await this.blockRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
@@ -128,7 +128,11 @@ export class BlockController {
       take: limit,
       skip: offset,
     });
-    return blocks.map((block) => this.toView(block));
+
+    return {
+      data: blocks.map((block) => this.toView(block)),
+      count,
+    };
   }
 
   @Get(':id')
@@ -143,6 +147,7 @@ export class BlockController {
       where: { id },
       relations: this.relations,
     });
+
     return this.toView(block);
   }
 

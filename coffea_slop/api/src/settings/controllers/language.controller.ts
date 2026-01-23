@@ -68,13 +68,17 @@ export class LanguageController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<LanguageView[]> {
-    const languages = await this.languageRepository.find({
+  ): Promise<{ data: LanguageView[]; count: number }> {
+    const [languages, count] = await this.languageRepository.findAndCount({
       relations: this.relations,
       take: limit,
       skip: offset,
     });
-    return languages.map((lng) => this.toView(lng));
+
+    return {
+      data: languages.map((lng) => this.toView(lng)),
+      count,
+    };
   }
 
   @Get(':id')
@@ -88,6 +92,7 @@ export class LanguageController {
       where: { id },
       relations: this.relations,
     });
+
     return this.toView(language);
   }
 

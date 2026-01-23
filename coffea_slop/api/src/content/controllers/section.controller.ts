@@ -116,8 +116,8 @@ export class SectionController {
     limit?: number,
     @Query('offset')
     offset?: number,
-  ): Promise<SectionView[]> {
-    const sections = await this.sectionRepository.find({
+  ): Promise<{ data: SectionView[]; count: number }> {
+    const [sections, count] = await this.sectionRepository.findAndCount({
       where: {
         permissions: {
           groupId: Or(In(groups), IsNull()),
@@ -128,7 +128,11 @@ export class SectionController {
       take: limit,
       skip: offset,
     });
-    return sections.map((sec) => this.toView(sec));
+
+    return {
+      data: sections.map((sec) => this.toView(sec)),
+      count,
+    };
   }
 
   @Get(':id')

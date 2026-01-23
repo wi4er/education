@@ -42,7 +42,7 @@ describe('MeasureController', () => {
         .get('/measure')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual({ data: [], count: 0 });
     });
 
     it('should return an array of measures with relations', async () => {
@@ -52,9 +52,9 @@ describe('MeasureController', () => {
         .get('/measure')
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe('measure-1');
-      expect(response.body[0].attributes).toEqual({
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBe('measure-1');
+      expect(response.body.data[0].attributes).toEqual({
         strings: [],
         points: [],
       });
@@ -71,7 +71,7 @@ describe('MeasureController', () => {
         .get('/measure?limit=2')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should skip measures when offset is provided', async () => {
@@ -83,7 +83,7 @@ describe('MeasureController', () => {
         .get('/measure?offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return paginated measures when both limit and offset are provided', async () => {
@@ -96,7 +96,7 @@ describe('MeasureController', () => {
         .get('/measure?limit=2&offset=1')
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body.data).toHaveLength(2);
     });
 
     it('should return empty array when offset exceeds total measures', async () => {
@@ -106,7 +106,7 @@ describe('MeasureController', () => {
         .get('/measure?offset=10')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
     });
   });
 
