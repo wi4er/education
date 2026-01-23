@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Measure2String} from './measure2string.entity';
 import {Measure2Point} from './measure2point.entity';
@@ -14,6 +15,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_measure')
+@Check('"id" <> \'\'')
 export class Measure
   extends BaseEntity
   implements WithStrings<Measure>,

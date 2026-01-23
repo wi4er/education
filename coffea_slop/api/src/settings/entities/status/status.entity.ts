@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Status2String} from './status2string.entity';
 import {Status2Point} from './status2point.entity';
@@ -15,6 +16,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('settings_status')
+@Check('"id" <> \'\'')
 export class Status
   extends BaseEntity
   implements WithStrings<Status>,

@@ -279,6 +279,15 @@ describe('DirectoryController', () => {
         value: 'Test Directory',
       });
     });
+
+    it('should return 400 when id is empty string', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/directory')
+        .send({ id: '' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 
   describe('PUT /directory/:id', () => {

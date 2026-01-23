@@ -7,10 +7,12 @@ import {
   JoinColumn,
   Column,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Form} from '../form/form.entity';
 
 @Entity('feedback_result')
+@Check('"id" <> \'\'')
 export class Result
   extends BaseEntity {
 

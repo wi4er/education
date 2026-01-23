@@ -8,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Point2String} from './point2string.entity';
 import {Point2Point} from './point2point.entity';
@@ -18,6 +19,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_point')
+@Check('"id" <> \'\'')
 export class Point
   extends BaseEntity
   implements WithStrings<Point>,

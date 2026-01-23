@@ -385,6 +385,15 @@ describe('FormController', () => {
         method: 'ALL',
       });
     });
+
+    it('should return 400 when id is empty string', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/form')
+        .send({ id: '' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 
   describe('PUT /form/:id', () => {

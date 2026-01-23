@@ -1389,5 +1389,16 @@ describe('ElementController', () => {
       expect(response.body.sections).toHaveLength(1);
       expect(response.body.sections[0]).toBe('section-1');
     });
+
+    it('should return 400 when id is empty string', async () => {
+      await repo(Block).save({ id: 'block-1' });
+
+      const response = await request(app.getHttpServer())
+        .post('/element')
+        .send({ id: '', parentId: 'block-1' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 });

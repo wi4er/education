@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {User2String} from './user2string.entity';
 import {User2Point} from './user2point.entity';
@@ -22,6 +23,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 import {WithFiles} from '../../../common/entities/with-files.entity';
 
 @Entity('personal_user')
+@Check('"id" <> \'\'')
 export class User
   extends BaseEntity
   implements WithStrings<User>,

@@ -176,6 +176,15 @@ describe('MeasureController', () => {
         value: 'Kilogram',
       });
     });
+
+    it('should return 400 when id is empty string', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/measure')
+        .send({ id: '' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 
   describe('PUT /measure/:id', () => {

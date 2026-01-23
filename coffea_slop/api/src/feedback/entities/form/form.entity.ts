@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Form2String} from './form2string.entity';
 import {Form2Point} from './form2point.entity';
@@ -22,6 +23,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 import {WithFiles} from '../../../common/entities/with-files.entity';
 
 @Entity('feedback_form')
+@Check('"id" <> \'\'')
 export class Form
   extends BaseEntity
   implements WithStrings<Form>,

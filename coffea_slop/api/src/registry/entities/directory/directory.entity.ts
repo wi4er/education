@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Directory2String} from './directory2string.entity';
 import {Directory2Point} from './directory2point.entity';
@@ -16,6 +17,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('registry_directory')
+@Check('"id" <> \'\'')
 export class Directory
   extends BaseEntity
   implements WithStrings<Directory>,

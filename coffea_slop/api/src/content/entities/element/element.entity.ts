@@ -8,6 +8,7 @@ import {
   JoinColumn,
   Column,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Element2String} from './element2string.entity';
 import {Element2Point} from './element2point.entity';
@@ -26,6 +27,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 import {Block} from '../block/block.entity';
 
 @Entity('content_element')
+@Check('"id" <> \'\'')
 export class Element
   extends BaseEntity
   implements WithStrings<Element>,

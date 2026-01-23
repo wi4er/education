@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Block2String} from './block2string.entity';
 import {Block2Point} from './block2point.entity';
@@ -24,6 +25,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 import {WithFiles} from '../../../common/entities/with-files.entity';
 
 @Entity('content_block')
+@Check('"id" <> \'\'')
 export class Block
   extends BaseEntity
   implements WithStrings<Block>,

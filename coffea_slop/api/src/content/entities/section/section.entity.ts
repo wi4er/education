@@ -8,6 +8,7 @@ import {
   JoinColumn,
   Column,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Section2String} from './section2string.entity';
 import {Section2Point} from './section2point.entity';
@@ -27,6 +28,7 @@ import {WithFiles} from '../../../common/entities/with-files.entity';
 import {Block} from '../block/block.entity';
 
 @Entity('content_section')
+@Check('"id" <> \'\'')
 export class Section
   extends BaseEntity
   implements WithStrings<Section>,

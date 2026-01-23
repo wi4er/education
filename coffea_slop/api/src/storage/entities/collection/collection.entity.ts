@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BaseEntity} from 'typeorm';
+import {Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BaseEntity, Check} from 'typeorm';
 import {Collection2String} from './collection2string.entity';
 import {Collection2Point} from './collection2point.entity';
 import {Collection4Status} from './collection4status.entity';
@@ -10,6 +10,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 import {WithPermissions} from '../../../common/entities/with-permissions.entity';
 
 @Entity('storage_collection')
+@Check('"id" <> \'\'')
 export class Collection
   extends BaseEntity
   implements

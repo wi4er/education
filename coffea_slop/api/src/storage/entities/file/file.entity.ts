@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity} from 'typeorm';
+import {Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity, Check} from 'typeorm';
 import {File2String} from './file2string.entity';
 import {File2Point} from './file2point.entity';
 import {File4Status} from './file4status.entity';
@@ -9,6 +9,7 @@ import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 
 @Entity('storage_file')
+@Check('"id" <> \'\'')
 export class File
   extends BaseEntity
   implements WithStrings<File>,

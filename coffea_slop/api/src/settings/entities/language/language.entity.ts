@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Language2String} from './language2string.entity';
 import {Language2Point} from './language2point.entity';
@@ -14,6 +15,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('settings_language')
+@Check('"id" <> \'\'')
 export class Language
   extends BaseEntity
   implements WithStrings<Language>,

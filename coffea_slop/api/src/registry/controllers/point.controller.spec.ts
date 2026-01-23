@@ -195,6 +195,17 @@ describe('PointController', () => {
         value: 'Test Point',
       });
     });
+
+    it('should return 400 when id is empty string', async () => {
+      await repo(Directory).save({ id: 'dir-1' });
+
+      const response = await request(app.getHttpServer())
+        .post('/point')
+        .send({ id: '', directoryId: 'dir-1' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 
   describe('PUT /point/:id', () => {

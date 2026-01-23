@@ -7,6 +7,7 @@ import {
   OneToMany,
   OneToOne,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Attribute2String} from './attribute2string.entity';
 import {Attribute2Point} from './attribute2point.entity';
@@ -17,6 +18,7 @@ import {WithPoints} from '../../../common/entities/with-points.entity';
 import {AttributeType} from './attribute-type.enum';
 
 @Entity('settings_attribute')
+@Check('"id" <> \'\'')
 export class Attribute
   extends BaseEntity
   implements WithStrings<Attribute>,

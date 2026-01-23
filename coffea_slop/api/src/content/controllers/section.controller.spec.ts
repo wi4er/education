@@ -363,6 +363,17 @@ describe('SectionController', () => {
         method: 'ALL',
       });
     });
+
+    it('should return 400 when id is empty string', async () => {
+      await repo(Block).save({ id: 'block-1' });
+
+      const response = await request(app.getHttpServer())
+        .post('/section')
+        .send({ id: '', parentId: 'block-1' })
+        .expect(400);
+
+      expect(response.body.message).toBe('Database query failed');
+    });
   });
 
   describe('PUT /section/:id', () => {

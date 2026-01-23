@@ -4,6 +4,7 @@ import {PermissionFilter} from './permission/permission.filter';
 import {AccessFilter} from './access/access.filter';
 import {WrongDataFilter} from './wrong-data/wrong-data.filter';
 import {NoDataFilter} from './no-data/no-data.filter';
+import {QueryFailedFilter} from './query-failed/query-failed.filter';
 
 @Module({
   providers: [
@@ -22,6 +23,10 @@ import {NoDataFilter} from './no-data/no-data.filter';
     {
       provide: APP_FILTER,
       useClass: NoDataFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: QueryFailedFilter,
     },
   ],
 })

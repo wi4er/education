@@ -5,6 +5,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
   BaseEntity,
+  Check,
 } from 'typeorm';
 import {Group2String} from './group2string.entity';
 import {Group2Point} from './group2point.entity';
@@ -17,6 +18,7 @@ import {WithDescriptions} from '../../../common/entities/with-descriptions.entit
 import {WithStatuses} from '../../../common/entities/with-statuses.entity';
 
 @Entity('personal_group')
+@Check('"id" <> \'\'')
 export class Group
   extends BaseEntity
   implements WithStrings<Group>,
