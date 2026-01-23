@@ -86,13 +86,14 @@ export function AttributeForm(
     <Dialog
       open={true}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
+      slotProps={{paper: {sx: {height: '80vh'}}}}
       fullWidth
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
         <DialogTitle>{edit ? `Edit Attribute ${id}` : 'Create Attribute'}</DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{flex: 1}}>
           <Box style={{ display: 'flex', gap: 12 }}>
             <TextField
               autoFocus

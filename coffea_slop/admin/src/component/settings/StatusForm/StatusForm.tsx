@@ -81,13 +81,14 @@ export function StatusForm(
     <Dialog
       open={true}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
+      slotProps={{paper: {sx: {height: '80vh'}}}}
       fullWidth
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
         <DialogTitle>{edit ? `Edit Status ${id}` : 'Create Status'}</DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{flex: 1}}>
           <TextField
             autoFocus
             required

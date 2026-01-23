@@ -72,13 +72,14 @@ export function CollectionForm(
     <Dialog
       open={true}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
+      slotProps={{paper: {sx: {height: '80vh'}}}}
       fullWidth
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
         <DialogTitle>{edit ? `Edit Collection ${id}` : 'Create Collection'}</DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{flex: 1}}>
           <TextField
             autoFocus
             margin="dense"
