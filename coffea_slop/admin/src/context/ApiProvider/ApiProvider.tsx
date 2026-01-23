@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
-import { apiContext } from './ApiData';
+import { apiContext, Pagination } from './ApiData';
+import { ApiEntity } from './ApiEntity';
 
-const apiPath = '/api';
+const apiPath = process.env.API_PATH ?? '/api';
 
 export function ApiProvider(
   {
@@ -12,8 +13,14 @@ export function ApiProvider(
 ) {
   return (
     <apiContext.Provider value={{
-      getList: async <T,>(path: string): Promise<Array<T>> => {
-        const res = await fetch(`${apiPath}/${path}`, {
+      getList: async <T,>(path: ApiEntity, pagination?: Pagination): Promise<Array<T>> => {
+        const params = new URLSearchParams();
+        if (pagination?.limit !== undefined) params.set('limit', String(pagination.limit));
+        if (pagination?.offset !== undefined) params.set('offset', String(pagination.offset));
+        const query = params.toString();
+        const url = query ? `${apiPath}/${path}?${query}` : `${apiPath}/${path}`;
+
+        const res = await fetch(url, {
           method: 'GET',
           credentials: 'include',
         });

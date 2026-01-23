@@ -5,7 +5,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import CircularProgress from '@mui/material/CircularProgress';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity } from '../../../context/ApiProvider';
 import { CollectionView } from '../../storage/view';
 import { FileView } from '../../storage/view';
 
@@ -27,8 +27,8 @@ export function ImageEdit(
 
   useEffect(() => {
     Promise.all([
-      getList<CollectionView>('collection'),
-      getList<FileView>('file'),
+      getList<CollectionView>(ApiEntity.COLLECTION),
+      getList<FileView>(ApiEntity.FILE),
     ])
       .then(([cols, files]) => {
         setCollections(cols);

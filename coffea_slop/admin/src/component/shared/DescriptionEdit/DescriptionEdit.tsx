@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity } from '../../../context/ApiProvider';
 import { AttributeView, LanguageView } from '../../settings/view';
 import { AttributeType } from '../../common/view';
 import Button from '@mui/material/Button';
@@ -36,8 +36,8 @@ export function DescriptionEdit({descriptions, onChange}: DescriptionEditProps) 
 
   useEffect(() => {
     Promise.all([
-      getList<AttributeView>('attribute'),
-      getList<LanguageView>('language'),
+      getList<AttributeView>(ApiEntity.ATTRIBUTE),
+      getList<LanguageView>(ApiEntity.LANGUAGE),
     ])
       .then(([attrs, langs]) => {
         setAttributes(attrs.filter(a => a.type === AttributeType.DESCRIPTION));

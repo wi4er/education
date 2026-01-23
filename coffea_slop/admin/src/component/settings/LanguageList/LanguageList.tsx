@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { LanguageView, StatusView } from '../view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -42,18 +42,18 @@ export function LanguageList() {
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<LanguageView>('language')
+  function refreshData(pagination?: Pagination) {
+    getList<LanguageView>(ApiEntity.LANGUAGE, pagination)
       .then(data => setList(data))
       .catch(() => setList([]));
   }
 
   useEffect(() => {
-    refreshData();
-    getList<StatusView>('status')
+    refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
+    getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, []);
+  }, [page, rowsPerPage]);
 
   return (
     <div>
@@ -113,7 +113,7 @@ export function LanguageList() {
                       icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
                         deleteItem('language', row.id)
-                          .then(() => refreshData());
+                          .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                       },
                     }]}/>
                   </TableCell>
@@ -164,7 +164,7 @@ export function LanguageList() {
       {edit !== null ? <LanguageForm
         edit={edit}
         onClose={() => {
-          refreshData();
+          refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
           setEdit(null);
         }}
       /> : null}

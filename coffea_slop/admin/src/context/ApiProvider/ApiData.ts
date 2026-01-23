@@ -1,7 +1,13 @@
 import { createContext } from 'react';
+import { ApiEntity } from './ApiEntity';
+
+export interface Pagination {
+  limit?: number;
+  offset?: number;
+}
 
 export interface ApiData {
-  getList: <T>(url: string) => Promise<Array<T>>;
+  getList: <T>(path: ApiEntity, pagination?: Pagination) => Promise<Array<T>>;
   getItem: <T>(path: string, id: string) => Promise<T>;
   postItem: <T>(url: string, data: object) => Promise<T>;
   putItem: <T>(path: string, id: string, data: object) => Promise<T>;

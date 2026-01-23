@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import {apiContext} from '../../../context/ApiProvider';
+import {apiContext, ApiEntity} from '../../../context/ApiProvider';
 import {StatusView} from '../../settings/view';
 import {getStringValue} from '../../../service/string.service';
 import * as Icons from '@mui/icons-material';
@@ -31,7 +31,7 @@ export function StatusEdit(
   const { getList } = React.useContext(apiContext);
 
   useEffect(() => {
-    getList<StatusView>('status')
+    getList<StatusView>(ApiEntity.STATUS)
       .then(items => {
         setStatuses(items);
         setLoading(false);

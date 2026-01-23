@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity } from '../../../context/ApiProvider';
 
 interface DirectoryView {
   id: string;
@@ -26,7 +26,7 @@ export function DirectoryEdit(
   const {getList} = React.useContext(apiContext);
 
   useEffect(() => {
-    getList<DirectoryView>('directory')
+    getList<DirectoryView>(ApiEntity.DIRECTORY)
       .then(dirs => {
         setDirectories(dirs);
         setLoading(false);

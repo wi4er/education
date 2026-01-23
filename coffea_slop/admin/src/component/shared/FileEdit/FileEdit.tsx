@@ -9,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity } from '../../../context/ApiProvider';
 import { AttributeView } from '../../settings/view';
 import { AttributeType } from '../../common/view';
 import { FileView } from '../../storage/view';
@@ -39,8 +39,8 @@ export function FileEdit(
 
   useEffect(() => {
     Promise.all([
-      getList<AttributeView>('attribute'),
-      getList<FileView>('file'),
+      getList<AttributeView>(ApiEntity.ATTRIBUTE),
+      getList<FileView>(ApiEntity.FILE),
     ])
       .then(([attrs, fls]) => {
         setAttributes(attrs.filter(a => a.type === AttributeType.FILE));

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { StatusView } from '../view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -50,13 +50,13 @@ export function StatusList() {
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<StatusView>('status')
+  function refreshData(pagination?: Pagination) {
+    getList<StatusView>(ApiEntity.STATUS, pagination)
       .then(data => setList(data))
       .catch(() => setList([]));
   }
 
-  useEffect(() => refreshData(), []);
+  useEffect(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }), [page, rowsPerPage]);
 
   return (
     <div>
@@ -116,7 +116,7 @@ export function StatusList() {
                       icon: <DeleteIcon fontSize="small"/>,
                       onClick: () => {
                         deleteItem('status', row.id)
-                          .then(() => refreshData());
+                          .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                       },
                     }]}/>
                   </TableCell>
@@ -194,7 +194,7 @@ export function StatusList() {
       {edit !== null ? <StatusForm
         edit={edit}
         onClose={() => {
-          refreshData();
+          refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
           setEdit(null);
         }}
       /> : null}

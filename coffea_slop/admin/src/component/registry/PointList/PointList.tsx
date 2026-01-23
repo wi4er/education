@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { PointView } from '../view';
 import { StatusView } from '../../settings/view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -68,18 +68,18 @@ export function PointList(
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<PointView>('point')
+  function refreshData(pagination?: Pagination) {
+    getList<PointView>(ApiEntity.POINT, pagination)
       .then(data => setAllItems(data))
       .catch(() => setAllItems([]));
   }
 
   useEffect(() => {
-    refreshData();
-    getList<StatusView>('status')
+    refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
+    getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, []);
+  }, [page, rowsPerPage]);
 
   if (list.length === 0) {
     return (
@@ -104,7 +104,7 @@ export function PointList(
             edit={edit}
             defaultDirectoryId={directoryId}
             onClose={() => {
-              refreshData();
+              refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
               setEdit(null);
             }}
           />
@@ -160,7 +160,7 @@ export function PointList(
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
                       deleteItem('point', row.id)
-                        .then(() => refreshData());
+                        .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                     },
                   }]}/>
                 </TableCell>

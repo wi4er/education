@@ -13,7 +13,7 @@ import StatusIcon from '@mui/icons-material/Flag';
 import BlockIcon from '@mui/icons-material/ViewModule';
 import FolderIcon from '@mui/icons-material/Folder';
 import { useNavigate } from 'react-router';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity } from '../../../context/ApiProvider';
 import { BlockView } from '../../content/view';
 import { DirectoryView } from '../../registry/view';
 import { FormView } from '../../feedback/view';
@@ -41,16 +41,16 @@ export function MainMenu(
   const [collections, setCollections] = useState<CollectionView[]>([]);
 
   useEffect(() => {
-    getList<BlockView>('block')
+    getList<BlockView>(ApiEntity.BLOCK)
       .then(data => setBlocks(data))
       .catch(() => setBlocks([]));
-    getList<DirectoryView>('directory')
+    getList<DirectoryView>(ApiEntity.DIRECTORY)
       .then(data => setDirectories(data))
       .catch(() => setDirectories([]));
-    getList<FormView>('form')
+    getList<FormView>(ApiEntity.FORM)
       .then(data => setForms(data))
       .catch(() => setForms([]));
-    getList<CollectionView>('collection')
+    getList<CollectionView>(ApiEntity.COLLECTION)
       .then(data => setCollections(data))
       .catch(() => setCollections([]));
   }, []);

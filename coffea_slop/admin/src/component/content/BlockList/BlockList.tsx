@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { BlockView } from '../view';
 import { StatusView } from '../../settings/view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getDescriptionValue, getDescriptionColumns } from '../../../service/description.service';
@@ -50,18 +50,18 @@ export function BlockList() {
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<BlockView>('block')
+  function refreshData(pagination?: Pagination) {
+    getList<BlockView>(ApiEntity.BLOCK, pagination)
       .then(data => setList(data))
       .catch(() => setList([]));
   }
 
   useEffect(() => {
-    refreshData();
-    getList<StatusView>('status')
+    refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
+    getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, []);
+  }, [page, rowsPerPage]);
 
   if (list.length === 0) {
     return (
@@ -89,7 +89,7 @@ export function BlockList() {
           <BlockForm
             edit={edit}
             onClose={() => {
-              refreshData();
+              refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
               setEdit(null);
             }}
           />
@@ -150,7 +150,7 @@ export function BlockList() {
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
                       deleteItem('block', row.id)
-                        .then(() => refreshData());
+                        .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                     },
                   }]}/>
                 </TableCell>

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { FileView } from '../view';
 import { StatusView } from '../../settings/view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -51,11 +51,16 @@ export function FileList(
   },
 ) {
   const { getList, deleteItem } = useContext(apiContext);
-  const [list, setList] = useState<Array<FileView>>([]);
+  const [allItems, setAllItems] = useState<Array<FileView>>([]);
   const [statuses, setStatuses] = useState<Array<StatusView>>([]);
   const [edit, setEdit] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50);
+
+  const list = useMemo(() =>
+      allItems.filter(item => item.parentId === parentId),
+    [allItems, parentId],
+  );
 
   const statusColumns = useMemo(() => getStatusColumns(list, statuses), [list, statuses]);
 
@@ -65,18 +70,18 @@ export function FileList(
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<FileView>(`file?parentId=${parentId}`)
-      .then(data => setList(data))
-      .catch(() => setList([]));
+  function refreshData(pagination?: Pagination) {
+    getList<FileView>(ApiEntity.FILE, pagination)
+      .then(data => setAllItems(data))
+      .catch(() => setAllItems([]));
   }
 
   useEffect(() => {
-    refreshData();
-    getList<StatusView>('status')
+    refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
+    getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, [parentId]);
+  }, [page, rowsPerPage]);
 
   if (list.length === 0) {
     return (
@@ -101,7 +106,7 @@ export function FileList(
             edit={edit}
             parentId={parentId}
             onClose={() => {
-              refreshData();
+              refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
               setEdit(null);
             }}
           />
@@ -157,7 +162,7 @@ export function FileList(
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
                       deleteItem('file', row.id)
-                        .then(() => refreshData());
+                        .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                     },
                   }]}/>
                 </TableCell>

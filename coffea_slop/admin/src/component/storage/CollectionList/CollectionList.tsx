@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { CollectionView } from '../view';
 import { StatusView } from '../../settings/view';
-import { apiContext } from '../../../context/ApiProvider';
+import { apiContext, ApiEntity, Pagination } from '../../../context/ApiProvider';
 import { getStringValue, getStringColumns, Column } from '../../../service/string.service';
 import { getPointValue, getPointColumns } from '../../../service/point.service';
 import { getStatusColumns } from '../../../service/status.service';
@@ -48,18 +48,18 @@ export function CollectionList() {
     ...getPointColumns(list),
   ], [list]);
 
-  function refreshData() {
-    getList<CollectionView>('collection')
+  function refreshData(pagination?: Pagination) {
+    getList<CollectionView>(ApiEntity.COLLECTION, pagination)
       .then(data => setList(data))
       .catch(() => setList([]));
   }
 
   useEffect(() => {
-    refreshData();
-    getList<StatusView>('status')
+    refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
+    getList<StatusView>(ApiEntity.STATUS)
       .then(data => setStatuses(data))
       .catch(() => setStatuses([]));
-  }, []);
+  }, [page, rowsPerPage]);
 
   if (list.length === 0) {
     return (
@@ -87,7 +87,7 @@ export function CollectionList() {
           <CollectionForm
             edit={edit}
             onClose={() => {
-              refreshData();
+              refreshData({ limit: rowsPerPage, offset: page * rowsPerPage });
               setEdit(null);
             }}
           />
@@ -148,7 +148,7 @@ export function CollectionList() {
                     icon: <DeleteIcon fontSize="small"/>,
                     onClick: () => {
                       deleteItem('collection', row.id)
-                        .then(() => refreshData());
+                        .then(() => refreshData({ limit: rowsPerPage, offset: page * rowsPerPage }));
                     },
                   }]}/>
                 </TableCell>
